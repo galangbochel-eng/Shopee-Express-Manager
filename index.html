@@ -3,439 +3,514 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delivery Empire Manager - Shopee & ShopeeFood Style</title>
+    <title>Delivery Empire Simulator - Shopee Food Edition</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f3f4f6;
+            background-color: #0b0f19;
             user-select: none;
+            touch-action: manipulation;
         }
         
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+        .custom-scroll {
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
         }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #fd5da8;
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #111827;
             border-radius: 4px;
         }
-        ::-webkit-scrollbar-thumb:hover {
+        .custom-scroll::-webkit-scrollbar-thumb {
             background: #ee4d2d;
+            border-radius: 4px;
         }
 
         .shopee-gradient {
-            background: linear-gradient(135deg, #f53d2d 0%, #ff6633 100%);
+            background: linear-gradient(135deg, #ee4d2d 0%, #ff6633 100%);
         }
 
-        .shopee-border {
-            border-color: #ee4d2d;
+        .shopee-glass {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .shopee-text {
-            color: #ee4d2d;
+        @keyframes pulse-glow {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.08); opacity: 0.85; }
         }
 
-        .shopee-bg-light {
-            background-color: #fff5f2;
+        .animate-pulse-glow {
+            animation: pulse-glow 2s infinite ease-in-out;
         }
 
-        .pulse-subtle {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        /* Canvas Overlay Styles */
-        #gameCanvas {
-            border-radius: 12px;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
-            background: #eef2f5;
+        canvas {
+            border-radius: 16px;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.6);
         }
     </style>
 </head>
-<body class="h-screen overflow-hidden flex flex-col text-slate-800">
+<body class="h-screen w-screen overflow-hidden flex flex-col text-slate-100 bg-slate-950">
 
-    <!-- Top Bar Navigation -->
-    <header class="shopee-gradient text-white px-4 py-2.5 shadow-md flex justify-between items-center z-20 flex-shrink-0">
-        <div class="flex items-center space-x-3">
-            <div class="bg-white text-[#ee4d2d] p-2 rounded-xl font-black text-xl shadow flex items-center justify-center w-10 h-10">
-                <i class="fa-solid fa-truck-fast"></i>
+    <header class="shopee-gradient text-white px-3 md:px-5 py-2 shadow-xl flex justify-between items-center z-20 flex-shrink-0">
+        <div class="flex items-center space-x-2 md:space-x-3">
+            <div class="bg-white text-[#ee4d2d] p-2 rounded-2xl font-black text-xl shadow-lg flex items-center justify-center w-9 h-9 md:w-11 md:h-11">
+                <i class="fa-solid fa-utensils"></i>
             </div>
             <div>
-                <h1 class="font-extrabold text-lg leading-none tracking-tight flex items-center gap-2">
-                    ShopeeExpress & Food Manager
-                    <span class="bg-yellow-400 text-slate-900 text-xs px-2 py-0.5 rounded-full font-bold uppercase tracking-wider text-[10px]">Pro Manager</span>
+                <h1 class="font-black text-base md:text-xl leading-none tracking-tight flex items-center gap-2">
+                    ShopeeFood Empire
+                    <span id="skinBadge" class="bg-yellow-400 text-slate-900 text-[10px] md:text-xs px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider shadow">Pro Edition</span>
                 </h1>
-                <p class="text-xs text-orange-100 opacity-90 mt-0.5">Kelola armada kurir & pengiriman kota real-time</p>
+                <p class="text-[10px] md:text-xs text-orange-100 opacity-90 mt-0.5 hidden sm:block">Simulator Kurir, Multi-Batch Delivery & Peta Kota Organik Realtime</p>
             </div>
         </div>
 
         <!-- Realtime Stats Bar Header -->
-        <div class="hidden md:flex items-center space-x-6 bg-black/15 px-4 py-1.5 rounded-xl backdrop-blur-sm border border-white/10">
+        <div class="hidden lg:flex items-center space-x-5 bg-black/25 px-4 py-1.5 rounded-2xl backdrop-blur-md border border-white/10">
             <div class="text-center">
-                <span class="text-[10px] uppercase font-bold text-orange-200 block">Saldo Kas</span>
+                <span class="text-[9px] uppercase font-bold text-orange-200 block tracking-wider">Kas Perusahaan</span>
                 <span id="statMoney" class="text-sm font-black text-yellow-300">Rp 500.000</span>
             </div>
             <div class="h-6 w-px bg-white/20"></div>
             <div class="text-center">
-                <span class="text-[10px] uppercase font-bold text-orange-200 block">Kepuasan</span>
+                <span class="text-[9px] uppercase font-bold text-orange-200 block tracking-wider">Rating Shopee</span>
                 <span id="statRating" class="text-sm font-bold text-white"><i class="fa-solid fa-star text-yellow-300 mr-1"></i>5.0</span>
             </div>
             <div class="h-6 w-px bg-white/20"></div>
             <div class="text-center">
-                <span class="text-[10px] uppercase font-bold text-orange-200 block">Cuaca Kota</span>
+                <span class="text-[9px] uppercase font-bold text-orange-200 block tracking-wider">Kondisi Cuaca</span>
                 <span id="statWeather" class="text-sm font-bold text-white flex items-center gap-1">
                     <i class="fa-solid fa-sun text-yellow-300"></i> Cerah
                 </span>
             </div>
             <div class="h-6 w-px bg-white/20"></div>
             <div class="text-center">
-                <span class="text-[10px] uppercase font-bold text-orange-200 block">Status Waktu</span>
+                <span class="text-[9px] uppercase font-bold text-orange-200 block tracking-wider">Waktu Operasional</span>
                 <span id="statTime" class="text-sm font-mono font-bold text-white">08:00 WIB</span>
             </div>
         </div>
 
-        <!-- Controls Speed & Pause -->
-        <div class="flex items-center space-x-2">
-            <div class="bg-white/20 p-1 rounded-lg flex items-center space-x-1 border border-white/20">
-                <button id="btnSpeed0" onclick="setSpeed(0)" class="px-2 py-1 text-xs font-bold rounded bg-white/20 hover:bg-white/40 transition">⏸</button>
-                <button id="btnSpeed1" onclick="setSpeed(1)" class="px-2 py-1 text-xs font-bold rounded bg-yellow-400 text-slate-900 transition">1x</button>
-                <button id="btnSpeed2" onclick="setSpeed(2)" class="px-2 py-1 text-xs font-bold rounded bg-white/20 hover:bg-white/40 transition">2x</button>
-                <button id="btnSpeed4" onclick="setSpeed(4)" class="px-2 py-1 text-xs font-bold rounded bg-white/20 hover:bg-white/40 transition">4x</button>
+        <!-- Controls -->
+        <div class="flex items-center space-x-1.5 md:space-x-2">
+            <button id="btnFlashSale" onclick="triggerFlashSaleEvent()" class="bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-black px-2.5 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow-lg transition active:scale-95">
+                <i class="fa-solid fa-bolt text-red-600 animate-bounce"></i>
+                <span class="hidden sm:inline">Event 11.11</span>
+            </button>
+
+            <div class="bg-black/25 p-1 rounded-xl flex items-center space-x-1 border border-white/10">
+                <button id="btnSpeed0" onclick="setSpeed(0)" class="px-2 py-1 text-xs font-bold rounded-lg bg-white/20 hover:bg-white/40 transition">⏸</button>
+                <button id="btnSpeed1" onclick="setSpeed(1)" class="px-2 py-1 text-xs font-bold rounded-lg bg-yellow-400 text-slate-900 transition">1x</button>
+                <button id="btnSpeed2" onclick="setSpeed(2)" class="px-2 py-1 text-xs font-bold rounded-lg bg-white/20 hover:bg-white/40 transition">2x</button>
+                <button id="btnSpeed4" onclick="setSpeed(4)" class="px-2 py-1 text-xs font-bold rounded-lg bg-white/20 hover:bg-white/40 transition">4x</button>
             </div>
-            <button onclick="toggleAudio()" id="btnAudio" class="p-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm text-white">
+            
+            <button onclick="toggleAudio()" id="btnAudio" class="p-2 bg-black/25 hover:bg-black/40 rounded-xl text-xs md:text-sm text-white border border-white/10">
                 <i class="fa-solid fa-volume-high"></i>
             </button>
         </div>
     </header>
 
-    <!-- Main Content Grid -->
-    <div class="flex-1 flex overflow-hidden p-3 gap-3">
+    <div class="flex lg:hidden bg-slate-900 text-white px-3 py-1.5 justify-between items-center text-[11px] border-b border-slate-800 z-20 flex-shrink-0">
+        <div class="flex items-center gap-1">
+            <span class="text-slate-400">Kas:</span>
+            <span id="mStatMoney" class="font-black text-yellow-400">Rp 500.000</span>
+        </div>
+        <div class="flex items-center gap-1">
+            <i class="fa-solid fa-star text-yellow-400"></i>
+            <span id="mStatRating" class="font-bold">5.0</span>
+        </div>
+        <div id="mStatWeather" class="flex items-center gap-1">
+            <i class="fa-solid fa-sun text-yellow-400"></i> Cerah
+        </div>
+        <div id="mStatTime" class="font-mono font-bold text-orange-300">
+            08:00
+        </div>
+    </div>
 
-        <!-- Left Sidebar: Order Queue & Mode Filter -->
-        <aside class="w-80 bg-white rounded-2xl shadow-sm border border-slate-200/80 flex flex-col overflow-hidden flex-shrink-0">
-            <!-- Navigation Tabs (Shopee Express / Shopee Food) -->
-            <div class="flex border-b border-slate-100 bg-slate-50 p-1.5 gap-1">
-                <button id="tabAll" onclick="switchOrderTab('all')" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-white shadow-sm text-[#ee4d2d] transition">
-                    Semua (<span id="countAllOrders">0</span>)
+    <!-- FLASH SALE BANNER -->
+    <div id="bannerFlashSale" class="hidden bg-gradient-to-r from-red-600 via-orange-500 to-amber-500 text-white px-4 py-2 flex items-center justify-between text-xs font-bold shadow-lg z-30 animate-pulse flex-shrink-0">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-fire text-yellow-300 text-base"></i>
+            <span>FLASH SALE 11.11 AKTIF! Pesanan melimpah 3x Lipat + Bonus Tip Kurir!</span>
+        </div>
+        <span id="flashTimer" class="bg-black/30 px-2 py-0.5 rounded-lg font-mono text-yellow-300">00:30</span>
+    </div>
+
+    <div class="flex-1 flex flex-col md:flex-row overflow-hidden p-2 md:p-3 gap-2 md:gap-3 bg-slate-950 min-h-0">
+
+        <!-- Left Sidebar: Orders & Customer Reviews Feed -->
+        <aside id="panelOrders" class="w-full md:w-80 bg-slate-900/90 rounded-2xl border border-slate-800 flex flex-col overflow-hidden flex-shrink-0 shadow-2xl h-full min-h-0">
+            <div class="flex border-b border-slate-800 bg-slate-950 p-1.5 gap-1 flex-shrink-0">
+                <button id="tabOrders" onclick="switchLeftTab('orders')" class="flex-1 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-orange-400 shadow transition flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-boxes-packing"></i> Pesanan (<span id="countAllOrders">0</span>)
                 </button>
-                <button id="tabFood" onclick="switchOrderTab('food')" class="flex-1 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/60 transition flex items-center justify-center gap-1">
-                    <i class="fa-solid fa-utensils text-orange-500"></i> Food
-                </button>
-                <button id="tabExpress" onclick="switchOrderTab('express')" class="flex-1 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/60 transition flex items-center justify-center gap-1">
-                    <i class="fa-solid fa-box text-blue-500"></i> Express
+                <button id="tabReviews" onclick="switchLeftTab('reviews')" class="flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:bg-slate-800/60 transition flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-star text-yellow-400"></i> Ulasan (<span id="countReviews">0</span>)
                 </button>
             </div>
 
-            <!-- Auto Assign Toggle -->
-            <div class="p-3 bg-orange-50/60 border-b border-orange-100 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-robot text-[#ee4d2d]"></i>
-                    <span class="text-xs font-bold text-slate-700">Auto-Assign Kurir</span>
+            <!-- View: Orders List -->
+            <div id="viewOrders" class="flex-1 flex flex-col overflow-hidden min-h-0">
+                <div class="p-2.5 bg-slate-800/50 border-b border-slate-800 flex items-center justify-between flex-shrink-0">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-route text-orange-500"></i>
+                        <span class="text-xs font-bold text-slate-200">Auto-Batch Multi Order</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="autoAssignToggle" onchange="toggleAutoAssign()" class="sr-only peer" checked>
+                        <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
+                    </label>
                 </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="autoAssignToggle" onchange="toggleAutoAssign()" class="sr-only peer" checked>
-                    <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#ee4d2d]"></div>
-                </label>
+
+                <div class="p-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex justify-between items-center flex-shrink-0">
+                    <span>Daftar Pesanan Masuk</span>
+                    <span id="rushHourBadge" class="hidden bg-red-600 text-white text-[9px] px-2 py-0.5 rounded-full font-black animate-pulse">JAM SIBUK / MACET</span>
+                </div>
+
+                <div id="ordersList" class="flex-1 custom-scroll px-2.5 space-y-2 pb-3 min-h-0">
+                    <!-- Dynamic Orders -->
+                </div>
             </div>
 
-            <!-- Orders Queue List -->
-            <div class="p-2 font-bold text-xs text-slate-400 uppercase tracking-wider flex justify-between items-center">
-                <span>Daftar Pesanan Masuk</span>
-                <span id="rushHourBadge" class="hidden bg-red-500 text-white text-[9px] px-2 py-0.5 rounded-full font-black animate-pulse">RUSH HOUR 2x!</span>
-            </div>
-
-            <div id="ordersList" class="flex-1 overflow-y-auto px-3 space-y-2.5 pb-3">
-                <!-- Order Card template dynamically populated -->
+            <!-- View: Customer Reviews Feed -->
+            <div id="viewReviews" class="flex-1 flex flex-col overflow-hidden hidden min-h-0">
+                <div class="p-2.5 bg-slate-800/50 border-b border-slate-800 text-xs font-bold text-slate-300 flex items-center justify-between flex-shrink-0">
+                    <span>Ulasan Pembeli ShopeeFood</span>
+                    <span id="reviewScoreSummary" class="text-yellow-400"><i class="fa-solid fa-star"></i> 5.0 / 5.0</span>
+                </div>
+                <div id="reviewsList" class="flex-1 custom-scroll p-2.5 space-y-2.5 min-h-0">
+                    <!-- Dynamic Reviews -->
+                </div>
             </div>
         </aside>
 
-        <!-- Center Interactive Map Canvas -->
-        <main class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200/80 flex flex-col overflow-hidden relative">
+        <main id="panelMap" class="w-full flex-1 bg-slate-900 rounded-2xl border border-slate-800 flex flex-col overflow-hidden relative min-h-[300px] h-full shadow-2xl">
             <!-- Map Info Overlay Header -->
             <div class="absolute top-3 left-3 right-3 z-10 flex justify-between items-center pointer-events-none">
-                <div class="bg-slate-900/80 backdrop-blur-md text-white px-3 py-1.5 rounded-xl text-xs font-medium shadow-lg pointer-events-auto flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                    <span>Monitoring Peta Kota Dynamic v2.5</span>
+                <div class="bg-slate-950/85 backdrop-blur-md text-white px-3 py-1.5 rounded-xl text-[10px] md:text-xs font-medium shadow-xl pointer-events-auto flex items-center gap-2 border border-slate-800">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span id="mapStatusText">Peta Organik Kota Metro Realtime</span>
                 </div>
 
-                <div class="bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl text-xs font-semibold shadow-lg text-slate-700 pointer-events-auto flex items-center gap-3">
-                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-orange-500 inline-block"></span> Restoran</span>
-                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span> Toko Express</span>
-                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span> Rumah</span>
+                <!-- Shopee Styled Map Legend -->
+                <div class="bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-xl text-[10px] md:text-xs font-semibold shadow-xl text-slate-300 pointer-events-auto flex items-center gap-3 border border-slate-800">
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#ee4d2d] flex items-center justify-center text-[8px] text-white font-bold"><i class="fa-solid fa-utensils"></i></span> Warung</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#ee4d2d] border border-white flex items-center justify-center text-[8px] text-white"><i class="fa-solid fa-motorcycle"></i></span> Kurir</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500 flex items-center justify-center text-[8px] text-white"><i class="fa-solid fa-location-dot"></i></span> Pembeli</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-400 flex items-center justify-center text-[8px] text-slate-900"><i class="fa-solid fa-gas-pump"></i></span> SPBU</span>
                 </div>
             </div>
 
             <!-- Canvas Container -->
-            <div class="w-full h-full relative overflow-hidden bg-slate-100 flex items-center justify-center">
-                <canvas id="gameCanvas" class="w-full h-full object-cover cursor-crosshair"></canvas>
+            <div class="w-full h-full relative overflow-hidden bg-slate-950 flex items-center justify-center flex-1">
+                <canvas id="gameCanvas" class="w-full h-full object-cover cursor-pointer"></canvas>
             </div>
 
             <!-- Bottom Map Bar Summary -->
-            <div class="h-12 border-t border-slate-100 bg-white/90 backdrop-blur px-4 flex items-center justify-between text-xs font-medium text-slate-600 flex-shrink-0">
+            <div class="h-11 border-t border-slate-800 bg-slate-900/90 backdrop-blur px-4 flex items-center justify-between text-xs font-medium text-slate-400 flex-shrink-0">
                 <div class="flex items-center gap-4">
-                    <span><i class="fa-solid fa-motorcycle text-orange-500 mr-1"></i> Kurir Aktif: <strong id="activeCouriersCount" class="text-slate-800">0/0</strong></span>
-                    <span><i class="fa-solid fa-check-circle text-emerald-500 mr-1"></i> Order Selesai: <strong id="completedOrdersCount" class="text-slate-800">0</strong></span>
+                    <span><i class="fa-solid fa-motorcycle text-orange-500 mr-1"></i> Kurir Aktif: <strong id="activeCouriersCount" class="text-slate-100">0/0</strong></span>
+                    <span><i class="fa-solid fa-gas-pump text-amber-400 mr-1"></i> SPBU: <strong id="gasStationsCount" class="text-slate-100">2</strong></span>
+                    <span><i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i> Terantar: <strong id="completedOrdersCount" class="text-slate-100">0</strong></span>
                 </div>
-                <div class="flex items-center gap-2 text-slate-400 text-[11px]">
-                    <i class="fa-solid fa-circle-info"></i> Klik pada kurir di peta untuk melihat detail rute.
+                <div class="hidden sm:flex items-center gap-2 text-slate-400 text-[11px]">
+                    <i class="fa-solid fa-lightbulb text-yellow-400"></i> Kurir akan otomatis mampir SPBU jika bensin &lt; 15%!
                 </div>
             </div>
         </main>
 
-        <!-- Right Sidebar: Management (Couriers & Merchants) -->
-        <aside class="w-80 bg-white rounded-2xl shadow-sm border border-slate-200/80 flex flex-col overflow-hidden flex-shrink-0">
-            <!-- Navigation Tabs for Right Panel -->
-            <div class="flex border-b border-slate-100 bg-slate-50 p-1.5 gap-1">
-                <button id="rightTabCouriers" onclick="switchRightTab('couriers')" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-white shadow-sm text-[#ee4d2d] transition">
-                    Armada Kurir (<span id="countCouriers">0</span>)
+        <aside id="panelManage" class="w-full md:w-80 bg-slate-900/90 rounded-2xl border border-slate-800 flex flex-col overflow-hidden flex-shrink-0 hidden md:flex shadow-2xl h-full min-h-0">
+            <div class="flex border-b border-slate-800 bg-slate-950 p-1.5 gap-1 flex-shrink-0">
+                <button id="rightTabCouriers" onclick="switchRightTab('couriers')" class="flex-1 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-orange-400 shadow transition">
+                    Armada (<span id="countCouriers">0</span>)
                 </button>
-                <button id="rightTabMerchants" onclick="switchRightTab('merchants')" class="flex-1 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/60 transition">
-                    Merchant & Toko
+                <button id="rightTabMerchants" onclick="switchRightTab('merchants')" class="flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:bg-slate-800/60 transition">
+                    Warung & SPBU
+                </button>
+                <button id="rightTabSkins" onclick="switchRightTab('skins')" class="flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:bg-slate-800/60 transition">
+                    Skin / Uniform
                 </button>
             </div>
 
             <!-- Couriers Tab View -->
-            <div id="viewCouriers" class="flex-1 flex flex-col overflow-hidden">
-                <div class="p-3 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Manajemen Kurir</span>
-                    <button onclick="openHireModal()" class="shopee-gradient text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm hover:opacity-90 transition flex items-center gap-1">
-                        <i class="fa-solid fa-user-plus"></i> Rekrut Kurir
+            <div id="viewCouriers" class="flex-1 flex flex-col overflow-hidden min-h-0">
+                <div class="p-2.5 border-b border-slate-800 flex justify-between items-center bg-slate-800/40 flex-shrink-0">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Kelola & Isi Bensin</span>
+                    <button onclick="openHireModal()" class="shopee-gradient text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow hover:opacity-90 transition flex items-center gap-1">
+                        <i class="fa-solid fa-user-plus"></i> Rekrut Driver
                     </button>
                 </div>
-                <div id="courierList" class="flex-1 overflow-y-auto p-3 space-y-2.5">
+                <div id="courierList" class="flex-1 custom-scroll p-2.5 space-y-2.5 min-h-0">
                     <!-- Courier cards rendered here -->
                 </div>
             </div>
 
-            <!-- Merchants Tab View -->
-            <div id="viewMerchants" class="flex-1 flex flex-col overflow-hidden hidden">
-                <div class="p-3 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Merchant Partner</span>
-                    <button onclick="openAddMerchantModal()" class="bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm hover:bg-blue-700 transition flex items-center gap-1">
-                        <i class="fa-solid fa-store"></i> Tambah Toko
+            <!-- Merchants & SPBU Tab View -->
+            <div id="viewMerchants" class="flex-1 flex flex-col overflow-hidden hidden min-h-0">
+                <div class="p-2.5 border-b border-slate-800 flex justify-between items-center bg-slate-800/40 flex-shrink-0">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Warung & SPBU</span>
+                    <button onclick="openAddMerchantModal()" class="bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow hover:bg-blue-700 transition flex items-center gap-1">
+                        <i class="fa-solid fa-plus"></i> Tambah Lokasi
                     </button>
                 </div>
-                <div id="merchantList" class="flex-1 overflow-y-auto p-3 space-y-2.5">
-                    <!-- Merchant cards rendered here -->
+                <div id="merchantList" class="flex-1 custom-scroll p-2.5 space-y-2.5 min-h-0">
+                    <!-- Merchant & SPBU cards rendered here -->
+                </div>
+            </div>
+
+            <!-- Skins & Customization Tab View -->
+            <div id="viewSkins" class="flex-1 flex flex-col overflow-hidden hidden min-h-0">
+                <div class="p-2.5 border-b border-slate-800 bg-slate-800/40 flex-shrink-0">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Tema Branding & Seragam</span>
+                </div>
+                <div id="skinsList" class="flex-1 custom-scroll p-2.5 space-y-2.5 min-h-0">
+                    <!-- Skins rendered here -->
                 </div>
             </div>
         </aside>
     </div>
 
-    <!-- Hire Courier Modal -->
-    <div id="hireModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden">
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all">
+    <!-- Mobile Navigation -->
+    <nav class="md:hidden bg-slate-900 border-t border-slate-800 flex justify-around items-center py-2 px-3 z-30 shadow-2xl flex-shrink-0">
+        <button id="mTabMap" onclick="switchMobileTab('map')" class="flex flex-col items-center gap-0.5 text-orange-500 font-bold">
+            <i class="fa-solid fa-map-location-dot text-base"></i>
+            <span class="text-[10px]">Peta</span>
+        </button>
+        <button id="mTabOrders" onclick="switchMobileTab('orders')" class="flex flex-col items-center gap-0.5 text-slate-400 relative">
+            <i class="fa-solid fa-boxes-packing text-base"></i>
+            <span class="text-[10px] font-bold">Pesanan</span>
+            <span id="mBadgeOrders" class="absolute -top-1 -right-2 bg-orange-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full">0</span>
+        </button>
+        <button id="mTabManage" onclick="switchMobileTab('manage')" class="flex flex-col items-center gap-0.5 text-slate-400">
+            <i class="fa-solid fa-sliders text-base"></i>
+            <span class="text-[10px] font-bold">Kelola</span>
+        </button>
+    </nav>
+
+    <!-- Modals -->
+    <div id="hireModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl border border-slate-800 overflow-hidden text-slate-100">
             <div class="shopee-gradient p-4 text-white flex justify-between items-center">
                 <h3 class="font-bold text-base flex items-center gap-2">
-                    <i class="fa-solid fa-user-plus"></i> Rekrut Kurir Baru
+                    <i class="fa-solid fa-user-plus"></i> Rekrut Driver ShopeeFood
                 </h3>
                 <button onclick="closeHireModal()" class="text-white/80 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-4 space-y-3">
-                <p class="text-xs text-slate-500">Pilih kandidat kurir untuk meningkatkan kecepatan dan kapasitas armada delivery Anda.</p>
-                <div id="candidatesList" class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
-                    <!-- Candidate cards injected dynamically -->
-                </div>
+                <p class="text-xs text-slate-400">Pilih driver handal dengan kapasitas tas & jenis kendaraan sesuai kebutuhan armada.</p>
+                <div id="candidatesList" class="space-y-2.5 max-h-80 custom-scroll pr-1"></div>
             </div>
         </div>
     </div>
 
-    <!-- Add Merchant Modal -->
-    <div id="addMerchantModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden">
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
-            <div class="bg-slate-800 p-4 text-white flex justify-between items-center">
+    <div id="addMerchantModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl border border-slate-800 overflow-hidden text-slate-100">
+            <div class="bg-blue-600 p-4 text-white flex justify-between items-center">
                 <h3 class="font-bold text-base flex items-center gap-2">
-                    <i class="fa-solid fa-shop"></i> Buka Partner Merchant Baru
+                    <i class="fa-solid fa-shop"></i> Buka Partner Warung / SPBU
                 </h3>
                 <button onclick="closeAddMerchantModal()" class="text-white/80 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-4 space-y-3">
-                <p class="text-xs text-slate-500">Tambah merchant baru di peta kota untuk menghasilkan jenis pesanan baru yang lebih mahal.</p>
-                <div id="merchantCandidatesList" class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
-                    <!-- Merchant options dynamic -->
-                </div>
+                <p class="text-xs text-slate-400">Tambah titik Mitra Warung atau SPBU di wilayah peta kota yang belum terjangkau.</p>
+                <div id="merchantCandidatesList" class="space-y-2.5 max-h-80 custom-scroll pr-1"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // ==========================================
-        // GAME STATE & CONFIGURATION
-        // ==========================================
         const CONFIG = {
             mapWidth: 1200,
             mapHeight: 800,
             tickInterval: 1000,
-            baseOrderInterval: 4000,
-            baseCourierSalary: 50,
             weatherTypes: ['Cerah', 'Hujan', 'Malam'],
             vehicleTypes: {
-                bicycle: { name: 'Sepeda Ontel', speed: 1.2, capacity: 1, cost: 0, icon: 'fa-bicycle', color: '#64748b' },
-                motorcycle: { name: 'Motor Matic', speed: 2.2, capacity: 2, cost: 250000, icon: 'fa-motorcycle', color: '#ee4d2d' },
-                car: { name: 'Mobil Box', speed: 3.2, capacity: 4, cost: 750000, icon: 'fa-truck-pickup', color: '#2563eb' },
-                ev: { name: 'EV Super Bike', speed: 4.5, capacity: 3, cost: 1500000, icon: 'fa-bolt', color: '#10b981' }
-            }
+                bicycle: { name: 'Sepeda Ontel', speed: 1.4, capacity: 1, fuelBurn: 0, maxFuel: 100, cost: 0, icon: 'fa-bicycle', color: '#94a3b8' },
+                motorcycle: { name: 'Motor Matic Shopee', speed: 2.6, capacity: 2, fuelBurn: 0.3, maxFuel: 100, cost: 250000, icon: 'fa-motorcycle', color: '#ee4d2d' },
+                car: { name: 'Mobil Van Delivery', speed: 3.4, capacity: 4, fuelBurn: 0.55, maxFuel: 130, cost: 750000, icon: 'fa-truck-pickup', color: '#3b82f6' },
+                ev: { name: 'EV Super Bike', speed: 4.6, capacity: 3, fuelBurn: 0.2, maxFuel: 160, cost: 1500000, icon: 'fa-bolt', color: '#10b981' }
+            },
+            skins: [
+                { id: 'shopee', name: 'ShopeeFood Orange Classic', badge: 'Shopee Edition', primary: '#ee4d2d', secondary: '#ff6633', cost: 0, unlocked: true },
+                { id: 'cyber', name: 'Cyberpunk Neon 2088', badge: 'Cyberpunk', primary: '#06b6d4', secondary: '#3b82f6', cost: 300000, unlocked: false },
+                { id: 'gold', name: 'Golden VIP Delivery', badge: 'VIP Gold', primary: '#eab308', secondary: '#ca8a04', cost: 800000, unlocked: false }
+            ]
         };
 
         let gameState = {
             money: 500000,
             rating: 5.0,
             ratingCount: 1,
-            timeMinutes: 8 * 60, // Start at 08:00 AM
+            timeMinutes: 8 * 60,
             weather: 'Cerah',
-            gameSpeed: 1, // 0: pause, 1, 2, 4
+            gameSpeed: 1,
             autoAssign: true,
-            activeTab: 'all',
+            leftTab: 'orders',
             rightTab: 'couriers',
+            mobileView: 'map',
             soundEnabled: true,
             completedOrders: 0,
-            rushHour: false
+            rushHour: false,
+            currentSkin: 'shopee',
+            flashSale: { active: false, timer: 0 }
         };
 
-        // Entities
-        let nodes = []; // Map Grid Road Nodes
-        let merchants = [];
-        let customers = [];
-        let couriers = [];
-        let orders = [];
+        let nodes = [], merchants = [], customers = [], couriers = [], orders = [], reviews = [], gasStations = [], riverPath = [];
+        let nextOrderId = 101, nextCourierId = 2;
+        let canvas, ctx;
 
-        // Dynamic ID Generators
-        let nextOrderId = 101;
-        let nextCourierId = 1;
-
-        // Audio System (Web Audio API)
         const AudioSys = {
             ctx: null,
-            init() {
-                try {
-                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-                } catch(e) {}
-            },
-            playBeep(freq = 600, type = 'sine', duration = 0.15) {
+            init() { try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){} },
+            playBeep(freq = 600, type = 'sine', duration = 0.12) {
                 if (!gameState.soundEnabled || !this.ctx) return;
                 try {
+                    if (this.ctx.state === 'suspended') this.ctx.resume();
                     const osc = this.ctx.createOscillator();
                     const gain = this.ctx.createGain();
                     osc.type = type;
                     osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-                    gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
                     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
                     osc.connect(gain);
                     gain.connect(this.ctx.destination);
                     osc.start();
                     osc.stop(this.ctx.currentTime + duration);
-                } catch(e) {}
+                } catch(e){}
             },
             playSuccess() {
                 this.playBeep(523.25, 'triangle', 0.1);
-                setTimeout(() => this.playBeep(659.25, 'triangle', 0.15), 100);
+                setTimeout(() => this.playBeep(659.25, 'triangle', 0.1), 80);
+                setTimeout(() => this.playBeep(783.99, 'triangle', 0.2), 160);
             },
-            playOrderNew() {
-                this.playBeep(880, 'sine', 0.08);
+            playOrderNew() { this.playBeep(880, 'sine', 0.08); },
+            playRefuel() { this.playBeep(300, 'sawtooth', 0.3); },
+            playSiren() {
+                this.playBeep(900, 'sine', 0.15);
+                setTimeout(() => this.playBeep(1200, 'sine', 0.2), 150);
             }
         };
 
-        // Map Canvas Initialization & Node System
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
+        function initOrganicMapGrid() {
+            canvas = document.getElementById('gameCanvas');
+            if (canvas) ctx = canvas.getContext('2d');
 
-        function initMapGrid() {
-            canvas.width = CONFIG.mapWidth;
-            canvas.height = CONFIG.mapHeight;
+            nodes = [
+                // Ring Road / Utama
+                { id: 0, x: 120, y: 150, neighbors: [] },
+                { id: 1, x: 400, y: 120, neighbors: [] },
+                { id: 2, x: 750, y: 110, neighbors: [] },
+                { id: 3, x: 1080, y: 160, neighbors: [] },
+                { id: 4, x: 1120, y: 420, neighbors: [] },
+                { id: 5, x: 1050, y: 680, neighbors: [] },
+                { id: 6, x: 700, y: 720, neighbors: [] },
+                { id: 7, x: 380, y: 700, neighbors: [] },
+                { id: 8, x: 100, y: 650, neighbors: [] },
+                { id: 9, x: 80, y: 380, neighbors: [] },
 
-            // Generate Road Network Nodes (Grid style + diagonals)
-            const rows = 5;
-            const cols = 7;
-            const paddingX = 120;
-            const paddingY = 100;
-            const stepX = (CONFIG.mapWidth - paddingX * 2) / (cols - 1);
-            const stepY = (CONFIG.mapHeight - paddingY * 2) / (rows - 1);
+                // City Center Roundabout / Plaza (Pusat Kota)
+                { id: 10, x: 580, y: 380, neighbors: [] }, // Bundaran Utama
+                { id: 11, x: 500, y: 300, neighbors: [] },
+                { id: 12, x: 660, y: 300, neighbors: [] },
+                { id: 13, x: 660, y: 460, neighbors: [] },
+                { id: 14, x: 500, y: 460, neighbors: [] },
 
-            nodes = [];
-            for (let r = 0; r < rows; r++) {
-                for (let c = 0; c < cols; c++) {
-                    nodes.push({
-                        id: r * cols + c,
-                        x: paddingX + c * stepX + (Math.random() * 20 - 10),
-                        y: paddingY + r * stepY + (Math.random() * 20 - 10),
-                        neighbors: []
-                    });
-                }
-            }
+                // Inner Arterials (Jalan Penghubung Diagonal & Melengkung)
+                { id: 15, x: 280, y: 260, neighbors: [] },
+                { id: 16, x: 880, y: 250, neighbors: [] },
+                { id: 17, x: 900, y: 550, neighbors: [] },
+                { id: 18, x: 280, y: 530, neighbors: [] },
+                { id: 19, x: 580, y: 200, neighbors: [] },
+                { id: 20, x: 580, y: 580, neighbors: [] }
+            ];
 
-            // Connect horizontal & vertical roads
-            for (let r = 0; r < rows; r++) {
-                for (let c = 0; c < cols; c++) {
-                    const idx = r * cols + c;
-                    if (c < cols - 1) connectNodes(nodes[idx], nodes[idx + 1]);
-                    if (r < rows - 1) connectNodes(nodes[idx], nodes[idx + cols]);
-                }
-            }
+            // Connect Ring Road
+            const ringSeq = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+            for (let i = 0; i < ringSeq.length - 1; i++) connectNodes(nodes[ringSeq[i]], nodes[ringSeq[i+1]]);
 
-            // Initial Default Merchants
+            // Connect Roundabout Center
+            const centerSeq = [11, 12, 13, 14, 11];
+            for (let i = 0; i < centerSeq.length - 1; i++) connectNodes(nodes[centerSeq[i]], nodes[centerSeq[i+1]]);
+
+            // Connect Radial Spoke Roads
+            connectNodes(nodes[10], nodes[11]);
+            connectNodes(nodes[10], nodes[12]);
+            connectNodes(nodes[10], nodes[13]);
+            connectNodes(nodes[10], nodes[14]);
+
+            connectNodes(nodes[15], nodes[0]);
+            connectNodes(nodes[15], nodes[1]);
+            connectNodes(nodes[15], nodes[11]);
+            connectNodes(nodes[15], nodes[9]);
+
+            connectNodes(nodes[19], nodes[1]);
+            connectNodes(nodes[19], nodes[2]);
+            connectNodes(nodes[19], nodes[11]);
+            connectNodes(nodes[19], nodes[12]);
+
+            connectNodes(nodes[16], nodes[2]);
+            connectNodes(nodes[16], nodes[3]);
+            connectNodes(nodes[16], nodes[12]);
+
+            connectNodes(nodes[17], nodes[4]);
+            connectNodes(nodes[17], nodes[5]);
+            connectNodes(nodes[17], nodes[13]);
+
+            connectNodes(nodes[20], nodes[6]);
+            connectNodes(nodes[20], nodes[7]);
+            connectNodes(nodes[20], nodes[13]);
+            connectNodes(nodes[20], nodes[14]);
+
+            connectNodes(nodes[18], nodes[7]);
+            connectNodes(nodes[18], nodes[8]);
+            connectNodes(nodes[18], nodes[14]);
+
+            // River Path Points (Sungai Kota)
+            riverPath = [
+                { x: 0, y: 280 }, { x: 300, y: 340 }, { x: 520, y: 220 },
+                { x: 780, y: 220 }, { x: 1000, y: 320 }, { x: 1200, y: 290 }
+            ];
+
+            // Gas Stations (SPBU Pertamax & EV Charge)
+            gasStations = [
+                { id: 'spbu1', name: 'SPBU Pertamax Central 01', level: 1, speedBonus: 1.0, x: nodes[15].x - 30, y: nodes[15].y + 35, node: nodes[15] },
+                { id: 'spbu2', name: 'Shopee EV Supercharge Station', level: 1, speedBonus: 1.2, x: nodes[17].x + 30, y: nodes[17].y - 35, node: nodes[17] }
+            ];
+
+            // Shopee Food Merchants (Kuliner & Express Depot)
             merchants = [
-                { id: 'm1', name: 'Ayam Geprek Sambal Ijo', type: 'food', x: nodes[2].x + 30, y: nodes[2].y - 30, level: 1, prepSpeed: 1, node: nodes[2] },
-                { id: 'm2', name: 'Boba Fresh Milk 99', type: 'food', x: nodes[16].x - 30, y: nodes[16].y + 20, level: 1, prepSpeed: 1, node: nodes[16] },
-                { id: 'm3', name: 'Shopee Warehouse Central', type: 'express', x: nodes[10].x + 40, y: nodes[10].y + 30, level: 1, prepSpeed: 1.2, node: nodes[10] },
-                { id: 'm4', name: 'Official Fashion Hub', type: 'express', x: nodes[24].x - 40, y: nodes[24].y - 20, level: 1, prepSpeed: 1, node: nodes[24] }
+                { id: 'm1', name: 'Ayam Geprek Sambal Ijo', type: 'food', rating: 4.9, x: nodes[11].x - 45, y: nodes[11].y - 30, level: 1, prepSpeed: 1, node: nodes[11] },
+                { id: 'm2', name: 'Boba Fresh Milk 99', type: 'food', rating: 4.8, x: nodes[12].x + 40, y: nodes[12].y - 35, level: 1, prepSpeed: 1, node: nodes[12] },
+                { id: 'm3', name: 'Nasi Padang Sederhana', type: 'food', rating: 5.0, x: nodes[18].x - 40, y: nodes[18].y + 30, level: 1, prepSpeed: 1.1, node: nodes[18] },
+                { id: 'm4', name: 'Shopee Central Warehouse', type: 'express', rating: 4.9, x: nodes[16].x + 40, y: nodes[16].y - 30, level: 1, prepSpeed: 1.3, node: nodes[16] }
             ];
 
-            // Initial Customers (Houses)
+            // Customers
             customers = [
-                { id: 'c1', name: 'Bpk. Budi', address: 'Jl. Merdeka No. 12', x: nodes[0].x - 40, y: nodes[0].y - 30, node: nodes[0] },
-                { id: 'c2', name: 'Ibu Ani', address: 'Perum Gading 5', x: nodes[6].x + 40, y: nodes[6].y - 20, node: nodes[6] },
-                { id: 'c3', name: 'Siska (Kost Blue)', address: 'Jl. Mawar 88', x: nodes[28].x - 30, y: nodes[28].y + 40, node: nodes[28] },
-                { id: 'c4', name: 'Andi Tech', address: 'Komplek Permata B2', x: nodes[34].x + 30, y: nodes[34].y + 30, node: nodes[34] },
-                { id: 'c5', name: 'Maya Restu', address: 'Jl. Sudirman 101', x: nodes[18].x + 30, y: nodes[18].y - 40, node: nodes[18] }
+                { id: 'c1', name: 'Bpk. Budi', address: 'Perum Gading Mas', x: nodes[0].x - 35, y: nodes[0].y - 35, node: nodes[0] },
+                { id: 'c2', name: 'Ibu Ani', address: 'Jl. Merdeka No. 88', x: nodes[3].x + 35, y: nodes[3].y - 30, node: nodes[3] },
+                { id: 'c3', name: 'Siska (Kost Blue)', address: 'Komplek Permata B2', x: nodes[5].x + 35, y: nodes[5].y + 35, node: nodes[5] },
+                { id: 'c4', name: 'Andi Tech', address: 'Jl. Melati Indah 12', x: nodes[8].x - 35, y: nodes[8].y + 35, node: nodes[8] }
             ];
 
-            // Default Starting Couriers
+            // Couriers (Shopee Food Drivers)
             couriers = [
-                {
-                    id: 'k1',
-                    name: 'Rizky Fast',
-                    vehicle: 'motorcycle',
-                    speed: CONFIG.vehicleTypes.motorcycle.speed,
-                    x: nodes[17].x,
-                    y: nodes[17].y,
-                    status: 'IDLE', // IDLE, PICKING_UP, DELIVERING
-                    currentOrder: null,
-                    targetX: nodes[17].x,
-                    targetY: nodes[17].y,
-                    path: [],
-                    earnings: 0,
-                    rating: 5.0
-                },
-                {
-                    id: 'k2',
-                    name: 'Siti Eco',
-                    vehicle: 'bicycle',
-                    speed: CONFIG.vehicleTypes.bicycle.speed,
-                    x: nodes[12].x,
-                    y: nodes[12].y,
-                    status: 'IDLE',
-                    currentOrder: null,
-                    targetX: nodes[12].x,
-                    targetY: nodes[12].y,
-                    path: [],
-                    earnings: 0,
-                    rating: 4.9
-                }
+                { id: 'k1', name: 'Rizky (Shopee Driver 01)', vehicle: 'motorcycle', speed: CONFIG.vehicleTypes.motorcycle.speed, capacity: CONFIG.vehicleTypes.motorcycle.capacity, fuelBurn: CONFIG.vehicleTypes.motorcycle.fuelBurn, fuel: 100, x: nodes[10].x, y: nodes[10].y, status: 'IDLE', currentOrders: [], path: [], earnings: 0, rating: 5.0 },
+                { id: 'k2', name: 'Siti Eco (Driver Sepeda)', vehicle: 'bicycle', speed: CONFIG.vehicleTypes.bicycle.speed, capacity: CONFIG.vehicleTypes.bicycle.capacity, fuelBurn: CONFIG.vehicleTypes.bicycle.fuelBurn, fuel: 100, x: nodes[14].x, y: nodes[14].y, status: 'IDLE', currentOrders: [], path: [], earnings: 0, rating: 4.9 }
             ];
         }
 
@@ -444,26 +519,15 @@
             if (!n2.neighbors.includes(n1)) n2.neighbors.push(n1);
         }
 
-        // Shortest Path Dijkstra for Courier Movement
         function findShortestPath(startNode, endNode) {
-            let distances = {};
-            let previous = {};
-            let unvisited = new Set(nodes);
-
-            nodes.forEach(node => {
-                distances[node.id] = Infinity;
-                previous[node.id] = null;
-            });
+            let distances = {}, previous = {}, unvisited = new Set(nodes);
+            nodes.forEach(node => { distances[node.id] = Infinity; previous[node.id] = null; });
             distances[startNode.id] = 0;
 
             while (unvisited.size > 0) {
-                let current = null;
-                let lowestDist = Infinity;
+                let current = null, lowestDist = Infinity;
                 unvisited.forEach(node => {
-                    if (distances[node.id] < lowestDist) {
-                        lowestDist = distances[node.id];
-                        current = node;
-                    }
+                    if (distances[node.id] < lowestDist) { lowestDist = distances[node.id]; current = node; }
                 });
 
                 if (!current || current === endNode) break;
@@ -471,486 +535,690 @@
 
                 current.neighbors.forEach(neighbor => {
                     if (unvisited.has(neighbor)) {
-                        let dist = Math.hypot(current.x - neighbor.x, current.y - neighbor.y);
-                        let alt = distances[current.id] + dist;
-                        if (alt < distances[neighbor.id]) {
-                            distances[neighbor.id] = alt;
-                            previous[neighbor.id] = current;
+                        let baseDist = Math.hypot(current.x - neighbor.x, current.y - neighbor.y);
+                        // Rush hour congestion multiplier on main ring road
+                        if (gameState.rushHour && (current.id <= 9 && neighbor.id <= 9)) {
+                            baseDist *= 1.8;
                         }
+                        let alt = distances[current.id] + baseDist;
+                        if (alt < distances[neighbor.id]) { distances[neighbor.id] = alt; previous[neighbor.id] = current; }
                     }
                 });
             }
 
-            let path = [];
-            let curr = endNode;
-            while (curr) {
-                path.unshift(curr);
-                curr = previous[curr.id];
-            }
+            let path = [], curr = endNode;
+            while (curr) { path.unshift(curr); curr = previous[curr.id]; }
             return path;
         }
 
         function getClosestNode(x, y) {
-            let closest = nodes[0];
-            let minD = Infinity;
+            let closest = nodes[0], minD = Infinity;
             nodes.forEach(n => {
                 let d = Math.hypot(n.x - x, n.y - y);
-                if (d < minD) {
-                    minD = d;
-                    closest = n;
-                }
+                if (d < minD) { minD = d; closest = n; }
             });
             return closest;
         }
 
-        // Generate Dynamic Orders
-        function spawnOrder() {
-            if (orders.length >= 8) return; // Limit queue
-
-            const isFood = Math.random() > 0.4;
+        function spawnOrder(isFlashSale = false) {
+            if (orders.length >= 14) return;
+            const isFood = Math.random() > 0.3;
             const availableMerchants = merchants.filter(m => isFood ? m.type === 'food' : m.type === 'express');
             if (availableMerchants.length === 0) return;
 
             const merchant = availableMerchants[Math.floor(Math.random() * availableMerchants.length)];
             const customer = customers[Math.floor(Math.random() * customers.length)];
-
-            // Calculate Base Price based on distance
             const dist = Math.hypot(merchant.x - customer.x, merchant.y - customer.y);
-            const multiplier = gameState.rushHour ? 1.8 : 1.0;
-            const price = Math.round((12000 + dist * 120) * multiplier);
+            const multiplier = (isFlashSale ? 2.5 : gameState.rushHour ? 1.8 : 1.0) * (1 + (merchant.level - 1) * 0.15);
+            const price = Math.round((16000 + dist * 140) * multiplier);
+
+            const itemsPool = isFood 
+                ? ['Ayam Geprek Mozzarella', 'Boba Milk Tea Jumbo', 'Nasi Padang Rendang', 'Kebab Beef Super', 'Es Teh Solo Jumbo']
+                : ['Shopee Package Express', 'Jaket Custom Hoodie', 'Skincare Glow Kit', 'Smartphone Case Neon'];
 
             const newOrder = {
                 id: nextOrderId++,
                 type: isFood ? 'food' : 'express',
                 merchant: merchant,
                 customer: customer,
-                item: isFood ? getRandomFoodItem() : getRandomExpressItem(),
+                item: itemsPool[Math.floor(Math.random() * itemsPool.length)],
                 price: price,
-                timer: 45, // Seconds deadline
-                maxTimer: 45,
-                status: 'PENDING', // PENDING, ASSIGNED, PICKING, DELIVERING, COMPLETED
-                assignedCourierId: null
+                timer: isFlashSale ? 50 : 45,
+                status: 'PENDING',
+                assignedCourierId: null,
+                isFlashSale: isFlashSale
             };
 
             orders.push(newOrder);
             AudioSys.playOrderNew();
             renderOrdersList();
-
-            if (gameState.autoAssign) {
-                tryAutoAssignOrder(newOrder);
-            }
+            if (gameState.autoAssign) tryAutoAssignOrders();
         }
 
-        function getRandomFoodItem() {
-            const items = ['Paket Ayam Geprek Super', 'Boba Brown Sugar', 'Nasi Goreng Spesial', 'Martabak Manis Keju', 'Kopi Susu Gula Aren'];
-            return items[Math.floor(Math.random() * items.length)];
-        }
-
-        function getRandomExpressItem() {
-            const items = ['Baju Kaos Oversize', 'Pembersih Wajah 100ml', 'Casing HP Custom', 'Sepatu Sneaker Off-White', 'Headphone Wireless'];
-            return items[Math.floor(Math.random() * items.length)];
-        }
-
-        function tryAutoAssignOrder(order) {
-            if (order.status !== 'PENDING') return;
-
-            // Find closest available courier
-            let bestCourier = null;
-            let minDist = Infinity;
+        /* Multi-order Batching Algorithm */
+        function tryAutoAssignOrders() {
+            const pendingOrders = orders.filter(o => o.status === 'PENDING');
+            if (pendingOrders.length === 0) return;
 
             couriers.forEach(courier => {
-                if (courier.status === 'IDLE') {
-                    let d = Math.hypot(courier.x - order.merchant.x, courier.y - order.merchant.y);
-                    if (d < minDist) {
-                        minDist = d;
-                        bestCourier = courier;
-                    }
-                }
-            });
+                if (courier.fuel <= 12 || courier.status === 'BROKEN_DOWN' || courier.status === 'REFUELING') return;
 
-            if (bestCourier) {
-                assignOrderToCourier(order.id, bestCourier.id);
-            }
+                // Check remaining capacity for batching
+                const currentCount = courier.currentOrders.length;
+                if (currentCount >= courier.capacity) return;
+
+                pendingOrders.forEach(order => {
+                    if (order.status !== 'PENDING') return;
+                    if (courier.currentOrders.length >= courier.capacity) return;
+
+                    // Calculate distance proximity
+                    let lastLoc = courier.currentOrders.length > 0 
+                        ? courier.currentOrders[courier.currentOrders.length - 1].merchant 
+                        : { x: courier.x, y: courier.y };
+
+                    let dist = Math.hypot(lastLoc.x - order.merchant.x, lastLoc.y - order.merchant.y);
+                    if (dist < 500) {
+                        assignOrderToCourier(order.id, courier.id);
+                    }
+                });
+            });
         }
 
         function assignOrderToCourier(orderId, courierId) {
             const order = orders.find(o => o.id === orderId);
             const courier = couriers.find(c => c.id === courierId);
-
-            if (!order || !courier || courier.status !== 'IDLE') return;
+            if (!order || !courier || courier.fuel <= 0) return;
 
             order.status = 'ASSIGNED';
             order.assignedCourierId = courier.id;
+            courier.currentOrders.push(order);
 
-            courier.status = 'PICKING_UP';
-            courier.currentOrder = order;
-
-            // Build Path to Merchant
-            const startNode = getClosestNode(courier.x, courier.y);
-            const merchantNode = order.merchant.node;
-            courier.path = findShortestPath(startNode, merchantNode);
-
+            if (courier.status === 'IDLE') {
+                courier.status = 'PICKING_UP';
+                courier.path = findShortestPath(getClosestNode(courier.x, courier.y), order.merchant.node);
+            }
             renderOrdersList();
             renderCouriersList();
         }
 
-        // Main Loop / Game State Tick
-        function gameTick() {
-            if (gameState.gameSpeed === 0) return;
-
-            // Time progression
-            gameState.timeMinutes += 1;
-            if (gameState.timeMinutes >= 24 * 60) gameState.timeMinutes = 0;
-
-            // Rush Hour check (11:00-13:00 & 17:00-19:00)
-            const hours = Math.floor(gameState.timeMinutes / 60);
-            gameState.rushHour = (hours >= 11 && hours <= 13) || (hours >= 17 && hours <= 19);
-
-            // Random Weather Switch
-            if (Math.random() < 0.02) {
-                gameState.weather = CONFIG.weatherTypes[Math.floor(Math.random() * CONFIG.weatherTypes.length)];
-            }
-
-            // Order Timers & Timeout
-            orders.forEach((order, idx) => {
-                if (order.status === 'PENDING') {
-                    order.timer -= 1;
-                    if (order.timer <= 0) {
-                        // Cancel Order
-                        orders.splice(idx, 1);
-                        gameState.rating = Math.max(1.0, (gameState.rating - 0.1)).toFixed(1);
-                        showToast(`Pesanan #${order.id} dibatalkan karena terlambat!`, 'error');
-                    }
-                }
-            });
-
-            // Random Spawning logic based on Rush Hour
-            const spawnRate = gameState.rushHour ? 0.4 : 0.2;
-            if (Math.random() < spawnRate) {
-                spawnOrder();
-            }
-
-            // Retry auto assign for unassigned pending orders
-            if (gameState.autoAssign) {
-                orders.filter(o => o.status === 'PENDING').forEach(tryAutoAssignOrder);
-            }
-
-            updateHeaderStats();
-        }
-
-        // Smooth Movement Animation Loop
         function updatePositions() {
             if (gameState.gameSpeed === 0) return;
-
             const speedMultiplier = gameState.gameSpeed * (gameState.weather === 'Hujan' ? 0.75 : 1.0);
 
             couriers.forEach(courier => {
+                // Auto reroute to SPBU if bensin low (<15%)
+                if (courier.fuel < 15 && courier.fuel > 0 && courier.status !== 'REFUELING' && courier.status !== 'BROKEN_DOWN') {
+                    let closestGas = gasStations[0], minDist = Infinity;
+                    gasStations.forEach(gs => {
+                        let d = Math.hypot(gs.x - courier.x, gs.y - courier.y);
+                        if (d < minDist) { minDist = d; closestGas = gs; }
+                    });
+                    courier.status = 'REFUELING';
+                    courier.path = findShortestPath(getClosestNode(courier.x, courier.y), closestGas.node);
+                    showToast(`${courier.name} Bensin Tipis! Mengalihkan rute ke SPBU terdekat.`, 'info');
+                }
+
+                if (courier.fuel <= 0) { courier.fuel = 0; courier.status = 'BROKEN_DOWN'; return; }
                 if (courier.status === 'IDLE') return;
 
                 if (courier.path.length > 0) {
                     const targetNode = courier.path[0];
-                    const dx = targetNode.x - courier.x;
-                    const dy = targetNode.y - courier.y;
-                    const dist = Math.hypot(dx, dy);
-
-                    const moveStep = courier.speed * speedMultiplier * 1.5;
+                    const dx = targetNode.x - courier.x, dy = targetNode.y - courier.y, dist = Math.hypot(dx, dy);
+                    const moveStep = courier.speed * speedMultiplier * 1.6;
 
                     if (dist < moveStep) {
-                        courier.x = targetNode.x;
-                        courier.y = targetNode.y;
-                        courier.path.shift(); // Reached waypoint
+                        courier.x = targetNode.x; courier.y = targetNode.y; courier.path.shift();
+                        if (courier.vehicle !== 'bicycle') courier.fuel = Math.max(0, courier.fuel - courier.fuelBurn);
                     } else {
-                        courier.x += (dx / dist) * moveStep;
-                        courier.y += (dy / dist) * moveStep;
+                        courier.x += (dx / dist) * moveStep; courier.y += (dy / dist) * moveStep;
+                        if (courier.vehicle !== 'bicycle') courier.fuel = Math.max(0, courier.fuel - courier.fuelBurn * 0.1);
                     }
                 } else {
-                    // Path finished, update stage
-                    if (courier.status === 'PICKING_UP') {
-                        courier.status = 'DELIVERING';
-                        courier.currentOrder.status = 'DELIVERING';
-
-                        // Calculate path to Customer
-                        const merchantNode = courier.currentOrder.merchant.node;
-                        const customerNode = courier.currentOrder.customer.node;
-                        courier.path = findShortestPath(merchantNode, customerNode);
-
-                        AudioSys.playBeep(440, 'sine', 0.1);
-                        renderOrdersList();
-                    } 
-                    else if (courier.status === 'DELIVERING') {
-                        // Order Delivered Successfully!
-                        const order = courier.currentOrder;
-                        gameState.money += order.price;
-                        courier.earnings += order.price * 0.2; // 20% commission
-                        gameState.completedOrders++;
-
-                        // Add Tip if fast
-                        if (order.timer > 20) {
-                            gameState.money += 5000;
+                    if (courier.status === 'REFUELING') {
+                        courier.fuel = CONFIG.vehicleTypes[courier.vehicle].maxFuel;
+                        courier.status = courier.currentOrders.length > 0 ? 'PICKING_UP' : 'IDLE';
+                        if (courier.status === 'PICKING_UP') {
+                            courier.path = findShortestPath(getClosestNode(courier.x, courier.y), courier.currentOrders[0].merchant.node);
                         }
-
-                        AudioSys.playSuccess();
-                        showToast(`Pesanan #${order.id} Selesai! (+Rp ${order.price.toLocaleString('id-ID')})`, 'success');
-
-                        // Reset Courier & Order
-                        courier.status = 'IDLE';
-                        courier.currentOrder = null;
-
-                        // Remove order
-                        const orderIdx = orders.findIndex(o => o.id === order.id);
-                        if (orderIdx !== -1) orders.splice(orderIdx, 1);
-
-                        renderOrdersList();
+                        showToast(`${courier.name} Selesai Isi Bensin di SPBU!`, 'success');
                         renderCouriersList();
+                    } else if (courier.status === 'PICKING_UP') {
+                        courier.status = 'DELIVERING';
+                        courier.currentOrders.forEach(o => o.status = 'DELIVERING');
+                        courier.path = findShortestPath(courier.currentOrders[0].merchant.node, courier.currentOrders[0].customer.node);
+                        renderOrdersList();
+                    } else if (courier.status === 'DELIVERING') {
+                        if (courier.currentOrders.length > 0) {
+                            const completedOrder = courier.currentOrders.shift();
+                            const tip = Math.round(2000 + Math.random() * 6000);
+                            const totalPayout = completedOrder.price + tip;
+
+                            gameState.money += totalPayout;
+                            gameState.completedOrders++;
+
+                            const funnyComments = [
+                                "Driver ramah banget, makanan masih panas super gurih!",
+                                "Cepat banget nyampenya, porsi mantap! +Tip buat abang driver.",
+                                "Es teh masih dingin seger, ShopeeFood emang terbaik!",
+                                "Recommended! Kurir sopan & pakai masker lengkap."
+                            ];
+                            addCustomerReview(completedOrder.customer.name, 5, funnyComments[Math.floor(Math.random() * funnyComments.length)], tip);
+
+                            AudioSys.playSuccess();
+                            showToast(`Pesanan #${completedOrder.id} Terantar! (+Rp ${totalPayout.toLocaleString('id-ID')})`, 'success');
+                            orders = orders.filter(o => o.id !== completedOrder.id);
+
+                            if (courier.currentOrders.length > 0) {
+                                courier.path = findShortestPath(getClosestNode(courier.x, courier.y), courier.currentOrders[0].customer.node);
+                            } else {
+                                courier.status = 'IDLE';
+                            }
+                            renderOrdersList();
+                            renderCouriersList();
+                        }
                     }
                 }
             });
         }
 
-        // Render Map Graphics on Canvas
-        function renderMap() {
+        function renderOrganicMap() {
+            if (!canvas || !ctx) return;
+            const container = canvas.parentElement;
+            if (container && (canvas.width !== container.clientWidth || canvas.height !== container.clientHeight)) {
+                canvas.width = container.clientWidth || 1200;
+                canvas.height = container.clientHeight || 800;
+            }
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.scale(canvas.width / CONFIG.mapWidth, canvas.height / CONFIG.mapHeight);
 
-            // Draw Background Texture Grid
-            ctx.fillStyle = '#f8fafc';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            const activeSkinObj = CONFIG.skins.find(s => s.id === gameState.currentSkin) || CONFIG.skins[0];
 
-            // Draw Roads
-            ctx.strokeStyle = '#cbd5e1';
-            ctx.lineWidth = 14;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
+            // Map Terrain Background (Kota Organik)
+            ctx.fillStyle = gameState.weather === 'Malam' ? '#090d16' : '#111827';
+            ctx.fillRect(0, 0, CONFIG.mapWidth, CONFIG.mapHeight);
 
-            nodes.forEach(node => {
-                node.neighbors.forEach(neighbor => {
-                    ctx.beginPath();
-                    ctx.moveTo(node.x, node.y);
-                    ctx.lineTo(neighbor.x, neighbor.y);
-                    ctx.stroke();
-                });
-            });
+            // Green Parks & City Districts
+            ctx.fillStyle = gameState.weather === 'Malam' ? '#062016' : '#143823';
+            ctx.beginPath();
+            ctx.roundRect(140, 180, 120, 70, 16);
+            ctx.roundRect(820, 580, 160, 90, 20);
+            ctx.fill();
 
-            // Inner Road Lines
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 2;
-            ctx.setLineDash([6, 6]);
-            nodes.forEach(node => {
-                node.neighbors.forEach(neighbor => {
-                    ctx.beginPath();
-                    ctx.moveTo(node.x, node.y);
-                    ctx.lineTo(neighbor.x, neighbor.y);
-                    ctx.stroke();
-                });
-            });
-            ctx.setLineDash([]); // Reset line dash
+            // River Drawing (Sungai Kota)
+            ctx.strokeStyle = '#1e3a8a'; ctx.lineWidth = 28; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+            ctx.beginPath();
+            ctx.moveTo(riverPath[0].x, riverPath[0].y);
+            for (let i = 1; i < riverPath.length; i++) ctx.lineTo(riverPath[i].x, riverPath[i].y);
+            ctx.stroke();
 
-            // Draw Active Delivery Routes (Dashed Polyline)
+            // Roads (Jalan Raya Organik)
+            nodes.forEach(node => node.neighbors.forEach(neighbor => {
+                const isRushCongested = gameState.rushHour && (node.id <= 9 && neighbor.id <= 9);
+                
+                // Road Asphalt
+                ctx.strokeStyle = isRushCongested ? '#7f1d1d' : '#1e293b';
+                ctx.lineWidth = isRushCongested ? 18 : 16;
+                ctx.lineCap = 'round';
+                ctx.beginPath(); ctx.moveTo(node.x, node.y); ctx.lineTo(neighbor.x, neighbor.y); ctx.stroke();
+
+                // Lane Dash Lines
+                ctx.strokeStyle = isRushCongested ? '#ef4444' : '#334155';
+                ctx.lineWidth = 2; ctx.setLineDash([8, 8]);
+                ctx.beginPath(); ctx.moveTo(node.x, node.y); ctx.lineTo(neighbor.x, neighbor.y); ctx.stroke();
+                ctx.setLineDash([]);
+            }));
+
+            // Roundabout Center (Bundaran Kota)
+            ctx.fillStyle = '#1e293b'; ctx.beginPath(); ctx.arc(nodes[10].x, nodes[10].y, 32, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#065f46'; ctx.beginPath(); ctx.arc(nodes[10].x, nodes[10].y, 22, 0, Math.PI * 2); ctx.fill();
+
+            // Active Path Trails
             couriers.forEach(courier => {
                 if (courier.status !== 'IDLE' && courier.path.length > 0) {
-                    ctx.strokeStyle = courier.status === 'PICKING_UP' ? '#f59e0b' : '#10b981';
-                    ctx.lineWidth = 4;
-                    ctx.setLineDash([8, 6]);
-                    ctx.beginPath();
-                    ctx.moveTo(courier.x, courier.y);
+                    ctx.strokeStyle = courier.status === 'REFUELING' ? '#f59e0b' : activeSkinObj.primary;
+                    ctx.lineWidth = 4; ctx.setLineDash([6, 6]);
+                    ctx.beginPath(); ctx.moveTo(courier.x, courier.y);
                     courier.path.forEach(pt => ctx.lineTo(pt.x, pt.y));
-                    ctx.stroke();
-                    ctx.setLineDash([]);
+                    ctx.stroke(); ctx.setLineDash([]);
                 }
             });
 
-            // Draw Customers (Houses)
+            // 1. SPBU / Charging Stations Icons
+            gasStations.forEach(gs => {
+                ctx.fillStyle = '#f59e0b';
+                ctx.shadowColor = 'rgba(245, 158, 11, 0.5)'; ctx.shadowBlur = 10;
+                ctx.beginPath(); ctx.arc(gs.x, gs.y, 14, 0, Math.PI * 2); ctx.fill();
+                ctx.shadowBlur = 0;
+
+                ctx.fillStyle = '#0f172a';
+                ctx.font = '900 11px "Font Awesome 6 Free"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText('\uf52f', gs.x, gs.y);
+            });
+
+            // 2. Customers Location Marker Pins
             customers.forEach(cust => {
+                // Shopee Pin Style (Emerald Pin)
                 ctx.fillStyle = '#10b981';
                 ctx.beginPath();
-                ctx.arc(cust.x, cust.y, 10, 0, Math.PI * 2);
+                ctx.arc(cust.x, cust.y - 6, 12, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Roof/Icon
-                ctx.fillStyle = '#ffffff';
-                ctx.font = '900 10px "Font Awesome 6 Free"';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('\uf015', cust.x, cust.y);
+                ctx.beginPath();
+                ctx.moveTo(cust.x - 7, cust.y - 2);
+                ctx.lineTo(cust.x + 7, cust.y - 2);
+                ctx.lineTo(cust.x, cust.y + 10);
+                ctx.closePath();
+                ctx.fill();
 
-                // Label
-                ctx.fillStyle = '#334155';
-                ctx.font = 'bold 10px "Plus Jakarta Sans"';
-                ctx.fillText(cust.name, cust.x, cust.y + 18);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '900 10px "Font Awesome 6 Free"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText('\uf015', cust.x, cust.y - 6);
             });
 
-            // Draw Merchants
+            // 3. Shopee Food Merchants / Warung Icons
             merchants.forEach(m => {
-                const color = m.type === 'food' ? '#ee4d2d' : '#2563eb';
-                ctx.fillStyle = color;
+                // Shopee Food Orange Pin Badge
+                ctx.fillStyle = activeSkinObj.primary;
+                ctx.shadowColor = 'rgba(238, 77, 45, 0.6)'; ctx.shadowBlur = 12;
                 ctx.beginPath();
-                ctx.arc(m.x, m.y, 14, 0, Math.PI * 2);
+                ctx.arc(m.x, m.y - 7, 15, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Outer Ring
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 2.5;
-                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(m.x - 9, m.y - 3);
+                ctx.lineTo(m.x + 9, m.y - 3);
+                ctx.lineTo(m.x, m.y + 12);
+                ctx.closePath();
+                ctx.fill();
+                ctx.shadowBlur = 0;
 
-                // Icon
+                // Inner White Store Icon
                 ctx.fillStyle = '#ffffff';
-                ctx.font = '900 11px "Font Awesome 6 Free"';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                const iconSymbol = m.type === 'food' ? '\uf2e7' : '\uf466'; // Utensils or Box
-                ctx.fillText(iconSymbol, m.x, m.y);
+                ctx.font = '900 11px "Font Awesome 6 Free"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(m.type === 'food' ? '\uf2e7' : '\uf466', m.x, m.y - 7);
 
-                // Label
-                ctx.fillStyle = '#1e293b';
-                ctx.font = 'bold 11px "Plus Jakarta Sans"';
-                ctx.fillText(m.name, m.x, m.y + 22);
+                // Label Warung
+                ctx.fillStyle = '#f8fafc'; ctx.font = 'bold 9px "Plus Jakarta Sans"';
+                ctx.fillText(m.name, m.x, m.y + 18);
             });
 
-            // Draw Couriers Animated
+            // 4. Shopee Food Driver / Kurir Icons
             couriers.forEach(courier => {
-                const vehicleConfig = CONFIG.vehicleTypes[courier.vehicle];
+                const isBroken = courier.status === 'BROKEN_DOWN';
 
-                // Courier Circle Base
-                ctx.fillStyle = vehicleConfig.color;
-                ctx.beginPath();
-                ctx.arc(courier.x, courier.y, 12, 0, Math.PI * 2);
-                ctx.fill();
+                // Driver Outer Helmet Circle
+                ctx.fillStyle = isBroken ? '#ef4444' : activeSkinObj.primary;
+                ctx.shadowColor = isBroken ? 'rgba(239, 68, 68, 0.8)' : 'rgba(238, 77, 45, 0.7)'; ctx.shadowBlur = 12;
+                ctx.beginPath(); ctx.arc(courier.x, courier.y, 14, 0, Math.PI * 2); ctx.fill();
+                ctx.shadowBlur = 0;
 
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 2;
-                ctx.stroke();
+                // Shopee Food Delivery Box on Back
+                ctx.fillStyle = '#ff6633';
+                ctx.fillRect(courier.x - 6, courier.y - 18, 12, 6);
 
-                // Vehicle Icon
+                // Helmet Visor / Motor Icon
                 ctx.fillStyle = '#ffffff';
-                ctx.font = '900 10px "Font Awesome 6 Free"';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                
-                let iconStr = '\uf21c'; // default motorcycle
-                if (courier.vehicle === 'bicycle') iconStr = '\uf206';
-                if (courier.vehicle === 'car') iconStr = '\uf0d1';
-                if (courier.vehicle === 'ev') iconStr = '\uf0e7';
+                ctx.font = '900 10px "Font Awesome 6 Free"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(isBroken ? '\uf071' : '\uf21c', courier.x, courier.y);
 
-                ctx.fillText(iconStr, courier.x, courier.y);
+                // Multi-Order Badge Counter
+                if (courier.currentOrders.length > 0) {
+                    ctx.fillStyle = '#3b82f6';
+                    ctx.beginPath(); ctx.arc(courier.x + 10, courier.y - 10, 7, 0, Math.PI * 2); ctx.fill();
+                    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 8px "Plus Jakarta Sans"';
+                    ctx.fillText(courier.currentOrders.length, courier.x + 10, courier.y - 10);
+                }
 
-                // Courier Name & Status Bubble
-                if (courier.status !== 'IDLE') {
-                    ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
-                    ctx.roundRect(courier.x - 30, courier.y - 32, 60, 16, 6);
-                    ctx.fill();
+                // Fuel Gauge Bar
+                const fuelPct = courier.fuel / CONFIG.vehicleTypes[courier.vehicle].maxFuel;
+                ctx.fillStyle = 'rgba(15, 23, 42, 0.9)'; ctx.fillRect(courier.x - 16, courier.y - 24, 32, 4);
+                ctx.fillStyle = fuelPct > 0.4 ? '#10b981' : fuelPct > 0.15 ? '#f59e0b' : '#ef4444';
+                ctx.fillRect(courier.x - 16, courier.y - 24, 32 * fuelPct, 4);
+            });
 
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold 9px "Plus Jakarta Sans"';
-                    const statusText = courier.status === 'PICKING_UP' ? 'Jemput' : 'Antar';
-                    ctx.fillText(statusText, courier.x, courier.y - 24);
+            // Rain particle effect
+            if (gameState.weather === 'Hujan') {
+                ctx.strokeStyle = 'rgba(147, 197, 253, 0.35)'; ctx.lineWidth = 1.5;
+                for (let i = 0; i < 40; i++) {
+                    let rx = (Math.sin(i * 99 + Date.now() * 0.002) * 0.5 + 0.5) * CONFIG.mapWidth;
+                    let ry = ((i * 35 + Date.now() * 0.4) % CONFIG.mapHeight);
+                    ctx.beginPath(); ctx.moveTo(rx, ry); ctx.lineTo(rx - 4, ry + 12); ctx.stroke();
+                }
+            }
+
+            ctx.restore();
+        }
+
+        function gameTick() {
+            if (gameState.gameSpeed === 0) return;
+            gameState.timeMinutes += 1;
+            if (gameState.timeMinutes >= 24 * 60) gameState.timeMinutes = 0;
+
+            const hours = Math.floor(gameState.timeMinutes / 60);
+            gameState.rushHour = (hours >= 11 && hours <= 13) || (hours >= 17 && hours <= 19);
+
+            const rushBadge = document.getElementById('rushHourBadge');
+            if (rushBadge) rushBadge.classList.toggle('hidden', !gameState.rushHour);
+
+            if (gameState.flashSale.active) {
+                gameState.flashSale.timer -= 1;
+                document.getElementById('flashTimer').innerText = `00:${gameState.flashSale.timer.toString().padStart(2, '0')}`;
+                if (gameState.flashSale.timer <= 0) {
+                    gameState.flashSale.active = false;
+                    document.getElementById('bannerFlashSale').classList.add('hidden');
+                    showToast('Event Flash Sale Selesai!', 'info');
+                }
+            }
+
+            if (Math.random() < 0.02) gameState.weather = CONFIG.weatherTypes[Math.floor(Math.random() * CONFIG.weatherTypes.length)];
+
+            orders.forEach((order, idx) => {
+                if (order.status === 'PENDING') {
+                    order.timer -= 1;
+                    if (order.timer <= 0) {
+                        orders.splice(idx, 1);
+                        addCustomerReview(order.customer.name, 1, "Lama banget nggak ada kurir yang ambil! Cancelled.", 0);
+                        showToast(`Pesanan #${order.id} Kadaluarsa!`, 'error');
+                    }
                 }
             });
 
-            // Weather Overlay Effect
-            if (gameState.weather === 'Hujan') {
-                ctx.fillStyle = 'rgba(15, 23, 42, 0.15)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-            } else if (gameState.weather === 'Malam') {
-                ctx.fillStyle = 'rgba(15, 23, 42, 0.35)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-            }
+            if (Math.random() < (gameState.flashSale.active ? 0.75 : gameState.rushHour ? 0.45 : 0.22)) spawnOrder(gameState.flashSale.active);
+            if (gameState.autoAssign) tryAutoAssignOrders();
+
+            updateHeaderStats();
         }
 
-        // UI Dashboard Updates & Renderers
+        function addCustomerReview(customerName, stars, comment, tip) {
+            reviews.unshift({ id: Date.now(), customer: customerName, stars: stars, comment: comment, tip: tip });
+            if (reviews.length > 20) reviews.pop();
+            const totalStars = reviews.reduce((sum, r) => sum + r.stars, 0);
+            gameState.rating = (totalStars / reviews.length).toFixed(1);
+            renderReviewsList();
+        }
+
+        function triggerFlashSaleEvent() {
+            if (gameState.flashSale.active) return showToast('Flash Sale sedang berlangsung!', 'info');
+            gameState.flashSale.active = true;
+            gameState.flashSale.timer = 30;
+            document.getElementById('bannerFlashSale').classList.remove('hidden');
+            AudioSys.playSiren();
+            showToast('🔥 FLASH SALE 11.11 DIMULAI! Orderan melimpah!', 'success');
+            for (let i = 0; i < 5; i++) spawnOrder(true);
+        }
+
+        function refuelCourier(courierId) {
+            const courier = couriers.find(c => c.id === courierId);
+            if (!courier) return;
+            const vehicleConfig = CONFIG.vehicleTypes[courier.vehicle];
+            if (courier.vehicle === 'bicycle') return showToast('Sepeda Ontel tidak butuh bensin!', 'info');
+
+            const neededFuel = vehicleConfig.maxFuel - courier.fuel;
+            if (neededFuel <= 2) return showToast('Bensin sudah penuh!', 'info');
+
+            const cost = Math.round(neededFuel * 200);
+            if (gameState.money < cost) return showToast(`Saldo tidak cukup (Rp ${cost.toLocaleString('id-ID')})`, 'error');
+
+            let closestGas = gasStations[0], minDist = Infinity;
+            gasStations.forEach(gs => {
+                let d = Math.hypot(gs.x - courier.x, gs.y - courier.y);
+                if (d < minDist) { minDist = d; closestGas = gs; }
+            });
+
+            gameState.money -= cost;
+            courier.status = 'REFUELING';
+            courier.path = findShortestPath(getClosestNode(courier.x, courier.y), closestGas.node);
+            AudioSys.playRefuel();
+            showToast(`${courier.name} menuju SPBU!`, 'info');
+            renderCouriersList();
+            updateHeaderStats();
+        }
+
+        function towCourier(courierId) {
+            const courier = couriers.find(c => c.id === courierId);
+            if (!courier) return;
+            if (gameState.money < 25000) return showToast('Saldo tidak cukup untuk derek (Rp 25.000)!', 'error');
+
+            gameState.money -= 25000;
+            courier.fuel = CONFIG.vehicleTypes[courier.vehicle].maxFuel;
+            courier.status = 'IDLE';
+            courier.currentOrders = [];
+            showToast(`${courier.name} berhasil diderek dan bensin penuh!`, 'success');
+            renderCouriersList();
+            updateHeaderStats();
+        }
+
+        function upgradeVehicle(courierId) {
+            const courier = couriers.find(c => c.id === courierId);
+            if (!courier) return;
+            let nextVehicle = courier.vehicle === 'bicycle' ? 'motorcycle' : courier.vehicle === 'motorcycle' ? 'car' : courier.vehicle === 'car' ? 'ev' : null;
+            if (!nextVehicle) return showToast('Kendaraan sudah level maksimal!', 'info');
+
+            const cost = CONFIG.vehicleTypes[nextVehicle].cost;
+            if (gameState.money < cost) return showToast(`Saldo tidak cukup! Butuh Rp ${cost.toLocaleString('id-ID')}`, 'error');
+
+            gameState.money -= cost;
+            courier.vehicle = nextVehicle;
+            courier.speed = CONFIG.vehicleTypes[nextVehicle].speed;
+            courier.capacity = CONFIG.vehicleTypes[nextVehicle].capacity;
+            courier.fuel = CONFIG.vehicleTypes[nextVehicle].maxFuel;
+            showToast(`${courier.name} upgrade ke ${CONFIG.vehicleTypes[nextVehicle].name}!`, 'success');
+            renderCouriersList();
+            updateHeaderStats();
+        }
+
+        function upgradeMerchant(mId) {
+            const m = merchants.find(i => i.id === mId);
+            if (!m) return;
+            const cost = m.level * 150000;
+            if (gameState.money < cost) return showToast(`Saldo tidak cukup! (Rp ${cost.toLocaleString('id-ID')})`, 'error');
+
+            gameState.money -= cost;
+            m.level += 1;
+            m.prepSpeed += 0.3;
+            AudioSys.playSuccess();
+            showToast(`${m.name} Upgrade ke Level ${m.level}!`, 'success');
+            renderMerchantsList();
+            updateHeaderStats();
+        }
+
+        function upgradeGasStation(gasId) {
+            const gs = gasStations.find(i => i.id === gasId);
+            if (!gs) return;
+            const curLevel = gs.level || 1;
+            const cost = curLevel * 200000;
+            if (gameState.money < cost) return showToast(`Saldo tidak cukup! (Rp ${cost.toLocaleString('id-ID')})`, 'error');
+
+            gameState.money -= cost;
+            gs.level = curLevel + 1;
+            gs.speedBonus = (gs.speedBonus || 1.0) + 0.4;
+            AudioSys.playSuccess();
+            showToast(`${gs.name} Upgrade ke Level ${gs.level}!`, 'success');
+            renderMerchantsList();
+            updateHeaderStats();
+        }
+
+        function applySkin(skinId) {
+            const skin = CONFIG.skins.find(s => s.id === skinId);
+            if (!skin) return;
+
+            if (!skin.unlocked) {
+                if (gameState.money < skin.cost) return showToast(`Saldo tidak cukup! (Rp ${skin.cost.toLocaleString('id-ID')})`, 'error');
+                gameState.money -= skin.cost;
+                skin.unlocked = true;
+                showToast(`Skin ${skin.name} berhasil dibeli!`, 'success');
+            }
+            gameState.currentSkin = skinId;
+            document.getElementById('skinBadge').innerText = skin.badge;
+            renderSkinsList();
+            updateHeaderStats();
+        }
+
+        function openHireModal() {
+            document.getElementById('hireModal').classList.remove('hidden');
+            const listEl = document.getElementById('candidatesList');
+            listEl.innerHTML = '';
+            [
+                { name: 'Bagas Express', vehicle: 'motorcycle', salary: 150000 },
+                { name: 'Doni Super Van', vehicle: 'car', salary: 450000 },
+                { name: 'Eka Cyber EV', vehicle: 'ev', salary: 850000 }
+            ].forEach(cand => {
+                const card = document.createElement('div');
+                card.className = "p-3 border border-slate-800 rounded-xl flex justify-between items-center bg-slate-800/60";
+                card.innerHTML = `<div><h4 class="font-bold text-xs">${cand.name}</h4><p class="text-[10px] text-slate-400">${CONFIG.vehicleTypes[cand.vehicle].name}</p></div><button onclick="confirmHire('${cand.name}', '${cand.vehicle}', ${cand.salary})" class="shopee-gradient text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow">Rekrut (Rp ${cand.salary.toLocaleString('id-ID')})</button>`;
+                listEl.appendChild(card);
+            });
+        }
+
+        function closeHireModal() { document.getElementById('hireModal').classList.add('hidden'); }
+        function confirmHire(name, vehicle, cost) {
+            if (gameState.money < cost) return showToast('Saldo tidak cukup!', 'error');
+            gameState.money -= cost;
+            const rNode = nodes[Math.floor(Math.random() * nodes.length)];
+            const vConfig = CONFIG.vehicleTypes[vehicle];
+
+            couriers.push({
+                id: `k${++nextCourierId}`, name: name, vehicle: vehicle, speed: vConfig.speed,
+                capacity: vConfig.capacity, fuelBurn: vConfig.fuelBurn, fuel: vConfig.maxFuel,
+                x: rNode.x, y: rNode.y, status: 'IDLE', currentOrders: [], path: [], earnings: 0, rating: 5.0
+            });
+            showToast(`Berhasil merekrut driver ${name}!`, 'success');
+            closeHireModal();
+            renderCouriersList();
+            updateHeaderStats();
+        }
+
+        function openAddMerchantModal() {
+            document.getElementById('addMerchantModal').classList.remove('hidden');
+            const listEl = document.getElementById('merchantCandidatesList');
+            listEl.innerHTML = '';
+            [
+                { name: 'Martabak Manis Bintang', type: 'food', cost: 200000 },
+                { name: 'Shopee Express Hub 02', type: 'express', cost: 350000 },
+                { name: 'SPBU Shell Express 24h', type: 'spbu', cost: 300000 }
+            ].forEach(opt => {
+                const card = document.createElement('div');
+                card.className = "p-3 border border-slate-800 rounded-xl flex justify-between items-center bg-slate-800/60";
+                card.innerHTML = `<div><h4 class="font-bold text-xs">${opt.name}</h4><p class="text-[10px] text-slate-400">${opt.type}</p></div><button onclick="confirmAddMerchant('${opt.name}', '${opt.type}', ${opt.cost})" class="bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow">Buka (Rp ${opt.cost.toLocaleString('id-ID')})</button>`;
+                listEl.appendChild(card);
+            });
+        }
+
+        function closeAddMerchantModal() { document.getElementById('addMerchantModal').classList.add('hidden'); }
+        function confirmAddMerchant(name, type, cost) {
+            if (gameState.money < cost) return showToast('Saldo tidak cukup!', 'error');
+            gameState.money -= cost;
+            const rNode = nodes[Math.floor(Math.random() * nodes.length)];
+
+            if (type === 'spbu') {
+                gasStations.push({ id: `spbu${gasStations.length + 1}`, name: name, level: 1, speedBonus: 1.0, x: rNode.x + 25, y: rNode.y + 25, node: rNode });
+                showToast(`SPBU Baru (${name}) dibangun!`, 'success');
+            } else {
+                merchants.push({ id: `m${merchants.length + 1}`, name: name, type: type, rating: 4.9, x: rNode.x + 25, y: rNode.y - 25, level: 1, prepSpeed: 1, node: rNode });
+                showToast(`Merchant baru ${name} beroperasi!`, 'success');
+            }
+            closeAddMerchantModal();
+            renderMerchantsList();
+            updateHeaderStats();
+        }
+
+        function switchLeftTab(tab) {
+            gameState.leftTab = tab;
+            document.getElementById('viewOrders').classList.toggle('hidden', tab !== 'orders');
+            document.getElementById('viewReviews').classList.toggle('hidden', tab !== 'reviews');
+            document.getElementById('tabOrders').className = tab === 'orders' ? "flex-1 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-orange-400 shadow transition flex items-center justify-center gap-1" : "flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:bg-slate-800/60 transition flex items-center justify-center gap-1";
+            document.getElementById('tabReviews').className = tab === 'reviews' ? "flex-1 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-yellow-400 shadow transition flex items-center justify-center gap-1" : "flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:bg-slate-800/60 transition flex items-center justify-center gap-1";
+        }
+
+        function switchRightTab(tab) {
+            gameState.rightTab = tab;
+            document.getElementById('viewCouriers').classList.toggle('hidden', tab !== 'couriers');
+            document.getElementById('viewMerchants').classList.toggle('hidden', tab !== 'merchants');
+            document.getElementById('viewSkins').classList.toggle('hidden', tab !== 'skins');
+        }
+
+        function switchMobileTab(tab) { gameState.mobileView = tab; updateMobileLayout(); }
+        function setSpeed(speed) {
+            gameState.gameSpeed = speed;
+            [0, 1, 2, 4].forEach(s => {
+                const btn = document.getElementById(`btnSpeed${s}`);
+                if (btn) btn.className = s === speed ? "px-2 py-1 text-xs font-bold rounded-lg bg-yellow-400 text-slate-900 transition shadow" : "px-2 py-1 text-xs font-bold rounded-lg bg-white/20 hover:bg-white/40 transition";
+            });
+        }
+        function toggleAudio() {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            const btn = document.getElementById('btnAudio');
+            if (btn) btn.innerHTML = gameState.soundEnabled ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
+        }
+        function toggleAutoAssign() {
+            const chk = document.getElementById('autoAssignToggle');
+            if (chk) gameState.autoAssign = chk.checked;
+        }
+
         function updateHeaderStats() {
             document.getElementById('statMoney').innerText = `Rp ${gameState.money.toLocaleString('id-ID')}`;
             document.getElementById('statRating').innerHTML = `<i class="fa-solid fa-star text-yellow-300 mr-1"></i>${gameState.rating}`;
+            document.getElementById('mStatMoney').innerText = `Rp ${gameState.money.toLocaleString('id-ID')}`;
+            document.getElementById('mStatRating').innerText = gameState.rating;
 
-            // Weather Icon
-            let wIcon = '<i class="fa-solid fa-sun text-yellow-300"></i> Cerah';
-            if (gameState.weather === 'Hujan') wIcon = '<i class="fa-solid fa-cloud-rain text-blue-300"></i> Hujan';
-            if (gameState.weather === 'Malam') wIcon = '<i class="fa-solid fa-moon text-indigo-200"></i> Malam';
-            document.getElementById('statWeather').innerHTML = wIcon;
+            const weatherIcons = { 'Cerah': '<i class="fa-solid fa-sun text-yellow-300"></i> Cerah', 'Hujan': '<i class="fa-solid fa-cloud-showers-heavy text-blue-300"></i> Hujan', 'Malam': '<i class="fa-solid fa-moon text-indigo-300"></i> Malam' };
+            document.getElementById('statWeather').innerHTML = weatherIcons[gameState.weather];
 
-            // Clock Format
             const h = Math.floor(gameState.timeMinutes / 60).toString().padStart(2, '0');
             const m = (gameState.timeMinutes % 60).toString().padStart(2, '0');
             document.getElementById('statTime').innerText = `${h}:${m} WIB`;
+            document.getElementById('mStatTime').innerText = `${h}:${m}`;
 
-            // Rush Hour Badge
-            const rushBadge = document.getElementById('rushHourBadge');
-            if (gameState.rushHour) {
-                rushBadge.classList.remove('hidden');
-            } else {
-                rushBadge.classList.add('hidden');
-            }
-
-            // Summary Bottom Bar
-            const activeCount = couriers.filter(c => c.status !== 'IDLE').length;
-            document.getElementById('activeCouriersCount').innerText = `${activeCount}/${couriers.length}`;
+            document.getElementById('activeCouriersCount').innerText = `${couriers.filter(c => c.status !== 'IDLE').length}/${couriers.length}`;
             document.getElementById('completedOrdersCount').innerText = gameState.completedOrders;
+            document.getElementById('gasStationsCount').innerText = gasStations.length;
+            document.getElementById('mBadgeOrders').innerText = orders.length;
         }
 
         function renderOrdersList() {
             const listEl = document.getElementById('ordersList');
             listEl.innerHTML = '';
-
-            const filteredOrders = orders.filter(o => {
-                if (gameState.activeTab === 'food') return o.type === 'food';
-                if (gameState.activeTab === 'express') return o.type === 'express';
-                return true;
-            });
-
             document.getElementById('countAllOrders').innerText = orders.length;
 
-            if (filteredOrders.length === 0) {
-                listEl.innerHTML = `
-                    <div class="text-center py-8 text-slate-400">
-                        <i class="fa-solid fa-box-open text-3xl mb-2 opacity-50"></i>
-                        <p class="text-xs">Tidak ada pesanan aktif saat ini</p>
-                    </div>`;
+            if (orders.length === 0) {
+                listEl.innerHTML = `<div class="text-center py-10 text-slate-500"><i class="fa-solid fa-utensils text-3xl mb-2 opacity-40"></i><p class="text-xs">Antrean pesanan kosong</p></div>`;
                 return;
             }
 
-            filteredOrders.forEach(order => {
-                const isFood = order.type === 'food';
+            orders.forEach(order => {
                 const card = document.createElement('div');
-                card.className = `p-3 rounded-xl border transition hover:shadow-md ${order.status === 'PENDING' ? 'bg-white border-orange-200' : 'bg-slate-50 border-slate-200'}`;
-
-                let statusBadge = `<span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Menunggu Kurir</span>`;
-                if (order.status === 'ASSIGNED' || order.status === 'PICKING') {
-                    statusBadge = `<span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Menjemput Barang</span>`;
-                } else if (order.status === 'DELIVERING') {
-                    statusBadge = `<span class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Proses Mengantar</span>`;
-                }
-
+                card.className = `p-3 rounded-xl border ${order.isFlashSale ? 'bg-red-950/50 border-red-500/70' : 'bg-slate-800/80 border-slate-700/80'}`;
                 card.innerHTML = `
-                    <div class="flex justify-between items-start mb-1.5">
-                        <div class="flex items-center gap-1.5">
-                            <span class="p-1 rounded-md ${isFood ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600'} text-xs">
-                                <i class="fa-solid ${isFood ? 'fa-utensils' : 'fa-box'}"></i>
-                            </span>
-                            <span class="font-bold text-xs text-slate-800">#${order.id} - ${order.item}</span>
-                        </div>
-                        <span class="font-black text-xs text-slate-900">Rp ${order.price.toLocaleString('id-ID')}</span>
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="font-bold text-xs flex items-center gap-1.5"><i class="fa-solid ${order.type === 'food' ? 'fa-utensils text-orange-400' : 'fa-box text-blue-400'}"></i> #${order.id} - ${order.item}</span>
+                        <span class="font-black text-xs text-yellow-400">Rp ${order.price.toLocaleString('id-ID')}</span>
                     </div>
-
-                    <div class="text-[11px] text-slate-500 space-y-0.5 mb-2">
-                        <div class="truncate"><i class="fa-solid fa-store text-slate-400 w-4"></i> ${order.merchant.name}</div>
-                        <div class="truncate"><i class="fa-solid fa-location-dot text-slate-400 w-4"></i> ${order.customer.name} (${order.customer.address})</div>
-                    </div>
-
-                    <div class="flex items-center justify-between pt-2 border-t border-slate-100">
-                        ${statusBadge}
-                        <div class="flex items-center gap-1 text-[11px] font-bold ${order.timer < 15 ? 'text-red-500 animate-pulse' : 'text-slate-500'}">
-                            <i class="fa-regular fa-clock"></i> ${order.timer}s
-                        </div>
+                    <div class="text-[11px] text-slate-400 mb-2">${order.merchant.name} ➔ ${order.customer.name}</div>
+                    <div class="flex justify-between items-center text-[10px] text-slate-400">
+                        <span>Status: <strong class="text-slate-200">${order.status}</strong></span>
+                        <span class="font-bold ${order.timer < 15 ? 'text-red-400 animate-pulse' : ''}">${order.timer}s</span>
                     </div>
                 `;
+                listEl.appendChild(card);
+            });
+        }
 
-                // Manual Assign options if pending
-                if (order.status === 'PENDING' && !gameState.autoAssign) {
-                    const assignBtn = document.createElement('button');
-                    assignBtn.className = "mt-2 w-full py-1 text-xs font-bold bg-[#ee4d2d] text-white rounded-lg hover:bg-orange-600 transition";
-                    assignBtn.innerText = "Assign Kurir Terdekat";
-                    assignBtn.onclick = () => tryAutoAssignOrder(order);
-                    card.appendChild(assignBtn);
-                }
+        function renderReviewsList() {
+            const listEl = document.getElementById('reviewsList');
+            listEl.innerHTML = '';
+            document.getElementById('countReviews').innerText = reviews.length;
+            document.getElementById('reviewScoreSummary').innerHTML = `<i class="fa-solid fa-star text-yellow-400"></i> ${gameState.rating} / 5.0`;
 
+            reviews.forEach(rev => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 space-y-1";
+                card.innerHTML = `
+                    <div class="flex justify-between text-xs font-bold"><span>${rev.customer}</span><span class="text-yellow-400">${'★'.repeat(rev.stars)}</span></div>
+                    <p class="text-[11px] text-slate-300 italic">"${rev.comment}"</p>
+                    ${rev.tip > 0 ? `<div class="text-[10px] text-emerald-400 font-bold">+Tip Rp ${rev.tip.toLocaleString('id-ID')}</div>` : ''}
+                `;
                 listEl.appendChild(card);
             });
         }
@@ -958,42 +1226,30 @@
         function renderCouriersList() {
             const listEl = document.getElementById('courierList');
             listEl.innerHTML = '';
-
             document.getElementById('countCouriers').innerText = couriers.length;
 
             couriers.forEach(courier => {
                 const vehicle = CONFIG.vehicleTypes[courier.vehicle];
+                const fuelPct = Math.round((courier.fuel / vehicle.maxFuel) * 100);
                 const card = document.createElement('div');
-                card.className = "bg-white p-3 rounded-xl border border-slate-200 shadow-sm space-y-2";
-
+                card.className = "bg-slate-800 p-3 rounded-xl border border-slate-700 space-y-2";
                 card.innerHTML = `
                     <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold" style="background-color: ${vehicle.color}">
-                                <i class="fa-solid ${vehicle.icon}"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-xs text-slate-800">${courier.name}</h4>
-                                <span class="text-[10px] text-slate-400">${vehicle.name}</span>
-                            </div>
-                        </div>
-                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${courier.status === 'IDLE' ? 'bg-slate-100 text-slate-600' : 'bg-emerald-100 text-emerald-700'}">
-                            ${courier.status === 'IDLE' ? 'Standby' : 'Mengantar'}
-                        </span>
+                        <div><h4 class="font-bold text-xs">${courier.name}</h4><span class="text-[10px] text-slate-400">${vehicle.name} (Max ${courier.capacity} Item)</span></div>
+                        <span class="text-[10px] font-bold ${courier.status === 'BROKEN_DOWN' ? 'text-red-400' : 'text-emerald-400'}">${courier.status}</span>
                     </div>
-
-                    <div class="grid grid-cols-2 gap-2 text-[10px] bg-slate-50 p-2 rounded-lg text-slate-600">
-                        <div>Kecepatan: <strong>${courier.speed}x</strong></div>
-                        <div>Total Komisi: <strong>Rp ${courier.earnings.toLocaleString('id-ID')}</strong></div>
+                    <div>
+                        <div class="flex justify-between text-[10px] text-slate-400 mb-1"><span>Indikator Bensin</span><span>${fuelPct}%</span></div>
+                        <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden"><div class="h-full ${fuelPct > 40 ? 'bg-emerald-500' : 'bg-red-500'}" style="width: ${fuelPct}%"></div></div>
                     </div>
-
-                    <div class="flex gap-1 pt-1">
-                        <button onclick="upgradeVehicle('${courier.id}')" class="flex-1 py-1 text-[11px] font-bold bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition">
-                            <i class="fa-solid fa-arrow-up"></i> Upgrade Kendaraan
-                        </button>
+                    <div class="flex gap-1">
+                        ${courier.status === 'BROKEN_DOWN' ? 
+                            `<button onclick="towCourier('${courier.id}')" class="w-full py-1 text-xs font-bold bg-red-600 rounded-xl">Derek SPBU (Rp 25k)</button>` :
+                            `<button onclick="refuelCourier('${courier.id}')" class="flex-1 py-1 text-[11px] font-bold bg-amber-500/20 text-amber-300 hover:bg-amber-500 hover:text-slate-900 rounded-xl transition">Isi Bensin</button>
+                             <button onclick="upgradeVehicle('${courier.id}')" class="flex-1 py-1 text-[11px] font-bold bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition">Upgrade</button>`
+                        }
                     </div>
                 `;
-
                 listEl.appendChild(card);
             });
         }
@@ -1004,299 +1260,77 @@
 
             merchants.forEach(m => {
                 const card = document.createElement('div');
-                card.className = "bg-white p-3 rounded-xl border border-slate-200 shadow-sm space-y-2";
-
-                const upgradeCost = m.level * 150000;
-
+                card.className = "bg-slate-800 p-3 rounded-xl border border-slate-700 space-y-2";
                 card.innerHTML = `
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold ${m.type === 'food' ? 'bg-orange-500' : 'bg-blue-500'}">
-                                <i class="fa-solid ${m.type === 'food' ? 'fa-utensils' : 'fa-box'}"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-xs text-slate-800">${m.name}</h4>
-                                <span class="text-[10px] text-slate-400">Level ${m.level} - Speed ${m.prepSpeed.toFixed(1)}x</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button onclick="upgradeMerchant('${m.id}')" class="w-full py-1 text-[11px] font-bold bg-slate-800 text-white rounded-lg hover:bg-slate-900 transition flex items-center justify-center gap-1">
-                        <i class="fa-solid fa-angles-up text-yellow-400"></i> Upgrade Toko (Rp ${upgradeCost.toLocaleString('id-ID')})
-                    </button>
+                    <div class="flex justify-between items-center"><h4 class="font-bold text-xs">${m.name}</h4><span class="text-[10px] text-slate-400">Lvl ${m.level}</span></div>
+                    <button onclick="upgradeMerchant('${m.id}')" class="w-full py-1 text-xs font-bold bg-slate-700 hover:bg-orange-600 rounded-xl transition">Upgrade Toko (Rp ${(m.level * 150000).toLocaleString('id-ID')})</button>
                 `;
-
                 listEl.appendChild(card);
             });
-        }
 
-        // Vehicle Upgrade Logic
-        function upgradeVehicle(courierId) {
-            const courier = couriers.find(c => c.id === courierId);
-            if (!courier) return;
-
-            let nextVehicle = null;
-            if (courier.vehicle === 'bicycle') nextVehicle = 'motorcycle';
-            else if (courier.vehicle === 'motorcycle') nextVehicle = 'car';
-            else if (courier.vehicle === 'car') nextVehicle = 'ev';
-
-            if (!nextVehicle) {
-                showToast('Kendaraan sudah berada pada level maksimal!', 'info');
-                return;
-            }
-
-            const cost = CONFIG.vehicleTypes[nextVehicle].cost;
-            if (gameState.money < cost) {
-                showToast(`Saldo tidak cukup! Butuh Rp ${cost.toLocaleString('id-ID')}`, 'error');
-                return;
-            }
-
-            gameState.money -= cost;
-            courier.vehicle = nextVehicle;
-            courier.speed = CONFIG.vehicleTypes[nextVehicle].speed;
-
-            showToast(`${courier.name} berhasil di-upgrade ke ${CONFIG.vehicleTypes[nextVehicle].name}!`, 'success');
-            renderCouriersList();
-            updateHeaderStats();
-        }
-
-        // Merchant Upgrade Logic
-        function upgradeMerchant(merchantId) {
-            const merchant = merchants.find(m => m.id === merchantId);
-            if (!merchant) return;
-
-            const cost = merchant.level * 150000;
-            if (gameState.money < cost) {
-                showToast(`Saldo tidak cukup! Butuh Rp ${cost.toLocaleString('id-ID')}`, 'error');
-                return;
-            }
-
-            gameState.money -= cost;
-            merchant.level++;
-            merchant.prepSpeed += 0.3;
-
-            showToast(`${merchant.name} berhasil dinaikkan ke Level ${merchant.level}!`, 'success');
-            renderMerchantsList();
-            updateHeaderStats();
-        }
-
-        // Modal Controls & Hire System
-        function openHireModal() {
-            document.getElementById('hireModal').classList.remove('hidden');
-            const listEl = document.getElementById('candidatesList');
-            listEl.innerHTML = '';
-
-            const candidates = [
-                { name: 'Andra Speed', vehicle: 'motorcycle', salary: 150000 },
-                { name: 'Bagas Cargo', vehicle: 'car', salary: 450000 },
-                { name: 'Deni EV', vehicle: 'ev', salary: 850000 }
-            ];
-
-            candidates.forEach(cand => {
-                const vehicleConfig = CONFIG.vehicleTypes[cand.vehicle];
+            gasStations.forEach(gs => {
                 const card = document.createElement('div');
-                card.className = "p-3 border border-slate-200 rounded-xl flex justify-between items-center bg-slate-50 hover:bg-white transition";
-
+                card.className = "bg-slate-800 p-3 rounded-xl border border-amber-500/30 space-y-2 mt-2";
                 card.innerHTML = `
-                    <div>
-                        <h4 class="font-bold text-xs text-slate-800">${cand.name}</h4>
-                        <p class="text-[10px] text-slate-500">${vehicleConfig.name} (Speed ${vehicleConfig.speed}x)</p>
-                    </div>
-                    <button onclick="confirmHire('${cand.name}', '${cand.vehicle}', ${cand.salary})" class="shopee-gradient text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm">
-                        Hire (Rp ${cand.salary.toLocaleString('id-ID')})
-                    </button>
+                    <div class="flex justify-between items-center"><h4 class="font-bold text-xs">${gs.name}</h4><span class="text-[10px] text-slate-400">Lvl ${gs.level || 1}</span></div>
+                    <button onclick="upgradeGasStation('${gs.id}')" class="w-full py-1 text-xs font-bold bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-900 rounded-xl transition">Upgrade SPBU (Rp ${((gs.level || 1) * 200000).toLocaleString('id-ID')})</button>
                 `;
                 listEl.appendChild(card);
             });
         }
 
-        function closeHireModal() {
-            document.getElementById('hireModal').classList.add('hidden');
-        }
-
-        function confirmHire(name, vehicle, cost) {
-            if (gameState.money < cost) {
-                showToast('Saldo kas tidak mencukupi untuk merekrut!', 'error');
-                return;
-            }
-
-            gameState.money -= cost;
-            const randomNode = nodes[Math.floor(Math.random() * nodes.length)];
-
-            couriers.push({
-                id: `k${++nextCourierId}`,
-                name: name,
-                vehicle: vehicle,
-                speed: CONFIG.vehicleTypes[vehicle].speed,
-                x: randomNode.x,
-                y: randomNode.y,
-                status: 'IDLE',
-                currentOrder: null,
-                targetX: randomNode.x,
-                targetY: randomNode.y,
-                path: [],
-                earnings: 0,
-                rating: 5.0
-            });
-
-            showToast(`Berhasil merekrut kurir baru: ${name}!`, 'success');
-            closeHireModal();
-            renderCouriersList();
-            updateHeaderStats();
-        }
-
-        function openAddMerchantModal() {
-            document.getElementById('addMerchantModal').classList.remove('hidden');
-            const listEl = document.getElementById('merchantCandidatesList');
+        function renderSkinsList() {
+            const listEl = document.getElementById('skinsList');
             listEl.innerHTML = '';
-
-            const options = [
-                { name: 'Kebab Turki Super', type: 'food', cost: 200000 },
-                { name: 'Shopee Mall Official Store', type: 'express', cost: 350000 }
-            ];
-
-            options.forEach(opt => {
+            CONFIG.skins.forEach(s => {
+                const isActive = gameState.currentSkin === s.id;
                 const card = document.createElement('div');
-                card.className = "p-3 border border-slate-200 rounded-xl flex justify-between items-center bg-slate-50 hover:bg-white transition";
-
+                card.className = "p-3 rounded-xl bg-slate-800 border border-slate-700 space-y-2";
                 card.innerHTML = `
-                    <div>
-                        <h4 class="font-bold text-xs text-slate-800">${opt.name}</h4>
-                        <p class="text-[10px] text-slate-500">${opt.type === 'food' ? 'Restoran Culinary' : 'Gudang Logistics'}</p>
-                    </div>
-                    <button onclick="confirmAddMerchant('${opt.name}', '${opt.type}', ${opt.cost})" class="bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm">
-                        Buka Partner (Rp ${opt.cost.toLocaleString('id-ID')})
-                    </button>
+                    <div class="flex justify-between items-center"><h4 class="font-bold text-xs">${s.name}</h4><span class="w-3.5 h-3.5 rounded-full" style="background:${s.primary}"></span></div>
+                    <button onclick="applySkin('${s.id}')" class="w-full py-1 text-xs font-bold rounded-xl ${isActive ? 'bg-emerald-600 text-white' : 'shopee-gradient text-white'}">${isActive ? 'Aktif' : 'Gunakan'}</button>
                 `;
                 listEl.appendChild(card);
             });
         }
 
-        function closeAddMerchantModal() {
-            document.getElementById('addMerchantModal').classList.add('hidden');
+        function updateMobileLayout() {
+            const isMobile = window.innerWidth < 768;
+            document.getElementById('panelOrders').classList.toggle('hidden', isMobile && gameState.mobileView !== 'orders');
+            document.getElementById('panelMap').classList.toggle('hidden', isMobile && gameState.mobileView !== 'map');
+            document.getElementById('panelManage').classList.toggle('hidden', isMobile && gameState.mobileView !== 'manage');
+            setTimeout(() => { if (typeof renderOrganicMap === 'function') renderOrganicMap(); }, 50);
         }
 
-        function confirmAddMerchant(name, type, cost) {
-            if (gameState.money < cost) {
-                showToast('Saldo tidak cukup!', 'error');
-                return;
-            }
-
-            gameState.money -= cost;
-            const randomNode = nodes[Math.floor(Math.random() * nodes.length)];
-
-            merchants.push({
-                id: `m${merchants.length + 1}`,
-                name: name,
-                type: type,
-                x: randomNode.x + 20,
-                y: randomNode.y - 20,
-                level: 1,
-                prepSpeed: 1,
-                node: randomNode
-            });
-
-            showToast(`Merchant baru ${name} resmi beroperasi!`, 'success');
-            closeAddMerchantModal();
-            renderMerchantsList();
-            updateHeaderStats();
-        }
-
-        // Tab Switching Controls
-        function switchOrderTab(tab) {
-            gameState.activeTab = tab;
-            ['all', 'food', 'express'].forEach(t => {
-                const btn = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`);
-                if (t === tab) {
-                    btn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-white shadow-sm text-[#ee4d2d] transition";
-                } else {
-                    btn.className = "flex-1 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/60 transition";
-                }
-            });
-            renderOrdersList();
-        }
-
-        function switchRightTab(tab) {
-            gameState.rightTab = tab;
-            if (tab === 'couriers') {
-                document.getElementById('viewCouriers').classList.remove('hidden');
-                document.getElementById('viewMerchants').classList.add('hidden');
-                document.getElementById('rightTabCouriers').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-white shadow-sm text-[#ee4d2d] transition";
-                document.getElementById('rightTabMerchants').className = "flex-1 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/60 transition";
-            } else {
-                document.getElementById('viewCouriers').classList.add('hidden');
-                document.getElementById('viewMerchants').classList.remove('hidden');
-                document.getElementById('rightTabCouriers').className = "flex-1 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/60 transition";
-                document.getElementById('rightTabMerchants').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-white shadow-sm text-[#ee4d2d] transition";
-            }
-        }
-
-        function toggleAutoAssign() {
-            gameState.autoAssign = document.getElementById('autoAssignToggle').checked;
-        }
-
-        function setSpeed(speed) {
-            gameState.gameSpeed = speed;
-            [0, 1, 2, 4].forEach(s => {
-                const btn = document.getElementById(`btnSpeed${s}`);
-                if (s === speed) {
-                    btn.className = "px-2 py-1 text-xs font-bold rounded bg-yellow-400 text-slate-900 transition";
-                } else {
-                    btn.className = "px-2 py-1 text-xs font-bold rounded bg-white/20 hover:bg-white/40 transition";
-                }
-            });
-        }
-
-        function toggleAudio() {
-            gameState.soundEnabled = !gameState.soundEnabled;
-            document.getElementById('btnAudio').innerHTML = gameState.soundEnabled ? 
-                '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
-        }
-
-        // Toast Notification System
         function showToast(msg, type = 'info') {
             const toast = document.createElement('div');
-            toast.className = `fixed bottom-5 right-5 z-50 px-4 py-2.5 rounded-xl shadow-xl text-white text-xs font-bold flex items-center gap-2 transition-all transform translate-y-4 opacity-0 ${
-                type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-red-600' : 'bg-slate-800'
-            }`;
-
-            const icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-triangle-exclamation' : 'fa-info-circle';
-            toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${msg}</span>`;
-
+            toast.className = `fixed bottom-14 md:bottom-5 right-5 z-50 px-4 py-2.5 rounded-xl text-white text-xs font-bold shadow-2xl transition-all ${type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-red-600' : 'bg-slate-800'}`;
+            toast.innerText = msg;
             document.body.appendChild(toast);
-
-            setTimeout(() => {
-                toast.classList.remove('translate-y-4', 'opacity-0');
-            }, 10);
-
-            setTimeout(() => {
-                toast.classList.add('translate-y-4', 'opacity-0');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            setTimeout(() => toast.remove(), 3000);
         }
 
-        // Window Load & Main Game Loop
         window.onload = function() {
             AudioSys.init();
-            initMapGrid();
-
+            initOrganicMapGrid();
             renderOrdersList();
+            renderReviewsList();
             renderCouriersList();
             renderMerchantsList();
+            renderSkinsList();
             updateHeaderStats();
+            updateMobileLayout();
 
-            // Main Animation Frame Loop (60 FPS)
+            window.addEventListener('resize', updateMobileLayout);
+
             function animLoop() {
                 updatePositions();
-                renderMap();
+                renderOrganicMap();
                 requestAnimationFrame(animLoop);
             }
             animLoop();
 
-            // Logic Simulation Clock Loop (Every 1 Sec)
-            setInterval(() => {
-                gameTick();
-            }, CONFIG.tickInterval);
+            setInterval(gameTick, CONFIG.tickInterval);
         };
     </script>
 </body>
