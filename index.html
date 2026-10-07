@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Empire Manager - Shopee & ShopeeFood Style</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f3f4f6;
+            user-select: none;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #fd5da8;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ee4d2d;
+        }
+
+        .shopee-gradient {
+            background: linear-gradient(135deg, #f53d2d 0%, #ff6633 100%);
+        }
+
+        .shopee-border {
+            border-color: #ee4d2d;
+        }
+
+        .shopee-text {
+            color: #ee4d2d;
+        }
+
+        .shopee-bg-light {
+            background-color: #fff5f2;
+        }
+
+        .pulse-subtle {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Canvas Overlay Styles */
+        #gameCanvas {
+            border-radius: 12px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+            background: #eef2f5;
+        }
+    </style>
+</head>
+<body class="h-screen overflow-hidden flex flex-col text-slate-800">
+
+    <!-- Top Bar Navigation -->
+    <header class="shopee-gradient text-white px-4 py-2.5 shadow-md flex justify-between items-center z-20 flex-shrink-0">
+        <div class="flex items-center space-x-3">
+            <div class="bg-white text-[#ee4d2d] p-2 rounded-xl font-black text-xl shadow flex items-center justify-center w-10 h-10">
+                <i class="fa-solid fa-truck-fast"></i>
+            </div>
+            <div>
+                <h1 class="font-extrabold text-lg leading-none tracking-tight flex items-center gap-2">
+                    ShopeeExpress & Food Manager
+                    <span class="bg-yellow-400 text-slate-900 text-xs px-2 py-0.5 rounded-full font-bold uppercase tracking-wider text-[10px]">Pro Manager</span>
+                </h1>
+                <p class="text-xs text-orange-100 opacity-90 mt-0.5">Kelola armada kurir & pengiriman kota real-time</p>
+            </div>
+        </div>
+
+        <!-- Realtime Stats Bar Header -->
+        <div class="hidden md:flex items-center space-x-6 bg-black/15 px-4 py-1.5 rounded-xl backdrop-blur-sm border border-white/10">
+            <div class="text-center">
+                <span class="text-[10px] uppercase font-bold text-orange-200 block">Saldo Kas</span>
+                <span id="statMoney" class="text-sm font-black text-yellow-300">Rp 500.000</span>
+            </div>
+            <div class="h-6 w-px bg-white/20"></div>
+            <div class="text-center">
+                <span class="text-[10px] uppercase font-bold text-orange-200 block">Kepuasan</span>
+                <span id="statRating" class="text-sm font-bold text-white"><i class="fa-solid fa-star text-yellow-300 mr-1"></i>5.0</span>
+            </div>
+            <div class="h-6 w-px bg-white/20"></div>
+            <div class="text-center">
+                <span class="text-[10px] uppercase font-bold text-orange-200 block">Cuaca Kota</span>
+                <span id="statWeather" class="text-sm font-bold text-white flex items-center gap-1">
+                    <i class="fa-solid fa-sun text-yellow-300"></i> Cerah
+                </span>
+            </div>
+            <div class="h-6 w-px bg-white/20"></div>
+            <div class="text-center">
+                <span class="text-[10px] uppercase font-bold text-orange-200 block">Status Waktu</span>
+                <span id="statTime" class="text-sm font-mono font-bold text-white">08:00 WIB</span>
+            </div>
+        </div>
+
+        <!-- Controls Speed & Pause -->
+        <div class="flex items-center space-x-2">
+            <div class="bg-white/20 p-1 rounded-lg flex items-center space-x-1 border border-white/20">
+                <button id="btnSpeed0" onclick="setSpeed(0)" class="px-2 py-1 text-xs font-bold rounded bg-white/20 hover:bg-white/40 transition">⏸</button>
+                <button id="btnSpeed1" onclick="setSpeed(1)" class="px-2 py-1 text-xs font-bold rounded bg-yellow-400 text-slate-900 transition">1x</button>
+                <button id="btnSpeed2" onclick="setSpeed(2)" class="px-2 py-1 text-xs font-bold rounded bg-white/20 hover:bg-white/40 transition">2x</button>
+                <button id="btnSpeed4" onclick="setSpeed(4)" class="px-2 py-1 text-xs font-bold rounded bg-white/20 hover:bg-white/40 transition">4x</button>
+            </div>
+            <button onclick="toggleAudio()" id="btnAudio" class="p-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm text-white">
+                <i class="fa-solid fa-volume-high"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <div class="flex-1 flex overflow-hidden p-3 gap-3">
+
+        <!-- Left Sidebar: Order Queue & Mode Filter -->
+        <aside class="w-80 bg-white rounded-2xl shadow-sm border border-slate-200/80 flex flex-col overflow-hidden flex-shrink-0">
+            <!-- Navigation Tabs (Shopee Express / Shopee Food) -->
+            <div class="flex border-b border-slate-100 bg-slate-50 p-1.5 gap-1">
+                <button id="tabAll" onclick="switchOrderTab('all')" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-white shadow-sm text-[#ee4d2d] transition">
+                    Semua (<span id="countAllOrders">0</span>)
+                </button>
+                <button id="tabFood" onclick="switchOrderTab('food')" class="flex-1 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/60 transition flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-utensils text-orange-500"></i> Food
+                </button>
+                <button id="tabExpress" onclick="switchOrderTab('express')" class="flex-1 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/60 transition flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-box text-blue-500"></i> Express
+                </button>
+            </div>
+
+            <!-- Auto Assign Toggle -->
+            <div class="p-3 bg-orange-50/60 border-b border-orange-100 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-robot text-[#ee4d2d]"></i>
+                    <span class="text-xs font-bold text-slate-700">Auto-Assign Kurir</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="autoAssignToggle" onchange="toggleAutoAssign()" class="sr-only peer" checked>
+                    <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#ee4d2d]"></div>
+                </label>
+            </div>
+
+            <!-- Orders Queue List -->
+            <div class="p-2 font-bold text-xs text-slate-400 uppercase tracking-wider flex justify-between items-center">
+                <span>Daftar Pesanan Masuk</span>
+                <span id="rushHourBadge" class="hidden bg-red-500 text-white text-[9px] px-2 py-0.5 rounded-full font-black animate-pulse">RUSH HOUR 2x!</span>
+            </div>
+
+            <div id="ordersList" class="flex-1 overflow-y-auto px-3 space-y-2.5 pb-3">
+                <!-- Order Card template dynamically populated -->
+            </div>
+        </aside>
+
+        <!-- Center Interactive Map Canvas -->
+        <main class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200/80 flex flex-col overflow-hidden relative">
+            <!-- Map Info Overlay Header -->
+            <div class="absolute top-3 left-3 right-3 z-10 flex justify-between items-center pointer-events-none">
+                <div class="bg-slate-900/80 backdrop-blur-md text-white px-3 py-1.5 rounded-xl text-xs font-medium shadow-lg pointer-events-auto flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span>Monitoring Peta Kota Dynamic v2.5</span>
+                </div>
+
+                <div class="bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl text-xs font-semibold shadow-lg text-slate-700 pointer-events-auto flex items-center gap-3">
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-orange-500 inline-block"></span> Restoran</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span> Toko Express</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span> Rumah</span>
+                </div>
+            </div>
+
+            <!-- Canvas Container -->
+            <div class="w-full h-full relative overflow-hidden bg-slate-100 flex items-center justify-center">
+                <canvas id="gameCanvas" class="w-full h-full object-cover cursor-crosshair"></canvas>
+            </div>
+
+            <!-- Bottom Map Bar Summary -->
+            <div class="h-12 border-t border-slate-100 bg-white/90 backdrop-blur px-4 flex items-center justify-between text-xs font-medium text-slate-600 flex-shrink-0">
+                <div class="flex items-center gap-4">
+                    <span><i class="fa-solid fa-motorcycle text-orange-500 mr-1"></i> Kurir Aktif: <strong id="activeCouriersCount" class="text-slate-800">0/0</strong></span>
+                    <span><i class="fa-solid fa-check-circle text-emerald-500 mr-1"></i> Order Selesai: <strong id="completedOrdersCount" class="text-slate-800">0</strong></span>
+                </div>
+                <div class="flex items-center gap-2 text-slate-400 text-[11px]">
+                    <i class="fa-solid fa-circle-info"></i> Klik pada kurir di peta untuk melihat detail rute.
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar: Management (Couriers & Merchants) -->
+        <aside class="w-80 bg-white rounded-2xl shadow-sm border border-slate-200/80 flex flex-col overflow-hidden flex-shrink-0">
+            <!-- Navigation Tabs for Right Panel -->
+            <div class="flex border-b border-slate-100 bg-slate-50 p-1.5 gap-1">
+                <button id="rightTabCouriers" onclick="switchRightTab('couriers')" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-white shadow-sm text-[#ee4d2d] transition">
+                    Armada Kurir (<span id="countCouriers">0</span>)
+                </button>
+                <button id="rightTabMerchants" onclick="switchRightTab('merchants')" class="flex-1 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/60 transition">
+                    Merchant & Toko
+                </button>
+            </div>
+
+            <!-- Couriers Tab View -->
+            <div id="viewCouriers" class="flex-1 flex flex-col overflow-hidden">
+                <div class="p-3 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Manajemen Kurir</span>
+                    <button onclick="openHireModal()" class="shopee-gradient text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm hover:opacity-90 transition flex items-center gap-1">
+                        <i class="fa-solid fa-user-plus"></i> Rekrut Kurir
+                    </button>
+                </div>
+                <div id="courierList" class="flex-1 overflow-y-auto p-3 space-y-2.5">
+                    <!-- Courier cards rendered here -->
+                </div>
+            </div>
+
+            <!-- Merchants Tab View -->
+            <div id="viewMerchants" class="flex-1 flex flex-col overflow-hidden hidden">
+                <div class="p-3 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Merchant Partner</span>
+                    <button onclick="openAddMerchantModal()" class="bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm hover:bg-blue-700 transition flex items-center gap-1">
+                        <i class="fa-solid fa-store"></i> Tambah Toko
+                    </button>
+                </div>
+                <div id="merchantList" class="flex-1 overflow-y-auto p-3 space-y-2.5">
+                    <!-- Merchant cards rendered here -->
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Hire Courier Modal -->
+    <div id="hireModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all">
+            <div class="shopee-gradient p-4 text-white flex justify-between items-center">
+                <h3 class="font-bold text-base flex items-center gap-2">
+                    <i class="fa-solid fa-user-plus"></i> Rekrut Kurir Baru
+                </h3>
+                <button onclick="closeHireModal()" class="text-white/80 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-4 space-y-3">
+                <p class="text-xs text-slate-500">Pilih kandidat kurir untuk meningkatkan kecepatan dan kapasitas armada delivery Anda.</p>
+                <div id="candidatesList" class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
+                    <!-- Candidate cards injected dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Merchant Modal -->
+    <div id="addMerchantModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
+            <div class="bg-slate-800 p-4 text-white flex justify-between items-center">
+                <h3 class="font-bold text-base flex items-center gap-2">
+                    <i class="fa-solid fa-shop"></i> Buka Partner Merchant Baru
+                </h3>
+                <button onclick="closeAddMerchantModal()" class="text-white/80 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-4 space-y-3">
+                <p class="text-xs text-slate-500">Tambah merchant baru di peta kota untuk menghasilkan jenis pesanan baru yang lebih mahal.</p>
+                <div id="merchantCandidatesList" class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
+                    <!-- Merchant options dynamic -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // GAME STATE & CONFIGURATION
+        // ==========================================
+        const CONFIG = {
+            mapWidth: 1200,
+            mapHeight: 800,
+            tickInterval: 1000,
+            baseOrderInterval: 4000,
+            baseCourierSalary: 50,
+            weatherTypes: ['Cerah', 'Hujan', 'Malam'],
+            vehicleTypes: {
+                bicycle: { name: 'Sepeda Ontel', speed: 1.2, capacity: 1, cost: 0, icon: 'fa-bicycle', color: '#64748b' },
+                motorcycle: { name: 'Motor Matic', speed: 2.2, capacity: 2, cost: 250000, icon: 'fa-motorcycle', color: '#ee4d2d' },
+                car: { name: 'Mobil Box', speed: 3.2, capacity: 4, cost: 750000, icon: 'fa-truck-pickup', color: '#2563eb' },
+                ev: { name: 'EV Super Bike', speed: 4.5, capacity: 3, cost: 1500000, icon: 'fa-bolt', color: '#10b981' }
+            }
+        };
+
+        let gameState = {
+            money: 500000,
+            rating: 5.0,
+            ratingCount: 1,
+            timeMinutes: 8 * 60, // Start at 08:00 AM
+            weather: 'Cerah',
+            gameSpeed: 1, // 0: pause, 1, 2, 4
+            autoAssign: true,
+            activeTab: 'all',
+            rightTab: 'couriers',
+            soundEnabled: true,
+            completedOrders: 0,
+            rushHour: false
+        };
+
+        // Entities
+        let nodes = []; // Map Grid Road Nodes
+        let merchants = [];
+        let customers = [];
+        let couriers = [];
+        let orders = [];
+
+        // Dynamic ID Generators
+        let nextOrderId = 101;
+        let nextCourierId = 1;
+
+        // Audio System (Web Audio API)
+        const AudioSys = {
+            ctx: null,
+            init() {
+                try {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                } catch(e) {}
+            },
+            playBeep(freq = 600, type = 'sine', duration = 0.15) {
+                if (!gameState.soundEnabled || !this.ctx) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                } catch(e) {}
+            },
+            playSuccess() {
+                this.playBeep(523.25, 'triangle', 0.1);
+                setTimeout(() => this.playBeep(659.25, 'triangle', 0.15), 100);
+            },
+            playOrderNew() {
+                this.playBeep(880, 'sine', 0.08);
+            }
+        };
+
+        // Map Canvas Initialization & Node System
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function initMapGrid() {
+            canvas.width = CONFIG.mapWidth;
+            canvas.height = CONFIG.mapHeight;
+
+            // Generate Road Network Nodes (Grid style + diagonals)
+            const rows = 5;
+            const cols = 7;
+            const paddingX = 120;
+            const paddingY = 100;
+            const stepX = (CONFIG.mapWidth - paddingX * 2) / (cols - 1);
+            const stepY = (CONFIG.mapHeight - paddingY * 2) / (rows - 1);
+
+            nodes = [];
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    nodes.push({
+                        id: r * cols + c,
+                        x: paddingX + c * stepX + (Math.random() * 20 - 10),
+                        y: paddingY + r * stepY + (Math.random() * 20 - 10),
+                        neighbors: []
+                    });
+                }
+            }
+
+            // Connect horizontal & vertical roads
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const idx = r * cols + c;
+                    if (c < cols - 1) connectNodes(nodes[idx], nodes[idx + 1]);
+                    if (r < rows - 1) connectNodes(nodes[idx], nodes[idx + cols]);
+                }
+            }
+
+            // Initial Default Merchants
+            merchants = [
+                { id: 'm1', name: 'Ayam Geprek Sambal Ijo', type: 'food', x: nodes[2].x + 30, y: nodes[2].y - 30, level: 1, prepSpeed: 1, node: nodes[2] },
+                { id: 'm2', name: 'Boba Fresh Milk 99', type: 'food', x: nodes[16].x - 30, y: nodes[16].y + 20, level: 1, prepSpeed: 1, node: nodes[16] },
+                { id: 'm3', name: 'Shopee Warehouse Central', type: 'express', x: nodes[10].x + 40, y: nodes[10].y + 30, level: 1, prepSpeed: 1.2, node: nodes[10] },
+                { id: 'm4', name: 'Official Fashion Hub', type: 'express', x: nodes[24].x - 40, y: nodes[24].y - 20, level: 1, prepSpeed: 1, node: nodes[24] }
+            ];
+
+            // Initial Customers (Houses)
+            customers = [
+                { id: 'c1', name: 'Bpk. Budi', address: 'Jl. Merdeka No. 12', x: nodes[0].x - 40, y: nodes[0].y - 30, node: nodes[0] },
+                { id: 'c2', name: 'Ibu Ani', address: 'Perum Gading 5', x: nodes[6].x + 40, y: nodes[6].y - 20, node: nodes[6] },
+                { id: 'c3', name: 'Siska (Kost Blue)', address: 'Jl. Mawar 88', x: nodes[28].x - 30, y: nodes[28].y + 40, node: nodes[28] },
+                { id: 'c4', name: 'Andi Tech', address: 'Komplek Permata B2', x: nodes[34].x + 30, y: nodes[34].y + 30, node: nodes[34] },
+                { id: 'c5', name: 'Maya Restu', address: 'Jl. Sudirman 101', x: nodes[18].x + 30, y: nodes[18].y - 40, node: nodes[18] }
+            ];
+
+            // Default Starting Couriers
+            couriers = [
+                {
+                    id: 'k1',
+                    name: 'Rizky Fast',
+                    vehicle: 'motorcycle',
+                    speed: CONFIG.vehicleTypes.motorcycle.speed,
+                    x: nodes[17].x,
+                    y: nodes[17].y,
+                    status: 'IDLE', // IDLE, PICKING_UP, DELIVERING
+                    currentOrder: null,
+                    targetX: nodes[17].x,
+                    targetY: nodes[17].y,
+                    path: [],
+                    earnings: 0,
+                    rating: 5.0
+                },
+                {
+                    id: 'k2',
+                    name: 'Siti Eco',
+                    vehicle: 'bicycle',
+                    speed: CONFIG.vehicleTypes.bicycle.speed,
+                    x: nodes[12].x,
+                    y: nodes[12].y,
+                    status: 'IDLE',
+                    currentOrder: null,
+                    targetX: nodes[12].x,
+                    targetY: nodes[12].y,
+                    path: [],
+                    earnings: 0,
+                    rating: 4.9
+                }
+            ];
+        }
+
+        function connectNodes(n1, n2) {
+            if (!n1.neighbors.includes(n2)) n1.neighbors.push(n2);
+            if (!n2.neighbors.includes(n1)) n2.neighbors.push(n1);
+        }
+
+        // Shortest Path Dijkstra for Courier Movement
+        function findShortestPath(startNode, endNode) {
+            let distances = {};
+            let previous = {};
+            let unvisited = new Set(nodes);
+
+            nodes.forEach(node => {
+                distances[node.id] = Infinity;
+                previous[node.id] = null;
+            });
+            distances[startNode.id] = 0;
+
+            while (unvisited.size > 0) {
+                let current = null;
+                let lowestDist = Infinity;
+                unvisited.forEach(node => {
+                    if (distances[node.id] < lowestDist) {
+                        lowestDist = distances[node.id];
+                        current = node;
+                    }
+                });
+
+                if (!current || current === endNode) break;
+                unvisited.delete(current);
+
+                current.neighbors.forEach(neighbor => {
+                    if (unvisited.has(neighbor)) {
+                        let dist = Math.hypot(current.x - neighbor.x, current.y - neighbor.y);
+                        let alt = distances[current.id] + dist;
+                        if (alt < distances[neighbor.id]) {
+                            distances[neighbor.id] = alt;
+                            previous[neighbor.id] = current;
+                        }
+                    }
+                });
+            }
+
+            let path = [];
+            let curr = endNode;
+            while (curr) {
+                path.unshift(curr);
+                curr = previous[curr.id];
+            }
+            return path;
+        }
+
+        function getClosestNode(x, y) {
+            let closest = nodes[0];
+            let minD = Infinity;
+            nodes.forEach(n => {
+                let d = Math.hypot(n.x - x, n.y - y);
+                if (d < minD) {
+                    minD = d;
+                    closest = n;
+                }
+            });
+            return closest;
+        }
+
+        // Generate Dynamic Orders
+        function spawnOrder() {
+            if (orders.length >= 8) return; // Limit queue
+
+            const isFood = Math.random() > 0.4;
+            const availableMerchants = merchants.filter(m => isFood ? m.type === 'food' : m.type === 'express');
+            if (availableMerchants.length === 0) return;
+
+            const merchant = availableMerchants[Math.floor(Math.random() * availableMerchants.length)];
+            const customer = customers[Math.floor(Math.random() * customers.length)];
+
+            // Calculate Base Price based on distance
+            const dist = Math.hypot(merchant.x - customer.x, merchant.y - customer.y);
+            const multiplier = gameState.rushHour ? 1.8 : 1.0;
+            const price = Math.round((12000 + dist * 120) * multiplier);
+
+            const newOrder = {
+                id: nextOrderId++,
+                type: isFood ? 'food' : 'express',
+                merchant: merchant,
+                customer: customer,
+                item: isFood ? getRandomFoodItem() : getRandomExpressItem(),
+                price: price,
+                timer: 45, // Seconds deadline
+                maxTimer: 45,
+                status: 'PENDING', // PENDING, ASSIGNED, PICKING, DELIVERING, COMPLETED
+                assignedCourierId: null
+            };
+
+            orders.push(newOrder);
+            AudioSys.playOrderNew();
+            renderOrdersList();
+
+            if (gameState.autoAssign) {
+                tryAutoAssignOrder(newOrder);
+            }
+        }
+
+        function getRandomFoodItem() {
+            const items = ['Paket Ayam Geprek Super', 'Boba Brown Sugar', 'Nasi Goreng Spesial', 'Martabak Manis Keju', 'Kopi Susu Gula Aren'];
+            return items[Math.floor(Math.random() * items.length)];
+        }
+
+        function getRandomExpressItem() {
+            const items = ['Baju Kaos Oversize', 'Pembersih Wajah 100ml', 'Casing HP Custom', 'Sepatu Sneaker Off-White', 'Headphone Wireless'];
+            return items[Math.floor(Math.random() * items.length)];
+        }
+
+        function tryAutoAssignOrder(order) {
+            if (order.status !== 'PENDING') return;
+
+            // Find closest available courier
+            let bestCourier = null;
+            let minDist = Infinity;
+
+            couriers.forEach(courier => {
+                if (courier.status === 'IDLE') {
+                    let d = Math.hypot(courier.x - order.merchant.x, courier.y - order.merchant.y);
+                    if (d < minDist) {
+                        minDist = d;
+                        bestCourier = courier;
+                    }
+                }
+            });
+
+            if (bestCourier) {
+                assignOrderToCourier(order.id, bestCourier.id);
+            }
+        }
+
+        function assignOrderToCourier(orderId, courierId) {
+            const order = orders.find(o => o.id === orderId);
+            const courier = couriers.find(c => c.id === courierId);
+
+            if (!order || !courier || courier.status !== 'IDLE') return;
+
+            order.status = 'ASSIGNED';
+            order.assignedCourierId = courier.id;
+
+            courier.status = 'PICKING_UP';
+            courier.currentOrder = order;
+
+            // Build Path to Merchant
+            const startNode = getClosestNode(courier.x, courier.y);
+            const merchantNode = order.merchant.node;
+            courier.path = findShortestPath(startNode, merchantNode);
+
+            renderOrdersList();
+            renderCouriersList();
+        }
+
+        // Main Loop / Game State Tick
+        function gameTick() {
+            if (gameState.gameSpeed === 0) return;
+
+            // Time progression
+            gameState.timeMinutes += 1;
+            if (gameState.timeMinutes >= 24 * 60) gameState.timeMinutes = 0;
+
+            // Rush Hour check (11:00-13:00 & 17:00-19:00)
+            const hours = Math.floor(gameState.timeMinutes / 60);
+            gameState.rushHour = (hours >= 11 && hours <= 13) || (hours >= 17 && hours <= 19);
+
+            // Random Weather Switch
+            if (Math.random() < 0.02) {
+                gameState.weather = CONFIG.weatherTypes[Math.floor(Math.random() * CONFIG.weatherTypes.length)];
+            }
+
+            // Order Timers & Timeout
+            orders.forEach((order, idx) => {
+                if (order.status === 'PENDING') {
+                    order.timer -= 1;
+                    if (order.timer <= 0) {
+                        // Cancel Order
+                        orders.splice(idx, 1);
+                        gameState.rating = Math.max(1.0, (gameState.rating - 0.1)).toFixed(1);
+                        showToast(`Pesanan #${order.id} dibatalkan karena terlambat!`, 'error');
+                    }
+                }
+            });
+
+            // Random Spawning logic based on Rush Hour
+            const spawnRate = gameState.rushHour ? 0.4 : 0.2;
+            if (Math.random() < spawnRate) {
+                spawnOrder();
+            }
+
+            // Retry auto assign for unassigned pending orders
+            if (gameState.autoAssign) {
+                orders.filter(o => o.status === 'PENDING').forEach(tryAutoAssignOrder);
+            }
+
+            updateHeaderStats();
+        }
+
+        // Smooth Movement Animation Loop
+        function updatePositions() {
+            if (gameState.gameSpeed === 0) return;
+
+            const speedMultiplier = gameState.gameSpeed * (gameState.weather === 'Hujan' ? 0.75 : 1.0);
+
+            couriers.forEach(courier => {
+                if (courier.status === 'IDLE') return;
+
+                if (courier.path.length > 0) {
+                    const targetNode = courier.path[0];
+                    const dx = targetNode.x - courier.x;
+                    const dy = targetNode.y - courier.y;
+                    const dist = Math.hypot(dx, dy);
+
+                    const moveStep = courier.speed * speedMultiplier * 1.5;
+
+                    if (dist < moveStep) {
+                        courier.x = targetNode.x;
+                        courier.y = targetNode.y;
+                        courier.path.shift(); // Reached waypoint
+                    } else {
+                        courier.x += (dx / dist) * moveStep;
+                        courier.y += (dy / dist) * moveStep;
+                    }
+                } else {
+                    // Path finished, update stage
+                    if (courier.status === 'PICKING_UP') {
+                        courier.status = 'DELIVERING';
+                        courier.currentOrder.status = 'DELIVERING';
+
+                        // Calculate path to Customer
+                        const merchantNode = courier.currentOrder.merchant.node;
+                        const customerNode = courier.currentOrder.customer.node;
+                        courier.path = findShortestPath(merchantNode, customerNode);
+
+                        AudioSys.playBeep(440, 'sine', 0.1);
+                        renderOrdersList();
+                    } 
+                    else if (courier.status === 'DELIVERING') {
+                        // Order Delivered Successfully!
+                        const order = courier.currentOrder;
+                        gameState.money += order.price;
+                        courier.earnings += order.price * 0.2; // 20% commission
+                        gameState.completedOrders++;
+
+                        // Add Tip if fast
+                        if (order.timer > 20) {
+                            gameState.money += 5000;
+                        }
+
+                        AudioSys.playSuccess();
+                        showToast(`Pesanan #${order.id} Selesai! (+Rp ${order.price.toLocaleString('id-ID')})`, 'success');
+
+                        // Reset Courier & Order
+                        courier.status = 'IDLE';
+                        courier.currentOrder = null;
+
+                        // Remove order
+                        const orderIdx = orders.findIndex(o => o.id === order.id);
+                        if (orderIdx !== -1) orders.splice(orderIdx, 1);
+
+                        renderOrdersList();
+                        renderCouriersList();
+                    }
+                }
+            });
+        }
+
+        // Render Map Graphics on Canvas
+        function renderMap() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Background Texture Grid
+            ctx.fillStyle = '#f8fafc';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Roads
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = 14;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            nodes.forEach(node => {
+                node.neighbors.forEach(neighbor => {
+                    ctx.beginPath();
+                    ctx.moveTo(node.x, node.y);
+                    ctx.lineTo(neighbor.x, neighbor.y);
+                    ctx.stroke();
+                });
+            });
+
+            // Inner Road Lines
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 6]);
+            nodes.forEach(node => {
+                node.neighbors.forEach(neighbor => {
+                    ctx.beginPath();
+                    ctx.moveTo(node.x, node.y);
+                    ctx.lineTo(neighbor.x, neighbor.y);
+                    ctx.stroke();
+                });
+            });
+            ctx.setLineDash([]); // Reset line dash
+
+            // Draw Active Delivery Routes (Dashed Polyline)
+            couriers.forEach(courier => {
+                if (courier.status !== 'IDLE' && courier.path.length > 0) {
+                    ctx.strokeStyle = courier.status === 'PICKING_UP' ? '#f59e0b' : '#10b981';
+                    ctx.lineWidth = 4;
+                    ctx.setLineDash([8, 6]);
+                    ctx.beginPath();
+                    ctx.moveTo(courier.x, courier.y);
+                    courier.path.forEach(pt => ctx.lineTo(pt.x, pt.y));
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            });
+
+            // Draw Customers (Houses)
+            customers.forEach(cust => {
+                ctx.fillStyle = '#10b981';
+                ctx.beginPath();
+                ctx.arc(cust.x, cust.y, 10, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Roof/Icon
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '900 10px "Font Awesome 6 Free"';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('\uf015', cust.x, cust.y);
+
+                // Label
+                ctx.fillStyle = '#334155';
+                ctx.font = 'bold 10px "Plus Jakarta Sans"';
+                ctx.fillText(cust.name, cust.x, cust.y + 18);
+            });
+
+            // Draw Merchants
+            merchants.forEach(m => {
+                const color = m.type === 'food' ? '#ee4d2d' : '#2563eb';
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(m.x, m.y, 14, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Outer Ring
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+
+                // Icon
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '900 11px "Font Awesome 6 Free"';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                const iconSymbol = m.type === 'food' ? '\uf2e7' : '\uf466'; // Utensils or Box
+                ctx.fillText(iconSymbol, m.x, m.y);
+
+                // Label
+                ctx.fillStyle = '#1e293b';
+                ctx.font = 'bold 11px "Plus Jakarta Sans"';
+                ctx.fillText(m.name, m.x, m.y + 22);
+            });
+
+            // Draw Couriers Animated
+            couriers.forEach(courier => {
+                const vehicleConfig = CONFIG.vehicleTypes[courier.vehicle];
+
+                // Courier Circle Base
+                ctx.fillStyle = vehicleConfig.color;
+                ctx.beginPath();
+                ctx.arc(courier.x, courier.y, 12, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Vehicle Icon
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '900 10px "Font Awesome 6 Free"';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                let iconStr = '\uf21c'; // default motorcycle
+                if (courier.vehicle === 'bicycle') iconStr = '\uf206';
+                if (courier.vehicle === 'car') iconStr = '\uf0d1';
+                if (courier.vehicle === 'ev') iconStr = '\uf0e7';
+
+                ctx.fillText(iconStr, courier.x, courier.y);
+
+                // Courier Name & Status Bubble
+                if (courier.status !== 'IDLE') {
+                    ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+                    ctx.roundRect(courier.x - 30, courier.y - 32, 60, 16, 6);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 9px "Plus Jakarta Sans"';
+                    const statusText = courier.status === 'PICKING_UP' ? 'Jemput' : 'Antar';
+                    ctx.fillText(statusText, courier.x, courier.y - 24);
+                }
+            });
+
+            // Weather Overlay Effect
+            if (gameState.weather === 'Hujan') {
+                ctx.fillStyle = 'rgba(15, 23, 42, 0.15)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            } else if (gameState.weather === 'Malam') {
+                ctx.fillStyle = 'rgba(15, 23, 42, 0.35)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        // UI Dashboard Updates & Renderers
+        function updateHeaderStats() {
+            document.getElementById('statMoney').innerText = `Rp ${gameState.money.toLocaleString('id-ID')}`;
+            document.getElementById('statRating').innerHTML = `<i class="fa-solid fa-star text-yellow-300 mr-1"></i>${gameState.rating}`;
+
+            // Weather Icon
+            let wIcon = '<i class="fa-solid fa-sun text-yellow-300"></i> Cerah';
+            if (gameState.weather === 'Hujan') wIcon = '<i class="fa-solid fa-cloud-rain text-blue-300"></i> Hujan';
+            if (gameState.weather === 'Malam') wIcon = '<i class="fa-solid fa-moon text-indigo-200"></i> Malam';
+            document.getElementById('statWeather').innerHTML = wIcon;
+
+            // Clock Format
+            const h = Math.floor(gameState.timeMinutes / 60).toString().padStart(2, '0');
+            const m = (gameState.timeMinutes % 60).toString().padStart(2, '0');
+            document.getElementById('statTime').innerText = `${h}:${m} WIB`;
+
+            // Rush Hour Badge
+            const rushBadge = document.getElementById('rushHourBadge');
+            if (gameState.rushHour) {
+                rushBadge.classList.remove('hidden');
+            } else {
+                rushBadge.classList.add('hidden');
+            }
+
+            // Summary Bottom Bar
+            const activeCount = couriers.filter(c => c.status !== 'IDLE').length;
+            document.getElementById('activeCouriersCount').innerText = `${activeCount}/${couriers.length}`;
+            document.getElementById('completedOrdersCount').innerText = gameState.completedOrders;
+        }
+
+        function renderOrdersList() {
+            const listEl = document.getElementById('ordersList');
+            listEl.innerHTML = '';
+
+            const filteredOrders = orders.filter(o => {
+                if (gameState.activeTab === 'food') return o.type === 'food';
+                if (gameState.activeTab === 'express') return o.type === 'express';
+                return true;
+            });
+
+            document.getElementById('countAllOrders').innerText = orders.length;
+
+            if (filteredOrders.length === 0) {
+                listEl.innerHTML = `
+                    <div class="text-center py-8 text-slate-400">
+                        <i class="fa-solid fa-box-open text-3xl mb-2 opacity-50"></i>
+                        <p class="text-xs">Tidak ada pesanan aktif saat ini</p>
+                    </div>`;
+                return;
+            }
+
+            filteredOrders.forEach(order => {
+                const isFood = order.type === 'food';
+                const card = document.createElement('div');
+                card.className = `p-3 rounded-xl border transition hover:shadow-md ${order.status === 'PENDING' ? 'bg-white border-orange-200' : 'bg-slate-50 border-slate-200'}`;
+
+                let statusBadge = `<span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Menunggu Kurir</span>`;
+                if (order.status === 'ASSIGNED' || order.status === 'PICKING') {
+                    statusBadge = `<span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Menjemput Barang</span>`;
+                } else if (order.status === 'DELIVERING') {
+                    statusBadge = `<span class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">Proses Mengantar</span>`;
+                }
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-1.5">
+                        <div class="flex items-center gap-1.5">
+                            <span class="p-1 rounded-md ${isFood ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600'} text-xs">
+                                <i class="fa-solid ${isFood ? 'fa-utensils' : 'fa-box'}"></i>
+                            </span>
+                            <span class="font-bold text-xs text-slate-800">#${order.id} - ${order.item}</span>
+                        </div>
+                        <span class="font-black text-xs text-slate-900">Rp ${order.price.toLocaleString('id-ID')}</span>
+                    </div>
+
+                    <div class="text-[11px] text-slate-500 space-y-0.5 mb-2">
+                        <div class="truncate"><i class="fa-solid fa-store text-slate-400 w-4"></i> ${order.merchant.name}</div>
+                        <div class="truncate"><i class="fa-solid fa-location-dot text-slate-400 w-4"></i> ${order.customer.name} (${order.customer.address})</div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                        ${statusBadge}
+                        <div class="flex items-center gap-1 text-[11px] font-bold ${order.timer < 15 ? 'text-red-500 animate-pulse' : 'text-slate-500'}">
+                            <i class="fa-regular fa-clock"></i> ${order.timer}s
+                        </div>
+                    </div>
+                `;
+
+                // Manual Assign options if pending
+                if (order.status === 'PENDING' && !gameState.autoAssign) {
+                    const assignBtn = document.createElement('button');
+                    assignBtn.className = "mt-2 w-full py-1 text-xs font-bold bg-[#ee4d2d] text-white rounded-lg hover:bg-orange-600 transition";
+                    assignBtn.innerText = "Assign Kurir Terdekat";
+                    assignBtn.onclick = () => tryAutoAssignOrder(order);
+                    card.appendChild(assignBtn);
+                }
+
+                listEl.appendChild(card);
+            });
+        }
+
+        function renderCouriersList() {
+            const listEl = document.getElementById('courierList');
+            listEl.innerHTML = '';
+
+            document.getElementById('countCouriers').innerText = couriers.length;
+
+            couriers.forEach(courier => {
+                const vehicle = CONFIG.vehicleTypes[courier.vehicle];
+                const card = document.createElement('div');
+                card.className = "bg-white p-3 rounded-xl border border-slate-200 shadow-sm space-y-2";
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold" style="background-color: ${vehicle.color}">
+                                <i class="fa-solid ${vehicle.icon}"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xs text-slate-800">${courier.name}</h4>
+                                <span class="text-[10px] text-slate-400">${vehicle.name}</span>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${courier.status === 'IDLE' ? 'bg-slate-100 text-slate-600' : 'bg-emerald-100 text-emerald-700'}">
+                            ${courier.status === 'IDLE' ? 'Standby' : 'Mengantar'}
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-[10px] bg-slate-50 p-2 rounded-lg text-slate-600">
+                        <div>Kecepatan: <strong>${courier.speed}x</strong></div>
+                        <div>Total Komisi: <strong>Rp ${courier.earnings.toLocaleString('id-ID')}</strong></div>
+                    </div>
+
+                    <div class="flex gap-1 pt-1">
+                        <button onclick="upgradeVehicle('${courier.id}')" class="flex-1 py-1 text-[11px] font-bold bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition">
+                            <i class="fa-solid fa-arrow-up"></i> Upgrade Kendaraan
+                        </button>
+                    </div>
+                `;
+
+                listEl.appendChild(card);
+            });
+        }
+
+        function renderMerchantsList() {
+            const listEl = document.getElementById('merchantList');
+            listEl.innerHTML = '';
+
+            merchants.forEach(m => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-3 rounded-xl border border-slate-200 shadow-sm space-y-2";
+
+                const upgradeCost = m.level * 150000;
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold ${m.type === 'food' ? 'bg-orange-500' : 'bg-blue-500'}">
+                                <i class="fa-solid ${m.type === 'food' ? 'fa-utensils' : 'fa-box'}"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xs text-slate-800">${m.name}</h4>
+                                <span class="text-[10px] text-slate-400">Level ${m.level} - Speed ${m.prepSpeed.toFixed(1)}x</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="upgradeMerchant('${m.id}')" class="w-full py-1 text-[11px] font-bold bg-slate-800 text-white rounded-lg hover:bg-slate-900 transition flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-angles-up text-yellow-400"></i> Upgrade Toko (Rp ${upgradeCost.toLocaleString('id-ID')})
+                    </button>
+                `;
+
+                listEl.appendChild(card);
+            });
+        }
+
+        // Vehicle Upgrade Logic
+        function upgradeVehicle(courierId) {
+            const courier = couriers.find(c => c.id === courierId);
+            if (!courier) return;
+
+            let nextVehicle = null;
+            if (courier.vehicle === 'bicycle') nextVehicle = 'motorcycle';
+            else if (courier.vehicle === 'motorcycle') nextVehicle = 'car';
+            else if (courier.vehicle === 'car') nextVehicle = 'ev';
+
+            if (!nextVehicle) {
+                showToast('Kendaraan sudah berada pada level maksimal!', 'info');
+                return;
+            }
+
+            const cost = CONFIG.vehicleTypes[nextVehicle].cost;
+            if (gameState.money < cost) {
+                showToast(`Saldo tidak cukup! Butuh Rp ${cost.toLocaleString('id-ID')}`, 'error');
+                return;
+            }
+
+            gameState.money -= cost;
+            courier.vehicle = nextVehicle;
+            courier.speed = CONFIG.vehicleTypes[nextVehicle].speed;
+
+            showToast(`${courier.name} berhasil di-upgrade ke ${CONFIG.vehicleTypes[nextVehicle].name}!`, 'success');
+            renderCouriersList();
+            updateHeaderStats();
+        }
+
+        // Merchant Upgrade Logic
+        function upgradeMerchant(merchantId) {
+            const merchant = merchants.find(m => m.id === merchantId);
+            if (!merchant) return;
+
+            const cost = merchant.level * 150000;
+            if (gameState.money < cost) {
+                showToast(`Saldo tidak cukup! Butuh Rp ${cost.toLocaleString('id-ID')}`, 'error');
+                return;
+            }
+
+            gameState.money -= cost;
+            merchant.level++;
+            merchant.prepSpeed += 0.3;
+
+            showToast(`${merchant.name} berhasil dinaikkan ke Level ${merchant.level}!`, 'success');
+            renderMerchantsList();
+            updateHeaderStats();
+        }
+
+        // Modal Controls & Hire System
+        function openHireModal() {
+            document.getElementById('hireModal').classList.remove('hidden');
+            const listEl = document.getElementById('candidatesList');
+            listEl.innerHTML = '';
+
+            const candidates = [
+                { name: 'Andra Speed', vehicle: 'motorcycle', salary: 150000 },
+                { name: 'Bagas Cargo', vehicle: 'car', salary: 450000 },
+                { name: 'Deni EV', vehicle: 'ev', salary: 850000 }
+            ];
+
+            candidates.forEach(cand => {
+                const vehicleConfig = CONFIG.vehicleTypes[cand.vehicle];
+                const card = document.createElement('div');
+                card.className = "p-3 border border-slate-200 rounded-xl flex justify-between items-center bg-slate-50 hover:bg-white transition";
+
+                card.innerHTML = `
+                    <div>
+                        <h4 class="font-bold text-xs text-slate-800">${cand.name}</h4>
+                        <p class="text-[10px] text-slate-500">${vehicleConfig.name} (Speed ${vehicleConfig.speed}x)</p>
+                    </div>
+                    <button onclick="confirmHire('${cand.name}', '${cand.vehicle}', ${cand.salary})" class="shopee-gradient text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm">
+                        Hire (Rp ${cand.salary.toLocaleString('id-ID')})
+                    </button>
+                `;
+                listEl.appendChild(card);
+            });
+        }
+
+        function closeHireModal() {
+            document.getElementById('hireModal').classList.add('hidden');
+        }
+
+        function confirmHire(name, vehicle, cost) {
+            if (gameState.money < cost) {
+                showToast('Saldo kas tidak mencukupi untuk merekrut!', 'error');
+                return;
+            }
+
+            gameState.money -= cost;
+            const randomNode = nodes[Math.floor(Math.random() * nodes.length)];
+
+            couriers.push({
+                id: `k${++nextCourierId}`,
+                name: name,
+                vehicle: vehicle,
+                speed: CONFIG.vehicleTypes[vehicle].speed,
+                x: randomNode.x,
+                y: randomNode.y,
+                status: 'IDLE',
+                currentOrder: null,
+                targetX: randomNode.x,
+                targetY: randomNode.y,
+                path: [],
+                earnings: 0,
+                rating: 5.0
+            });
+
+            showToast(`Berhasil merekrut kurir baru: ${name}!`, 'success');
+            closeHireModal();
+            renderCouriersList();
+            updateHeaderStats();
+        }
+
+        function openAddMerchantModal() {
+            document.getElementById('addMerchantModal').classList.remove('hidden');
+            const listEl = document.getElementById('merchantCandidatesList');
+            listEl.innerHTML = '';
+
+            const options = [
+                { name: 'Kebab Turki Super', type: 'food', cost: 200000 },
+                { name: 'Shopee Mall Official Store', type: 'express', cost: 350000 }
+            ];
+
+            options.forEach(opt => {
+                const card = document.createElement('div');
+                card.className = "p-3 border border-slate-200 rounded-xl flex justify-between items-center bg-slate-50 hover:bg-white transition";
+
+                card.innerHTML = `
+                    <div>
+                        <h4 class="font-bold text-xs text-slate-800">${opt.name}</h4>
+                        <p class="text-[10px] text-slate-500">${opt.type === 'food' ? 'Restoran Culinary' : 'Gudang Logistics'}</p>
+                    </div>
+                    <button onclick="confirmAddMerchant('${opt.name}', '${opt.type}', ${opt.cost})" class="bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm">
+                        Buka Partner (Rp ${opt.cost.toLocaleString('id-ID')})
+                    </button>
+                `;
+                listEl.appendChild(card);
+            });
+        }
+
+        function closeAddMerchantModal() {
+            document.getElementById('addMerchantModal').classList.add('hidden');
+        }
+
+        function confirmAddMerchant(name, type, cost) {
+            if (gameState.money < cost) {
+                showToast('Saldo tidak cukup!', 'error');
+                return;
+            }
+
+            gameState.money -= cost;
+            const randomNode = nodes[Math.floor(Math.random() * nodes.length)];
+
+            merchants.push({
+                id: `m${merchants.length + 1}`,
+                name: name,
+                type: type,
+                x: randomNode.x + 20,
+                y: randomNode.y - 20,
+                level: 1,
+                prepSpeed: 1,
+                node: randomNode
+            });
+
+            showToast(`Merchant baru ${name} resmi beroperasi!`, 'success');
+            closeAddMerchantModal();
+            renderMerchantsList();
+            updateHeaderStats();
+        }
+
+        // Tab Switching Controls
+        function switchOrderTab(tab) {
+            gameState.activeTab = tab;
+            ['all', 'food', 'express'].forEach(t => {
+                const btn = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`);
+                if (t === tab) {
+                    btn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-white shadow-sm text-[#ee4d2d] transition";
+                } else {
+                    btn.className = "flex-1 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/60 transition";
+                }
+            });
+            renderOrdersList();
+        }
+
+        function switchRightTab(tab) {
+            gameState.rightTab = tab;
+            if (tab === 'couriers') {
+                document.getElementById('viewCouriers').classList.remove('hidden');
+                document.getElementById('viewMerchants').classList.add('hidden');
+                document.getElementById('rightTabCouriers').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-white shadow-sm text-[#ee4d2d] transition";
+                document.getElementById('rightTabMerchants').className = "flex-1 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/60 transition";
+            } else {
+                document.getElementById('viewCouriers').classList.add('hidden');
+                document.getElementById('viewMerchants').classList.remove('hidden');
+                document.getElementById('rightTabCouriers').className = "flex-1 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/60 transition";
+                document.getElementById('rightTabMerchants').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-white shadow-sm text-[#ee4d2d] transition";
+            }
+        }
+
+        function toggleAutoAssign() {
+            gameState.autoAssign = document.getElementById('autoAssignToggle').checked;
+        }
+
+        function setSpeed(speed) {
+            gameState.gameSpeed = speed;
+            [0, 1, 2, 4].forEach(s => {
+                const btn = document.getElementById(`btnSpeed${s}`);
+                if (s === speed) {
+                    btn.className = "px-2 py-1 text-xs font-bold rounded bg-yellow-400 text-slate-900 transition";
+                } else {
+                    btn.className = "px-2 py-1 text-xs font-bold rounded bg-white/20 hover:bg-white/40 transition";
+                }
+            });
+        }
+
+        function toggleAudio() {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            document.getElementById('btnAudio').innerHTML = gameState.soundEnabled ? 
+                '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
+        }
+
+        // Toast Notification System
+        function showToast(msg, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-5 right-5 z-50 px-4 py-2.5 rounded-xl shadow-xl text-white text-xs font-bold flex items-center gap-2 transition-all transform translate-y-4 opacity-0 ${
+                type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-red-600' : 'bg-slate-800'
+            }`;
+
+            const icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-triangle-exclamation' : 'fa-info-circle';
+            toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${msg}</span>`;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Window Load & Main Game Loop
+        window.onload = function() {
+            AudioSys.init();
+            initMapGrid();
+
+            renderOrdersList();
+            renderCouriersList();
+            renderMerchantsList();
+            updateHeaderStats();
+
+            // Main Animation Frame Loop (60 FPS)
+            function animLoop() {
+                updatePositions();
+                renderMap();
+                requestAnimationFrame(animLoop);
+            }
+            animLoop();
+
+            // Logic Simulation Clock Loop (Every 1 Sec)
+            setInterval(() => {
+                gameTick();
+            }, CONFIG.tickInterval);
+        };
+    </script>
+</body>
+</html>
