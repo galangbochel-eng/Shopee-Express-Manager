@@ -63,7 +63,7 @@
         }
     </style>
 </head>
-<body class="h-screen w-screen overflow-hidden flex flex-col text-slate-100 bg-slate-950">
+<body class="h-[100dvh] w-screen overflow-hidden flex flex-col text-slate-100 bg-slate-950">
 
     <header class="shopee-gradient text-white px-3 md:px-5 py-2 shadow-xl flex justify-between items-center z-20 flex-shrink-0">
         <div class="flex items-center space-x-2 md:space-x-3">
@@ -162,7 +162,7 @@
     <div class="flex-1 flex flex-col md:flex-row overflow-hidden p-2 md:p-3 gap-2 md:gap-3 bg-slate-950 min-h-0">
 
         <!-- Left Sidebar: Orders & Customer Reviews Feed -->
-        <aside id="panelOrders" class="w-full md:w-80 bg-slate-900/90 rounded-2xl border border-slate-800 flex flex-col overflow-hidden flex-shrink-0 shadow-2xl h-full min-h-0">
+        <aside id="panelOrders" class="w-full md:w-80 bg-slate-900/90 rounded-2xl border border-slate-800 flex-col overflow-hidden flex-shrink-0 shadow-2xl h-full min-h-0 hidden md:flex">
             <div class="flex border-b border-slate-800 bg-slate-950 p-1.5 gap-1 flex-shrink-0">
                 <button id="tabOrders" onclick="switchLeftTab('orders')" class="flex-1 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-orange-400 shadow transition flex items-center justify-center gap-1">
                     <i class="fa-solid fa-boxes-packing"></i> Pesanan (<span id="countAllOrders">0</span>)
@@ -208,7 +208,7 @@
         </aside>
 
         <!-- Center Interactive Map Canvas -->
-        <main id="panelMap" class="w-full flex-1 bg-slate-900 rounded-2xl border border-slate-800 flex flex-col overflow-hidden relative min-h-[300px] h-full shadow-2xl">
+        <main id="panelMap" class="w-full flex-1 bg-slate-900 rounded-2xl border border-slate-800 flex flex-col overflow-hidden relative min-h-0 h-full shadow-2xl">
             <!-- Map Info Overlay Header -->
             <div class="absolute top-3 left-3 right-3 z-10 flex justify-between items-center pointer-events-none">
                 <div class="bg-slate-950/85 backdrop-blur-md text-white px-3 py-1.5 rounded-xl text-[10px] md:text-xs font-medium shadow-xl pointer-events-auto flex items-center gap-2 border border-slate-800">
@@ -389,59 +389,18 @@
     </div>
 
     <script>
-        const CONFIG = {
-            mapWidth: 1200,
-            mapHeight: 800,
-            tickInterval: 1000,
-            weatherTypes: ['Cerah', 'Hujan', 'Malam'],
-            vehicleTypes: {
-                bicycle: { name: 'Sepeda Ontel', speed: 1.4, capacity: 1, fuelBurn: 0, maxFuel: 100, cost: 0, icon: 'fa-bicycle' },
-                motorcycle: { name: 'Motor Matic Shopee', speed: 2.6, capacity: 2, fuelBurn: 0.3, maxFuel: 100, cost: 250000, icon: 'fa-motorcycle' },
-                car: { name: 'Mobil Box Delivery', speed: 3.4, capacity: 4, fuelBurn: 0.55, maxFuel: 130, cost: 750000, icon: 'fa-truck-pickup' },
-                ev: { name: 'EV Super Bike', speed: 4.6, capacity: 3, fuelBurn: 0.18, maxFuel: 160, cost: 1500000, icon: 'fa-bolt' }
-            },
-            skins: [
-                { id: 'shopee', name: 'ShopeeFood Orange Classic', badge: 'Shopee Edition', primary: '#ee4d2d', cost: 0, unlocked: true },
-                { id: 'cyber', name: 'Shopee Cyberpunk Neon 2088', badge: 'Cyberpunk', primary: '#06b6d4', cost: 300000, unlocked: false },
-                { id: 'gold', name: 'VIP Golden Express Elite', badge: 'VIP Gold', primary: '#eab308', cost: 800000, unlocked: false }
-            ],
-            cities: [
-                { id: 'jakarta', name: 'DKI Jakarta', desc: 'Ibu kota metropolitan, jalur Tol & landmark Monas & HI', cost: 0, unlocked: true, landmark: 'Tugu Monas & HI' },
-                { id: 'jogja', name: 'Yogyakarta', desc: 'Kota Budaya, jalur Malioboro, Tugu Jogja & Keraton', cost: 1500000, unlocked: false, landmark: 'Tugu Jogja & Malioboro' },
-                { id: 'bandung', name: 'Bandung (Pasundan)', desc: 'Kota Pegunungan, Gedung Sate & Jalan Asia Afrika', cost: 3000000, unlocked: false, landmark: 'Gedung Sate Pasundan' }
-            ]
-        };
-
-        let gameState = {
-            money: 500000,
-            currentCity: 'jakarta',
-            rating: 5.0,
-            timeMinutes: 8 * 60,
-            weather: 'Cerah',
-            gameSpeed: 1,
-            autoAssign: true,
-            leftTab: 'orders',
-            rightTab: 'couriers',
-            mobileView: 'map',
-            soundEnabled: true,
-            completedOrders: 0,
-            rushHour: false,
-            currentSkin: 'shopee',
-            flashSale: { active: false, timer: 0 }
-        };
-
-        // Active city nodes, merchants, customers, gas stations & landmarks
-        let nodes = [], merchants = [], customers = [], couriers = [], orders = [], reviews = [], gasStations = [], landmarks = [], riverPath = [];
-        let nextOrderId = 101, nextCourierId = 3;
-        let canvas, ctx;
-
-        // Mini game state
-        let activeRepairCourierId = null;
-        let repairTapCount = 0;
-
         const AudioSys = {
             ctx: null,
-            init() { try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){} },
+            init() { 
+                try { 
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)(); 
+                } catch(e){} 
+            },
+            unlockAudio() {
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume().catch(() => {});
+                }
+            },
             playBeep(freq = 600, type = 'sine', duration = 0.12) {
                 if (!gameState.soundEnabled || !this.ctx) return;
                 try {
@@ -937,9 +896,15 @@
         function drawCanvas() {
             if (!canvas || !ctx) return;
 
+            const scaleX = canvas.width / CONFIG.mapWidth;
+            const scaleY = canvas.height / CONFIG.mapHeight;
+
             // Clear Canvas
             ctx.fillStyle = '#0f172a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.save();
+            ctx.scale(scaleX, scaleY);
 
             // Draw River
             if (riverPath.length > 0) {
@@ -950,6 +915,149 @@
                 ctx.lineWidth = 28;
                 ctx.stroke();
             }
+
+            // Draw Road Connections
+            nodes.forEach(node => {
+                node.neighbors.forEach(neighbor => {
+                    ctx.beginPath();
+                    ctx.moveTo(node.x, node.y);
+                    ctx.lineTo(neighbor.x, neighbor.y);
+                    ctx.strokeStyle = gameState.rushHour ? '#ef4444' : '#334155';
+                    ctx.lineWidth = gameState.rushHour ? 10 : 8;
+                    ctx.stroke();
+
+                    // Inner road line
+                    ctx.beginPath();
+                    ctx.moveTo(node.x, node.y);
+                    ctx.lineTo(neighbor.x, neighbor.y);
+                    ctx.strokeStyle = '#475569';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                });
+            });
+
+            // Draw Landmarks
+            landmarks.forEach(lm => {
+                ctx.fillStyle = lm.color;
+                ctx.beginPath();
+                ctx.arc(lm.x, lm.y, 18, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('🏛️', lm.x, lm.y + 4);
+
+                ctx.fillStyle = '#f8fafc';
+                ctx.font = 'bold 11px sans-serif';
+                ctx.fillText(lm.name, lm.x, lm.y - 24);
+            });
+
+            // Draw Gas Stations (SPBU)
+            gasStations.forEach(spbu => {
+                ctx.fillStyle = '#f59e0b';
+                ctx.beginPath();
+                ctx.arc(spbu.x, spbu.y, 14, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#0f172a';
+                ctx.font = 'bold 10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('⛽', spbu.x, spbu.y + 3);
+            });
+
+            // Draw Merchants (Warung)
+            merchants.forEach(m => {
+                ctx.fillStyle = m.type === 'food' ? '#ee4d2d' : '#2563eb';
+                ctx.beginPath();
+                ctx.arc(m.x, m.y, 15, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(m.type === 'food' ? '🍜' : '📦', m.x, m.y + 3);
+
+                ctx.fillStyle = '#e2e8f0';
+                ctx.font = 'bold 10px sans-serif';
+                ctx.fillText(m.name, m.x, m.y - 18);
+            });
+
+            // Draw Customers
+            customers.forEach(c => {
+                ctx.fillStyle = '#10b981';
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, 12, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 9px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('🏠', c.x, c.y + 3);
+            });
+
+            // Draw Couriers
+            const activeSkin = CONFIG.skins.find(s => s.id === gameState.currentSkin) || CONFIG.skins[0];
+            couriers.forEach(c => {
+                ctx.save();
+                ctx.translate(c.x, c.y);
+
+                // Halo glow for current skin
+                ctx.fillStyle = activeSkin.primary;
+                ctx.globalAlpha = 0.3;
+                ctx.beginPath();
+                ctx.arc(0, 0, 20, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+
+                // Courier Circle Body
+                ctx.fillStyle = c.status === 'BROKEN' ? '#ef4444' : activeSkin.primary;
+                ctx.beginPath();
+                ctx.arc(0, 0, 14, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Courier Icon
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(c.status === 'BROKEN' ? '⚠️' : (c.vehicle === 'bicycle' ? '🚲' : '🛵'), 0, 3);
+
+                // Orders count badge
+                if (c.currentOrders.length > 0) {
+                    ctx.fillStyle = '#f59e0b';
+                    ctx.beginPath();
+                    ctx.arc(10, -10, 7, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = '#0f172a';
+                    ctx.font = 'black 9px sans-serif';
+                    ctx.fillText(c.currentOrders.length, 10, -7);
+                }
+
+                // Fuel level indicator line below
+                if (c.vehicle !== 'bicycle') {
+                    ctx.fillStyle = '#334155';
+                    ctx.fillRect(-12, 18, 24, 4);
+                    ctx.fillStyle = c.fuel > 30 ? '#10b981' : '#ef4444';
+                    ctx.fillRect(-12, 18, (c.fuel / 100) * 24, 4);
+                }
+
+                ctx.restore();
+            });
+
+            // Weather Effects Overlay
+            if (gameState.weather === 'Hujan') {
+                ctx.fillStyle = 'rgba(148, 163, 184, 0.15)';
+                ctx.fillRect(0, 0, CONFIG.mapWidth, CONFIG.mapHeight);
+            } else if (gameState.weather === 'Malam') {
+                ctx.fillStyle = 'rgba(3, 7, 18, 0.55)';
+                ctx.fillRect(0, 0, CONFIG.mapWidth, CONFIG.mapHeight);
+            }
+
+            ctx.restore();
+        }
 
             // Draw Road Connections
             nodes.forEach(node => {
@@ -1530,22 +1638,63 @@
 
         function switchMobileTab(tab) {
             gameState.mobileView = tab;
-            document.getElementById('panelOrders').classList.toggle('hidden', tab !== 'orders');
-            document.getElementById('panelMap').classList.toggle('hidden', tab !== 'map');
-            document.getElementById('panelManage').classList.toggle('hidden', tab !== 'manage');
+            const pOrders = document.getElementById('panelOrders');
+            const pMap = document.getElementById('panelMap');
+            const pManage = document.getElementById('panelManage');
+
+            if (window.innerWidth < 768) {
+                if (pOrders) {
+                    pOrders.classList.toggle('hidden', tab !== 'orders');
+                    pOrders.classList.toggle('flex', tab === 'orders');
+                }
+                if (pMap) {
+                    pMap.classList.toggle('hidden', tab !== 'map');
+                    pMap.classList.toggle('flex', tab === 'map');
+                }
+                if (pManage) {
+                    pManage.classList.toggle('hidden', tab !== 'manage');
+                    pManage.classList.toggle('flex', tab === 'manage');
+                }
+            } else {
+                if (pOrders) { pOrders.classList.remove('hidden'); pOrders.classList.add('flex'); }
+                if (pMap) { pMap.classList.remove('hidden'); pMap.classList.add('flex'); }
+                if (pManage) { pManage.classList.remove('hidden'); pManage.classList.add('flex'); }
+            }
+
+            const btnMap = document.getElementById('mTabMap');
+            const btnOrders = document.getElementById('mTabOrders');
+            const btnManage = document.getElementById('mTabManage');
+
+            if (btnMap) btnMap.className = `flex flex-col items-center gap-0.5 ${tab === 'map' ? 'text-orange-500 font-bold' : 'text-slate-400'}`;
+            if (btnOrders) btnOrders.className = `flex flex-col items-center gap-0.5 relative ${tab === 'orders' ? 'text-orange-500 font-bold' : 'text-slate-400'}`;
+            if (btnManage) btnManage.className = `flex flex-col items-center gap-0.5 ${tab === 'manage' ? 'text-orange-500 font-bold' : 'text-slate-400'}`;
         }
 
         function resizeCanvas() {
             canvas = document.getElementById('gameCanvas');
-            if (canvas) {
-                canvas.width = CONFIG.mapWidth;
-                canvas.height = CONFIG.mapHeight;
+            if (canvas && canvas.parentElement) {
+                const rect = canvas.parentElement.getBoundingClientRect();
+                if (rect.width > 0 && rect.height > 0) {
+                    canvas.width = rect.width;
+                    canvas.height = rect.height;
+                }
                 ctx = canvas.getContext('2d');
+                drawCanvas();
             }
         }
 
         window.onload = function() {
             AudioSys.init();
+            
+            // Touch unlock listener for mobile audio policy
+            const unlockHandler = () => {
+                AudioSys.unlockAudio();
+                document.removeEventListener('touchstart', unlockHandler);
+                document.removeEventListener('click', unlockHandler);
+            };
+            document.addEventListener('touchstart', unlockHandler);
+            document.addEventListener('click', unlockHandler);
+
             resizeCanvas();
             loadCityMapData('jakarta');
 
@@ -1556,6 +1705,8 @@
             renderMerchantsList();
             renderSkinsList();
 
+            switchMobileTab('map');
+
             // Main game loop interval
             setInterval(() => {
                 if (gameState.gameSpeed > 0) {
@@ -1564,7 +1715,10 @@
             }, CONFIG.tickInterval);
         };
 
-        window.onresize = resizeCanvas;
+        window.onresize = function() {
+            resizeCanvas();
+            switchMobileTab(gameState.mobileView);
+        };
     </script>
 </body>
 </html>
