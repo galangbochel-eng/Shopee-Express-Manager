@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delivery Empire Simulator - Shopee Food Edition</title>
+    <title>Delivery Empire Simulator - Edisi Indonesia Pro</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -50,7 +50,7 @@
 
         @keyframes pulse-glow {
             0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.08); opacity: 0.85; }
+            50% { transform: scale(1.06); opacity: 0.85; }
         }
 
         .animate-pulse-glow {
@@ -68,22 +68,27 @@
     <header class="shopee-gradient text-white px-3 md:px-5 py-2 shadow-xl flex justify-between items-center z-20 flex-shrink-0">
         <div class="flex items-center space-x-2 md:space-x-3">
             <div class="bg-white text-[#ee4d2d] p-2 rounded-2xl font-black text-xl shadow-lg flex items-center justify-center w-9 h-9 md:w-11 md:h-11">
-                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-motorcycle"></i>
             </div>
             <div>
                 <h1 class="font-black text-base md:text-xl leading-none tracking-tight flex items-center gap-2">
-                    ShopeeFood Empire
+                    ShopeeFood Indonesia Empire
                     <span id="skinBadge" class="bg-yellow-400 text-slate-900 text-[10px] md:text-xs px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider shadow">Pro Edition</span>
                 </h1>
-                <p class="text-[10px] md:text-xs text-orange-100 opacity-90 mt-0.5 hidden sm:block">Simulator Kurir, Multi-Batch Delivery & Peta Kota Organik Realtime</p>
+                <p class="text-[10px] md:text-xs text-orange-100 opacity-90 mt-0.5 hidden sm:block">Simulator Kurir Nusantara &bull; Multi-Kota, Kemacetan, SPBU & Ulasan Pelanggan</p>
             </div>
         </div>
 
         <!-- Realtime Stats Bar Header -->
-        <div class="hidden lg:flex items-center space-x-5 bg-black/25 px-4 py-1.5 rounded-2xl backdrop-blur-md border border-white/10">
+        <div class="hidden lg:flex items-center space-x-4 bg-black/25 px-4 py-1.5 rounded-2xl backdrop-blur-md border border-white/10">
             <div class="text-center">
-                <span class="text-[9px] uppercase font-bold text-orange-200 block tracking-wider">Kas Perusahaan</span>
+                <span class="text-[9px] uppercase font-bold text-orange-200 block tracking-wider">Kas Utama</span>
                 <span id="statMoney" class="text-sm font-black text-yellow-300">Rp 500.000</span>
+            </div>
+            <div class="h-6 w-px bg-white/20"></div>
+            <div class="text-center">
+                <span class="text-[9px] uppercase font-bold text-orange-200 block tracking-wider">Kota Aktif</span>
+                <span id="statCity" class="text-sm font-extrabold text-white"><i class="fa-solid fa-city text-orange-300 mr-1"></i>DKI Jakarta</span>
             </div>
             <div class="h-6 w-px bg-white/20"></div>
             <div class="text-center">
@@ -92,14 +97,14 @@
             </div>
             <div class="h-6 w-px bg-white/20"></div>
             <div class="text-center">
-                <span class="text-[9px] uppercase font-bold text-orange-200 block tracking-wider">Kondisi Cuaca</span>
+                <span class="text-[9px] uppercase font-bold text-orange-200 block tracking-wider">Cuaca</span>
                 <span id="statWeather" class="text-sm font-bold text-white flex items-center gap-1">
                     <i class="fa-solid fa-sun text-yellow-300"></i> Cerah
                 </span>
             </div>
             <div class="h-6 w-px bg-white/20"></div>
             <div class="text-center">
-                <span class="text-[9px] uppercase font-bold text-orange-200 block tracking-wider">Waktu Operasional</span>
+                <span class="text-[9px] uppercase font-bold text-orange-200 block tracking-wider">Waktu Operations</span>
                 <span id="statTime" class="text-sm font-mono font-bold text-white">08:00 WIB</span>
             </div>
         </div>
@@ -130,6 +135,9 @@
             <span id="mStatMoney" class="font-black text-yellow-400">Rp 500.000</span>
         </div>
         <div class="flex items-center gap-1">
+            <span id="mStatCity" class="font-bold text-orange-400">Jakarta</span>
+        </div>
+        <div class="flex items-center gap-1">
             <i class="fa-solid fa-star text-yellow-400"></i>
             <span id="mStatRating" class="font-bold">5.0</span>
         </div>
@@ -145,11 +153,12 @@
     <div id="bannerFlashSale" class="hidden bg-gradient-to-r from-red-600 via-orange-500 to-amber-500 text-white px-4 py-2 flex items-center justify-between text-xs font-bold shadow-lg z-30 animate-pulse flex-shrink-0">
         <div class="flex items-center gap-2">
             <i class="fa-solid fa-fire text-yellow-300 text-base"></i>
-            <span>FLASH SALE 11.11 AKTIF! Pesanan melimpah 3x Lipat + Bonus Tip Kurir!</span>
+            <span>PROMO HARBOLNAS 11.11! Pesanan membanjiri layar 3x Lipat & Plus Tip Melimpah!</span>
         </div>
-        <span id="flashTimer" class="bg-black/30 px-2 py-0.5 rounded-lg font-mono text-yellow-300">00:30</span>
+        <span id="flashTimer" class="bg-black/30 px-2.5 py-0.5 rounded-lg font-mono text-yellow-300">00:30</span>
     </div>
 
+    <!-- MAIN WRAPPER -->
     <div class="flex-1 flex flex-col md:flex-row overflow-hidden p-2 md:p-3 gap-2 md:gap-3 bg-slate-950 min-h-0">
 
         <!-- Left Sidebar: Orders & Customer Reviews Feed -->
@@ -177,8 +186,8 @@
                 </div>
 
                 <div class="p-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex justify-between items-center flex-shrink-0">
-                    <span>Daftar Pesanan Masuk</span>
-                    <span id="rushHourBadge" class="hidden bg-red-600 text-white text-[9px] px-2 py-0.5 rounded-full font-black animate-pulse">JAM SIBUK / MACET</span>
+                    <span>Daftar Order Masuk Realtime</span>
+                    <span id="rushHourBadge" class="hidden bg-red-600 text-white text-[9px] px-2 py-0.5 rounded-full font-black animate-pulse">MACET JAM SIBUK</span>
                 </div>
 
                 <div id="ordersList" class="flex-1 custom-scroll px-2.5 space-y-2 pb-3 min-h-0">
@@ -198,20 +207,22 @@
             </div>
         </aside>
 
+        <!-- Center Interactive Map Canvas -->
         <main id="panelMap" class="w-full flex-1 bg-slate-900 rounded-2xl border border-slate-800 flex flex-col overflow-hidden relative min-h-[300px] h-full shadow-2xl">
             <!-- Map Info Overlay Header -->
             <div class="absolute top-3 left-3 right-3 z-10 flex justify-between items-center pointer-events-none">
                 <div class="bg-slate-950/85 backdrop-blur-md text-white px-3 py-1.5 rounded-xl text-[10px] md:text-xs font-medium shadow-xl pointer-events-auto flex items-center gap-2 border border-slate-800">
                     <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                    <span id="mapStatusText">Peta Organik Kota Metro Realtime</span>
+                    <span id="mapStatusText">Peta DKI Jakarta (Monas & Bundaran HI)</span>
                 </div>
 
                 <!-- Shopee Styled Map Legend -->
-                <div class="bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-xl text-[10px] md:text-xs font-semibold shadow-xl text-slate-300 pointer-events-auto flex items-center gap-3 border border-slate-800">
+                <div class="bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-xl text-[10px] md:text-xs font-semibold shadow-xl text-slate-300 pointer-events-auto flex items-center gap-2.5 border border-slate-800 hidden sm:flex">
                     <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#ee4d2d] flex items-center justify-center text-[8px] text-white font-bold"><i class="fa-solid fa-utensils"></i></span> Warung</span>
                     <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#ee4d2d] border border-white flex items-center justify-center text-[8px] text-white"><i class="fa-solid fa-motorcycle"></i></span> Kurir</span>
                     <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500 flex items-center justify-center text-[8px] text-white"><i class="fa-solid fa-location-dot"></i></span> Pembeli</span>
                     <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-400 flex items-center justify-center text-[8px] text-slate-900"><i class="fa-solid fa-gas-pump"></i></span> SPBU</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-blue-500 flex items-center justify-center text-[8px] text-white"><i class="fa-solid fa-landmark"></i></span> Landmark</span>
                 </div>
             </div>
 
@@ -223,23 +234,27 @@
             <!-- Bottom Map Bar Summary -->
             <div class="h-11 border-t border-slate-800 bg-slate-900/90 backdrop-blur px-4 flex items-center justify-between text-xs font-medium text-slate-400 flex-shrink-0">
                 <div class="flex items-center gap-4">
-                    <span><i class="fa-solid fa-motorcycle text-orange-500 mr-1"></i> Kurir Aktif: <strong id="activeCouriersCount" class="text-slate-100">0/0</strong></span>
-                    <span><i class="fa-solid fa-gas-pump text-amber-400 mr-1"></i> SPBU: <strong id="gasStationsCount" class="text-slate-100">2</strong></span>
-                    <span><i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i> Terantar: <strong id="completedOrdersCount" class="text-slate-100">0</strong></span>
+                    <span><i class="fa-solid fa-motorcycle text-orange-500 mr-1"></i> Kurir Jalan: <strong id="activeCouriersCount" class="text-slate-100">0/0</strong></span>
+                    <span><i class="fa-solid fa-gas-pump text-amber-400 mr-1"></i> SPBU Pertamina: <strong id="gasStationsCount" class="text-slate-100">2</strong></span>
+                    <span><i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i> Sukses: <strong id="completedOrdersCount" class="text-slate-100">0</strong></span>
                 </div>
                 <div class="hidden sm:flex items-center gap-2 text-slate-400 text-[11px]">
-                    <i class="fa-solid fa-lightbulb text-yellow-400"></i> Kurir akan otomatis mampir SPBU jika bensin &lt; 15%!
+                    <i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Bensin &lt; 15% kurir otomatis mampir SPBU terdekat!
                 </div>
             </div>
         </main>
 
+        <!-- Right Sidebar: Fleet Management, Cities Expansion & Skins -->
         <aside id="panelManage" class="w-full md:w-80 bg-slate-900/90 rounded-2xl border border-slate-800 flex flex-col overflow-hidden flex-shrink-0 hidden md:flex shadow-2xl h-full min-h-0">
             <div class="flex border-b border-slate-800 bg-slate-950 p-1.5 gap-1 flex-shrink-0">
                 <button id="rightTabCouriers" onclick="switchRightTab('couriers')" class="flex-1 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-orange-400 shadow transition">
                     Armada (<span id="countCouriers">0</span>)
                 </button>
+                <button id="rightTabCities" onclick="switchRightTab('cities')" class="flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:bg-slate-800/60 transition">
+                    Kota (Ekspansi)
+                </button>
                 <button id="rightTabMerchants" onclick="switchRightTab('merchants')" class="flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:bg-slate-800/60 transition">
-                    Warung & SPBU
+                    Mitra Warung
                 </button>
                 <button id="rightTabSkins" onclick="switchRightTab('skins')" class="flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:bg-slate-800/60 transition">
                     Skin / Uniform
@@ -249,7 +264,7 @@
             <!-- Couriers Tab View -->
             <div id="viewCouriers" class="flex-1 flex flex-col overflow-hidden min-h-0">
                 <div class="p-2.5 border-b border-slate-800 flex justify-between items-center bg-slate-800/40 flex-shrink-0">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Kelola & Isi Bensin</span>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Kelola Driver & Bensin</span>
                     <button onclick="openHireModal()" class="shopee-gradient text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow hover:opacity-90 transition flex items-center gap-1">
                         <i class="fa-solid fa-user-plus"></i> Rekrut Driver
                     </button>
@@ -259,12 +274,22 @@
                 </div>
             </div>
 
+            <!-- Multi-City Expansion View -->
+            <div id="viewCities" class="flex-1 flex flex-col overflow-hidden hidden min-h-0">
+                <div class="p-2.5 border-b border-slate-800 bg-slate-800/40 flex-shrink-0">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Ekspansi Kota Baru Nusantara</span>
+                </div>
+                <div id="citiesList" class="flex-1 custom-scroll p-2.5 space-y-2.5 min-h-0">
+                    <!-- City Cards -->
+                </div>
+            </div>
+
             <!-- Merchants & SPBU Tab View -->
             <div id="viewMerchants" class="flex-1 flex flex-col overflow-hidden hidden min-h-0">
                 <div class="p-2.5 border-b border-slate-800 flex justify-between items-center bg-slate-800/40 flex-shrink-0">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Warung & SPBU</span>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Warung & SPBU Pertamina</span>
                     <button onclick="openAddMerchantModal()" class="bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow hover:bg-blue-700 transition flex items-center gap-1">
-                        <i class="fa-solid fa-plus"></i> Tambah Lokasi
+                        <i class="fa-solid fa-plus"></i> Tambah Mitra
                     </button>
                 </div>
                 <div id="merchantList" class="flex-1 custom-scroll p-2.5 space-y-2.5 min-h-0">
@@ -275,7 +300,7 @@
             <!-- Skins & Customization Tab View -->
             <div id="viewSkins" class="flex-1 flex flex-col overflow-hidden hidden min-h-0">
                 <div class="p-2.5 border-b border-slate-800 bg-slate-800/40 flex-shrink-0">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Tema Branding & Seragam</span>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Seragam & Sticker Armada</span>
                 </div>
                 <div id="skinsList" class="flex-1 custom-scroll p-2.5 space-y-2.5 min-h-0">
                     <!-- Skins rendered here -->
@@ -302,6 +327,7 @@
     </nav>
 
     <!-- Modals -->
+    <!-- Modal Hire Driver -->
     <div id="hireModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl border border-slate-800 overflow-hidden text-slate-100">
             <div class="shopee-gradient p-4 text-white flex justify-between items-center">
@@ -311,23 +337,53 @@
                 <button onclick="closeHireModal()" class="text-white/80 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-4 space-y-3">
-                <p class="text-xs text-slate-400">Pilih driver handal dengan kapasitas tas & jenis kendaraan sesuai kebutuhan armada.</p>
+                <p class="text-xs text-slate-400">Pilih driver profesional dengan jenis kendaraan & kapasitas muat sesuai kebutuhan kota.</p>
                 <div id="candidatesList" class="space-y-2.5 max-h-80 custom-scroll pr-1"></div>
             </div>
         </div>
     </div>
 
+    <!-- Modal Add Merchant / SPBU -->
     <div id="addMerchantModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl border border-slate-800 overflow-hidden text-slate-100">
             <div class="bg-blue-600 p-4 text-white flex justify-between items-center">
                 <h3 class="font-bold text-base flex items-center gap-2">
-                    <i class="fa-solid fa-shop"></i> Buka Partner Warung / SPBU
+                    <i class="fa-solid fa-shop"></i> Buka Mitra Warung / SPBU
                 </h3>
                 <button onclick="closeAddMerchantModal()" class="text-white/80 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-4 space-y-3">
-                <p class="text-xs text-slate-400">Tambah titik Mitra Warung atau SPBU di wilayah peta kota yang belum terjangkau.</p>
+                <p class="text-xs text-slate-400">Buka titik kuliner favorit khas daerah atau SPBU Pertamina tambahan.</p>
                 <div id="merchantCandidatesList" class="space-y-2.5 max-h-80 custom-scroll pr-1"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mini-Game Reparasi Motor Modal -->
+    <div id="repairModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl border border-red-500/50 overflow-hidden text-slate-100 text-center">
+            <div class="bg-gradient-to-r from-red-600 to-amber-600 p-4 text-white">
+                <h3 class="font-black text-lg flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-wrench"></i> Mini-Game Reparasi Motor!
+                </h3>
+                <p class="text-xs text-orange-100 mt-1">Tap/Klik cepat tombol di bawah untuk memperbaiki mesin mogok!</p>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="text-xs text-slate-400" id="repairTargetText">Driver: <strong id="repairDriverName" class="text-white">...</strong></div>
+                
+                <!-- Progress Bar Mini Game -->
+                <div class="w-full bg-slate-800 rounded-full h-5 p-1 border border-slate-700">
+                    <div id="repairProgressBar" class="bg-gradient-to-r from-amber-400 to-emerald-400 h-full rounded-full transition-all duration-100" style="width: 0%"></div>
+                </div>
+
+                <button id="btnTapRepair" onclick="tapRepairEngine()" class="w-full py-4 bg-orange-600 hover:bg-orange-500 text-white font-black rounded-2xl text-lg shadow-xl active:scale-95 transition transform">
+                    🔨 TAP CEPAT DI SINI! (<span id="repairClicksCount">0</span>/10)
+                </button>
+
+                <div class="flex justify-between items-center text-[11px] text-slate-500 pt-2 border-t border-slate-800">
+                    <span>Atau gunakan opsi Derek SPBU (Rp 25.000)</span>
+                    <button onclick="closeRepairModal()" class="text-slate-400 hover:text-white underline">Tutup</button>
+                </div>
             </div>
         </div>
     </div>
@@ -339,22 +395,27 @@
             tickInterval: 1000,
             weatherTypes: ['Cerah', 'Hujan', 'Malam'],
             vehicleTypes: {
-                bicycle: { name: 'Sepeda Ontel', speed: 1.4, capacity: 1, fuelBurn: 0, maxFuel: 100, cost: 0, icon: 'fa-bicycle', color: '#94a3b8' },
-                motorcycle: { name: 'Motor Matic Shopee', speed: 2.6, capacity: 2, fuelBurn: 0.3, maxFuel: 100, cost: 250000, icon: 'fa-motorcycle', color: '#ee4d2d' },
-                car: { name: 'Mobil Van Delivery', speed: 3.4, capacity: 4, fuelBurn: 0.55, maxFuel: 130, cost: 750000, icon: 'fa-truck-pickup', color: '#3b82f6' },
-                ev: { name: 'EV Super Bike', speed: 4.6, capacity: 3, fuelBurn: 0.2, maxFuel: 160, cost: 1500000, icon: 'fa-bolt', color: '#10b981' }
+                bicycle: { name: 'Sepeda Ontel', speed: 1.4, capacity: 1, fuelBurn: 0, maxFuel: 100, cost: 0, icon: 'fa-bicycle' },
+                motorcycle: { name: 'Motor Matic Shopee', speed: 2.6, capacity: 2, fuelBurn: 0.3, maxFuel: 100, cost: 250000, icon: 'fa-motorcycle' },
+                car: { name: 'Mobil Box Delivery', speed: 3.4, capacity: 4, fuelBurn: 0.55, maxFuel: 130, cost: 750000, icon: 'fa-truck-pickup' },
+                ev: { name: 'EV Super Bike', speed: 4.6, capacity: 3, fuelBurn: 0.18, maxFuel: 160, cost: 1500000, icon: 'fa-bolt' }
             },
             skins: [
-                { id: 'shopee', name: 'ShopeeFood Orange Classic', badge: 'Shopee Edition', primary: '#ee4d2d', secondary: '#ff6633', cost: 0, unlocked: true },
-                { id: 'cyber', name: 'Cyberpunk Neon 2088', badge: 'Cyberpunk', primary: '#06b6d4', secondary: '#3b82f6', cost: 300000, unlocked: false },
-                { id: 'gold', name: 'Golden VIP Delivery', badge: 'VIP Gold', primary: '#eab308', secondary: '#ca8a04', cost: 800000, unlocked: false }
+                { id: 'shopee', name: 'ShopeeFood Orange Classic', badge: 'Shopee Edition', primary: '#ee4d2d', cost: 0, unlocked: true },
+                { id: 'cyber', name: 'Shopee Cyberpunk Neon 2088', badge: 'Cyberpunk', primary: '#06b6d4', cost: 300000, unlocked: false },
+                { id: 'gold', name: 'VIP Golden Express Elite', badge: 'VIP Gold', primary: '#eab308', cost: 800000, unlocked: false }
+            ],
+            cities: [
+                { id: 'jakarta', name: 'DKI Jakarta', desc: 'Ibu kota metropolitan, jalur Tol & landmark Monas & HI', cost: 0, unlocked: true, landmark: 'Tugu Monas & HI' },
+                { id: 'jogja', name: 'Yogyakarta', desc: 'Kota Budaya, jalur Malioboro, Tugu Jogja & Keraton', cost: 1500000, unlocked: false, landmark: 'Tugu Jogja & Malioboro' },
+                { id: 'bandung', name: 'Bandung (Pasundan)', desc: 'Kota Pegunungan, Gedung Sate & Jalan Asia Afrika', cost: 3000000, unlocked: false, landmark: 'Gedung Sate Pasundan' }
             ]
         };
 
         let gameState = {
             money: 500000,
+            currentCity: 'jakarta',
             rating: 5.0,
-            ratingCount: 1,
             timeMinutes: 8 * 60,
             weather: 'Cerah',
             gameSpeed: 1,
@@ -369,9 +430,14 @@
             flashSale: { active: false, timer: 0 }
         };
 
-        let nodes = [], merchants = [], customers = [], couriers = [], orders = [], reviews = [], gasStations = [], riverPath = [];
-        let nextOrderId = 101, nextCourierId = 2;
+        // Active city nodes, merchants, customers, gas stations & landmarks
+        let nodes = [], merchants = [], customers = [], couriers = [], orders = [], reviews = [], gasStations = [], landmarks = [], riverPath = [];
+        let nextOrderId = 101, nextCourierId = 3;
         let canvas, ctx;
+
+        // Mini game state
+        let activeRepairCourierId = null;
+        let repairTapCount = 0;
 
         const AudioSys = {
             ctx: null,
@@ -398,125 +464,172 @@
                 setTimeout(() => this.playBeep(783.99, 'triangle', 0.2), 160);
             },
             playOrderNew() { this.playBeep(880, 'sine', 0.08); },
-            playRefuel() { this.playBeep(300, 'sawtooth', 0.3); },
+            playRefuel() { this.playBeep(320, 'sawtooth', 0.25); },
+            playRepair() { this.playBeep(450, 'square', 0.1); },
             playSiren() {
                 this.playBeep(900, 'sine', 0.15);
                 setTimeout(() => this.playBeep(1200, 'sine', 0.2), 150);
             }
         };
 
-        function initOrganicMapGrid() {
-            canvas = document.getElementById('gameCanvas');
-            if (canvas) ctx = canvas.getContext('2d');
+        function loadCityMapData(cityId) {
+            gameState.currentCity = cityId;
+            const statusText = document.getElementById('mapStatusText');
+            const cityConfig = CONFIG.cities.find(c => c.id === cityId);
+            if (statusText && cityConfig) statusText.innerText = `Peta ${cityConfig.name} (${cityConfig.landmark})`;
 
-            nodes = [
-                // Ring Road / Utama
-                { id: 0, x: 120, y: 150, neighbors: [] },
-                { id: 1, x: 400, y: 120, neighbors: [] },
-                { id: 2, x: 750, y: 110, neighbors: [] },
-                { id: 3, x: 1080, y: 160, neighbors: [] },
-                { id: 4, x: 1120, y: 420, neighbors: [] },
-                { id: 5, x: 1050, y: 680, neighbors: [] },
-                { id: 6, x: 700, y: 720, neighbors: [] },
-                { id: 7, x: 380, y: 700, neighbors: [] },
-                { id: 8, x: 100, y: 650, neighbors: [] },
-                { id: 9, x: 80, y: 380, neighbors: [] },
+            if (cityId === 'jakarta') {
+                // DKI JAKARTA MAP: Monas Center + Bundaran HI + Sudirman + Ciliwung
+                nodes = [
+                    { id: 0, x: 150, y: 150, neighbors: [] }, // Ancol North
+                    { id: 1, x: 600, y: 120, neighbors: [] }, // Kemayoran
+                    { id: 2, x: 1050, y: 150, neighbors: [] }, // Sunter/Kelapa Gading
+                    { id: 3, x: 1080, y: 450, neighbors: [] }, // Pulo Gadung
+                    { id: 4, x: 1050, y: 700, neighbors: [] }, // Cawang / East
+                    { id: 5, x: 600, y: 720, neighbors: [] }, // Pancoran / South
+                    { id: 6, x: 150, y: 700, neighbors: [] }, // Senayan / Palmerah
+                    { id: 7, x: 120, y: 420, neighbors: [] }, // Grogol West
 
-                // City Center Roundabout / Plaza (Pusat Kota)
-                { id: 10, x: 580, y: 380, neighbors: [] }, // Bundaran Utama
-                { id: 11, x: 500, y: 300, neighbors: [] },
-                { id: 12, x: 660, y: 300, neighbors: [] },
-                { id: 13, x: 660, y: 460, neighbors: [] },
-                { id: 14, x: 500, y: 460, neighbors: [] },
+                    // Center Monas & HI Roundabout
+                    { id: 8, x: 600, y: 320, neighbors: [] }, // Monas Center
+                    { id: 9, x: 600, y: 480, neighbors: [] }, // Bundaran HI
+                    { id: 10, x: 420, y: 400, neighbors: [] }, // Tanah Abang
+                    { id: 11, x: 780, y: 400, neighbors: [] }  // Senen / Manggarai
+                ];
 
-                // Inner Arterials (Jalan Penghubung Diagonal & Melengkung)
-                { id: 15, x: 280, y: 260, neighbors: [] },
-                { id: 16, x: 880, y: 250, neighbors: [] },
-                { id: 17, x: 900, y: 550, neighbors: [] },
-                { id: 18, x: 280, y: 530, neighbors: [] },
-                { id: 19, x: 580, y: 200, neighbors: [] },
-                { id: 20, x: 580, y: 580, neighbors: [] }
-            ];
+                connectSeq([0,1,2,3,4,5,6,7,0]);
+                connectSeq([8,9]);
+                connectSeq([8,1,10,6]);
+                connectSeq([8,11,3]);
+                connectSeq([9,5]); connectSeq([9,10]); connectSeq([9,11]);
 
-            // Connect Ring Road
-            const ringSeq = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
-            for (let i = 0; i < ringSeq.length - 1; i++) connectNodes(nodes[ringSeq[i]], nodes[ringSeq[i+1]]);
+                riverPath = [{ x: 50, y: 100 }, { x: 380, y: 300 }, { x: 600, y: 420 }, { x: 820, y: 550 }, { x: 1150, y: 750 }];
 
-            // Connect Roundabout Center
-            const centerSeq = [11, 12, 13, 14, 11];
-            for (let i = 0; i < centerSeq.length - 1; i++) connectNodes(nodes[centerSeq[i]], nodes[centerSeq[i+1]]);
+                landmarks = [
+                    { name: 'Monumen Nasional (Monas)', x: 600, y: 320, icon: '\uf44b', color: '#eab308' },
+                    { name: 'Bundaran HI', x: 600, y: 480, icon: '\uf2e7', color: '#3b82f6' }
+                ];
 
-            // Connect Radial Spoke Roads
-            connectNodes(nodes[10], nodes[11]);
-            connectNodes(nodes[10], nodes[12]);
-            connectNodes(nodes[10], nodes[13]);
-            connectNodes(nodes[10], nodes[14]);
+                gasStations = [
+                    { id: 'spbu1', name: 'SPBU Pertamina Pasti Pas Sudirman', level: 1, x: 520, y: 480, node: nodes[9] },
+                    { id: 'spbu2', name: 'Shopee EV Supercharge Pancoran', level: 1, x: 650, y: 700, node: nodes[5] }
+                ];
 
-            connectNodes(nodes[15], nodes[0]);
-            connectNodes(nodes[15], nodes[1]);
-            connectNodes(nodes[15], nodes[11]);
-            connectNodes(nodes[15], nodes[9]);
+                merchants = [
+                    { id: 'm1', name: 'Soto Betawi H. Husein', type: 'food', rating: 4.9, x: 400, y: 380, level: 1, prepSpeed: 1, node: nodes[10] },
+                    { id: 'm2', name: 'Martabak San Francisco HI', type: 'food', rating: 4.8, x: 640, y: 510, level: 1, prepSpeed: 1, node: nodes[9] },
+                    { id: 'm3', name: 'Shopee Central Warehouse Jakarta', type: 'express', rating: 5.0, x: 1020, y: 180, level: 1, prepSpeed: 1.2, node: nodes[2] }
+                ];
 
-            connectNodes(nodes[19], nodes[1]);
-            connectNodes(nodes[19], nodes[2]);
-            connectNodes(nodes[19], nodes[11]);
-            connectNodes(nodes[19], nodes[12]);
+                customers = [
+                    { id: 'c1', name: 'Bpk. Hendra', address: 'Apartemen Sudirman Suites', x: 560, y: 680, node: nodes[5] },
+                    { id: 'c2', name: 'Siska (Grogol)', address: 'Kost Green Garden', x: 120, y: 460, node: nodes[7] },
+                    { id: 'c3', name: 'Kantor BUMN Monas', address: 'Jl. Medan Merdeka Barat', x: 640, y: 300, node: nodes[8] }
+                ];
+            } else if (cityId === 'jogja') {
+                // YOGYAKARTA MAP
+                nodes = [
+                    { id: 0, x: 600, y: 150, neighbors: [] }, // Tugu Jogja
+                    { id: 1, x: 600, y: 350, neighbors: [] }, // Stasiun Tugu / Malioboro North
+                    { id: 2, x: 600, y: 520, neighbors: [] }, // Titik Nol KM / Benteng
+                    { id: 3, x: 600, y: 700, neighbors: [] }, // Alun-Alun Utara / Keraton
+                    { id: 4, x: 200, y: 350, neighbors: [] }, // Pingit / Barat
+                    { id: 5, x: 1000, y: 350, neighbors: [] }, // Lempuyangan / Timur
+                    { id: 6, x: 200, y: 700, neighbors: [] }, // Bugisan / Selatan Barat
+                    { id: 7, x: 1000, y: 700, neighbors: [] }  // Umbulharjo / Selatan Timur
+                ];
 
-            connectNodes(nodes[16], nodes[2]);
-            connectNodes(nodes[16], nodes[3]);
-            connectNodes(nodes[16], nodes[12]);
+                connectSeq([0,1,2,3]);
+                connectSeq([4,1,5]);
+                connectSeq([6,2,7]);
+                connectSeq([4,6,3,7,5,0,4]);
 
-            connectNodes(nodes[17], nodes[4]);
-            connectNodes(nodes[17], nodes[5]);
-            connectNodes(nodes[17], nodes[13]);
+                riverPath = [{ x: 350, y: 50 }, { x: 380, y: 400 }, { x: 420, y: 800 }];
 
-            connectNodes(nodes[20], nodes[6]);
-            connectNodes(nodes[20], nodes[7]);
-            connectNodes(nodes[20], nodes[13]);
-            connectNodes(nodes[20], nodes[14]);
+                landmarks = [
+                    { name: 'Tugu Yogyakarta', x: 600, y: 150, icon: '\uf44b', color: '#eab308' },
+                    { name: 'Jalan Malioboro', x: 600, y: 350, icon: '\uf54e', color: '#ee4d2d' },
+                    { name: 'Keraton Jogja', x: 600, y: 700, icon: '\uf015', color: '#10b981' }
+                ];
 
-            connectNodes(nodes[18], nodes[7]);
-            connectNodes(nodes[18], nodes[8]);
-            connectNodes(nodes[18], nodes[14]);
+                gasStations = [
+                    { id: 'spbu1', name: 'SPBU Pertamina Malioboro', level: 1, x: 650, y: 350, node: nodes[1] },
+                    { id: 'spbu2', name: 'SPBU Umbulharjo Jogja', level: 1, x: 950, y: 680, node: nodes[7] }
+                ];
 
-            // River Path Points (Sungai Kota)
-            riverPath = [
-                { x: 0, y: 280 }, { x: 300, y: 340 }, { x: 520, y: 220 },
-                { x: 780, y: 220 }, { x: 1000, y: 320 }, { x: 1200, y: 290 }
-            ];
+                merchants = [
+                    { id: 'm1', name: 'Gudeg Yu Djum Malioboro', type: 'food', rating: 5.0, x: 560, y: 380, level: 1, prepSpeed: 1, node: nodes[1] },
+                    { id: 'm2', name: 'Bakpia Pathok 25', type: 'food', rating: 4.9, x: 220, y: 380, level: 1, prepSpeed: 1, node: nodes[4] }
+                ];
 
-            // Gas Stations (SPBU Pertamax & EV Charge)
-            gasStations = [
-                { id: 'spbu1', name: 'SPBU Pertamax Central 01', level: 1, speedBonus: 1.0, x: nodes[15].x - 30, y: nodes[15].y + 35, node: nodes[15] },
-                { id: 'spbu2', name: 'Shopee EV Supercharge Station', level: 1, speedBonus: 1.2, x: nodes[17].x + 30, y: nodes[17].y - 35, node: nodes[17] }
-            ];
+                customers = [
+                    { id: 'c1', name: 'Mas Dimas', address: 'Jl. Solo Lempuyangan', x: 1020, y: 320, node: nodes[5] },
+                    { id: 'c2', name: 'Mbak Nisa', address: 'Alun-Alun Kidul', x: 640, y: 720, node: nodes[3] }
+                ];
+            } else if (cityId === 'bandung') {
+                // BANDUNG MAP
+                nodes = [
+                    { id: 0, x: 600, y: 120, neighbors: [] }, // Dago Atas
+                    { id: 1, x: 600, y: 320, neighbors: [] }, // Gedung Sate
+                    { id: 2, x: 600, y: 520, neighbors: [] }, // Asia Afrika
+                    { id: 3, x: 600, y: 720, neighbors: [] }, // Buah Batu
+                    { id: 4, x: 180, y: 320, neighbors: [] }, // Pasteur / Tol
+                    { id: 5, x: 1020, y: 320, neighbors: [] }, // Cicaheum
+                    { id: 6, x: 180, y: 720, neighbors: [] }, // Kopo
+                    { id: 7, x: 1020, y: 720, neighbors: [] }  // Kiaracondong
+                ];
 
-            // Shopee Food Merchants (Kuliner & Express Depot)
-            merchants = [
-                { id: 'm1', name: 'Ayam Geprek Sambal Ijo', type: 'food', rating: 4.9, x: nodes[11].x - 45, y: nodes[11].y - 30, level: 1, prepSpeed: 1, node: nodes[11] },
-                { id: 'm2', name: 'Boba Fresh Milk 99', type: 'food', rating: 4.8, x: nodes[12].x + 40, y: nodes[12].y - 35, level: 1, prepSpeed: 1, node: nodes[12] },
-                { id: 'm3', name: 'Nasi Padang Sederhana', type: 'food', rating: 5.0, x: nodes[18].x - 40, y: nodes[18].y + 30, level: 1, prepSpeed: 1.1, node: nodes[18] },
-                { id: 'm4', name: 'Shopee Central Warehouse', type: 'express', rating: 4.9, x: nodes[16].x + 40, y: nodes[16].y - 30, level: 1, prepSpeed: 1.3, node: nodes[16] }
-            ];
+                connectSeq([0,1,2,3]);
+                connectSeq([4,1,5]);
+                connectSeq([6,2,7]);
+                connectSeq([4,0,5,7,3,6,4]);
 
-            // Customers
-            customers = [
-                { id: 'c1', name: 'Bpk. Budi', address: 'Perum Gading Mas', x: nodes[0].x - 35, y: nodes[0].y - 35, node: nodes[0] },
-                { id: 'c2', name: 'Ibu Ani', address: 'Jl. Merdeka No. 88', x: nodes[3].x + 35, y: nodes[3].y - 30, node: nodes[3] },
-                { id: 'c3', name: 'Siska (Kost Blue)', address: 'Komplek Permata B2', x: nodes[5].x + 35, y: nodes[5].y + 35, node: nodes[5] },
-                { id: 'c4', name: 'Andi Tech', address: 'Jl. Melati Indah 12', x: nodes[8].x - 35, y: nodes[8].y + 35, node: nodes[8] }
-            ];
+                riverPath = [{ x: 50, y: 600 }, { x: 600, y: 640 }, { x: 1150, y: 620 }];
 
-            // Couriers (Shopee Food Drivers)
-            couriers = [
-                { id: 'k1', name: 'Rizky (Shopee Driver 01)', vehicle: 'motorcycle', speed: CONFIG.vehicleTypes.motorcycle.speed, capacity: CONFIG.vehicleTypes.motorcycle.capacity, fuelBurn: CONFIG.vehicleTypes.motorcycle.fuelBurn, fuel: 100, x: nodes[10].x, y: nodes[10].y, status: 'IDLE', currentOrders: [], path: [], earnings: 0, rating: 5.0 },
-                { id: 'k2', name: 'Siti Eco (Driver Sepeda)', vehicle: 'bicycle', speed: CONFIG.vehicleTypes.bicycle.speed, capacity: CONFIG.vehicleTypes.bicycle.capacity, fuelBurn: CONFIG.vehicleTypes.bicycle.fuelBurn, fuel: 100, x: nodes[14].x, y: nodes[14].y, status: 'IDLE', currentOrders: [], path: [], earnings: 0, rating: 4.9 }
-            ];
+                landmarks = [
+                    { name: 'Gedung Sate Pasundan', x: 600, y: 320, icon: '\uf19c', color: '#3b82f6' },
+                    { name: 'Jl. Asia Afrika Bandung', x: 600, y: 520, icon: '\uf54e', color: '#10b981' }
+                ];
+
+                gasStations = [
+                    { id: 'spbu1', name: 'SPBU Pertamina Pasteur', level: 1, x: 220, y: 320, node: nodes[4] },
+                    { id: 'spbu2', name: 'SPBU Dago Bandung', level: 1, x: 640, y: 150, node: nodes[0] }
+                ];
+
+                merchants = [
+                    { id: 'm1', name: 'Batagor Riri Dago', type: 'food', rating: 4.9, x: 550, y: 280, level: 1, prepSpeed: 1, node: nodes[1] },
+                    { id: 'm2', name: 'Seblak Bandung Pedas', type: 'food', rating: 4.8, x: 640, y: 550, level: 1, prepSpeed: 1, node: nodes[2] }
+                ];
+
+                customers = [
+                    { id: 'c1', name: 'Teh Asep', address: 'Komplek Pasteur Indah', x: 140, y: 350, node: nodes[4] },
+                    { id: 'c2', name: 'Kang Cecep', address: 'Buah Batu Residence', x: 640, y: 750, node: nodes[3] }
+                ];
+            }
+
+            if (couriers.length === 0) {
+                couriers = [
+                    { id: 'k1', name: 'Rizky (Driver Shopee 01)', vehicle: 'motorcycle', speed: CONFIG.vehicleTypes.motorcycle.speed, capacity: CONFIG.vehicleTypes.motorcycle.capacity, fuelBurn: CONFIG.vehicleTypes.motorcycle.fuelBurn, fuel: 100, x: nodes[0].x, y: nodes[0].y, status: 'IDLE', currentOrders: [], path: [] },
+                    { id: 'k2', name: 'Siti Eco (Driver Sepeda)', vehicle: 'bicycle', speed: CONFIG.vehicleTypes.bicycle.speed, capacity: CONFIG.vehicleTypes.bicycle.capacity, fuelBurn: CONFIG.vehicleTypes.bicycle.fuelBurn, fuel: 100, x: nodes[1].x, y: nodes[1].y, status: 'IDLE', currentOrders: [], path: [] }
+                ];
+            } else {
+                couriers.forEach((c, idx) => {
+                    const targetNode = nodes[idx % nodes.length];
+                    c.x = targetNode.x; c.y = targetNode.y; c.path = []; c.status = 'IDLE'; c.currentOrders = [];
+                });
+            }
+
+            orders = [];
+            document.getElementById('statCity').innerText = cityConfig ? cityConfig.name : cityId;
+            document.getElementById('mStatCity').innerText = cityConfig ? cityConfig.name : cityId;
         }
 
-        function connectNodes(n1, n2) {
-            if (!n1.neighbors.includes(n2)) n1.neighbors.push(n2);
-            if (!n2.neighbors.includes(n1)) n2.neighbors.push(n1);
+        function connectSeq(arr) {
+            for (let i = 0; i < arr.length - 1; i++) {
+                let n1 = nodes[arr[i]], n2 = nodes[arr[i+1]];
+                if (!n1.neighbors.includes(n2)) n1.neighbors.push(n2);
+                if (!n2.neighbors.includes(n1)) n2.neighbors.push(n1);
+            }
         }
 
         function findShortestPath(startNode, endNode) {
@@ -536,10 +649,7 @@
                 current.neighbors.forEach(neighbor => {
                     if (unvisited.has(neighbor)) {
                         let baseDist = Math.hypot(current.x - neighbor.x, current.y - neighbor.y);
-                        // Rush hour congestion multiplier on main ring road
-                        if (gameState.rushHour && (current.id <= 9 && neighbor.id <= 9)) {
-                            baseDist *= 1.8;
-                        }
+                        if (gameState.rushHour && (current.id % 2 === 0)) baseDist *= 1.8;
                         let alt = distances[current.id] + baseDist;
                         if (alt < distances[neighbor.id]) { distances[neighbor.id] = alt; previous[neighbor.id] = current; }
                     }
@@ -564,774 +674,897 @@
             if (orders.length >= 14) return;
             const isFood = Math.random() > 0.3;
             const availableMerchants = merchants.filter(m => isFood ? m.type === 'food' : m.type === 'express');
-            if (availableMerchants.length === 0) return;
+            if (availableMerchants.length === 0 || customers.length === 0) return;
 
             const merchant = availableMerchants[Math.floor(Math.random() * availableMerchants.length)];
             const customer = customers[Math.floor(Math.random() * customers.length)];
-            const dist = Math.hypot(merchant.x - customer.x, merchant.y - customer.y);
-            const multiplier = (isFlashSale ? 2.5 : gameState.rushHour ? 1.8 : 1.0) * (1 + (merchant.level - 1) * 0.15);
-            const price = Math.round((16000 + dist * 140) * multiplier);
+            
+            const foodNames = ['Ayam Geprek Sambal Ijo', 'Nasi Goreng Spesial Telur', 'Es Teh Manis Jumbo', 'Soto Ayam Madura', 'Kopi Susu Gula Aren', 'Seblak Seafood Pedas'];
+            const expressItems = ['Dokumen Kantor BUMN', 'Paket Shopee Express Premium', 'Kaos Distro Original', 'Aksesoris Gadget Neon'];
 
-            const itemsPool = isFood 
-                ? ['Ayam Geprek Mozzarella', 'Boba Milk Tea Jumbo', 'Nasi Padang Rendang', 'Kebab Beef Super', 'Es Teh Solo Jumbo']
-                : ['Shopee Package Express', 'Jaket Custom Hoodie', 'Skincare Glow Kit', 'Smartphone Case Neon'];
+            const itemName = isFood ? foodNames[Math.floor(Math.random() * foodNames.length)] : expressItems[Math.floor(Math.random() * expressItems.length)];
+            const basePrice = isFood ? Math.floor(Math.random() * 35000) + 15000 : Math.floor(Math.random() * 50000) + 20000;
+            const fee = Math.floor(basePrice * (isFlashSale ? 0.35 : 0.25));
 
             const newOrder = {
-                id: nextOrderId++,
-                type: isFood ? 'food' : 'express',
+                id: 'ORD-' + nextOrderId++,
+                item: itemName,
                 merchant: merchant,
                 customer: customer,
-                item: itemsPool[Math.floor(Math.random() * itemsPool.length)],
-                price: price,
-                timer: isFlashSale ? 50 : 45,
+                fee: fee,
+                tip: isFlashSale ? Math.floor(Math.random() * 15000) + 5000 : (Math.random() > 0.5 ? 5000 : 0),
                 status: 'PENDING',
                 assignedCourierId: null,
-                isFlashSale: isFlashSale
+                createdAt: gameState.timeMinutes
             };
 
             orders.push(newOrder);
             AudioSys.playOrderNew();
+
+            if (gameState.autoAssign) autoAssignOrders();
             renderOrdersList();
-            if (gameState.autoAssign) tryAutoAssignOrders();
         }
 
-        /* Multi-order Batching Algorithm */
-        function tryAutoAssignOrders() {
+        function autoAssignOrders() {
             const pendingOrders = orders.filter(o => o.status === 'PENDING');
-            if (pendingOrders.length === 0) return;
-
-            couriers.forEach(courier => {
-                if (courier.fuel <= 12 || courier.status === 'BROKEN_DOWN' || courier.status === 'REFUELING') return;
-
-                // Check remaining capacity for batching
-                const currentCount = courier.currentOrders.length;
-                if (currentCount >= courier.capacity) return;
-
-                pendingOrders.forEach(order => {
-                    if (order.status !== 'PENDING') return;
-                    if (courier.currentOrders.length >= courier.capacity) return;
-
-                    // Calculate distance proximity
-                    let lastLoc = courier.currentOrders.length > 0 
-                        ? courier.currentOrders[courier.currentOrders.length - 1].merchant 
-                        : { x: courier.x, y: courier.y };
-
-                    let dist = Math.hypot(lastLoc.x - order.merchant.x, lastLoc.y - order.merchant.y);
-                    if (dist < 500) {
-                        assignOrderToCourier(order.id, courier.id);
-                    }
+            pendingOrders.forEach(order => {
+                const availableCourier = couriers.find(c => {
+                    return c.status !== 'BROKEN' && c.currentOrders.length < c.capacity;
                 });
+
+                if (availableCourier) {
+                    assignOrderToCourier(order.id, availableCourier.id);
+                }
             });
         }
 
         function assignOrderToCourier(orderId, courierId) {
             const order = orders.find(o => o.id === orderId);
             const courier = couriers.find(c => c.id === courierId);
-            if (!order || !courier || courier.fuel <= 0) return;
+            if (!order || !courier) return;
 
             order.status = 'ASSIGNED';
             order.assignedCourierId = courier.id;
             courier.currentOrders.push(order);
 
             if (courier.status === 'IDLE') {
-                courier.status = 'PICKING_UP';
-                courier.path = findShortestPath(getClosestNode(courier.x, courier.y), order.merchant.node);
+                planCourierRoute(courier);
             }
             renderOrdersList();
             renderCouriersList();
         }
 
-        function updatePositions() {
-            if (gameState.gameSpeed === 0) return;
-            const speedMultiplier = gameState.gameSpeed * (gameState.weather === 'Hujan' ? 0.75 : 1.0);
+        function planCourierRoute(courier) {
+            if (courier.currentOrders.length === 0) {
+                // Check if fuel low
+                if (courier.fuel < 20 && courier.vehicle !== 'bicycle') {
+                    const closestGas = getClosestGasStation(courier.x, courier.y);
+                    if (closestGas) {
+                        const startNode = getClosestNode(courier.x, courier.y);
+                        courier.path = findShortestPath(startNode, closestGas.node);
+                        courier.status = 'REFUELING_NAV';
+                        return;
+                    }
+                }
+                courier.status = 'IDLE';
+                return;
+            }
 
+            const targetOrder = courier.currentOrders[0];
+            const startNode = getClosestNode(courier.x, courier.y);
+
+            if (targetOrder.status === 'ASSIGNED') {
+                courier.status = 'PICKING_UP';
+                courier.path = findShortestPath(startNode, targetOrder.merchant.node);
+            } else if (targetOrder.status === 'PICKED_UP') {
+                courier.status = 'DELIVERING';
+                courier.path = findShortestPath(startNode, targetOrder.customer.node);
+            }
+        }
+
+        function getClosestGasStation(x, y) {
+            if (gasStations.length === 0) return null;
+            let closest = gasStations[0], minD = Infinity;
+            gasStations.forEach(g => {
+                let d = Math.hypot(g.x - x, g.y - y);
+                if (d < minD) { minD = d; closest = g; }
+            });
+            return closest;
+        }
+
+        function updateCouriers() {
             couriers.forEach(courier => {
-                // Auto reroute to SPBU if bensin low (<15%)
-                if (courier.fuel < 15 && courier.fuel > 0 && courier.status !== 'REFUELING' && courier.status !== 'BROKEN_DOWN') {
-                    let closestGas = gasStations[0], minDist = Infinity;
-                    gasStations.forEach(gs => {
-                        let d = Math.hypot(gs.x - courier.x, gs.y - courier.y);
-                        if (d < minDist) { minDist = d; closestGas = gs; }
-                    });
-                    courier.status = 'REFUELING';
-                    courier.path = findShortestPath(getClosestNode(courier.x, courier.y), closestGas.node);
-                    showToast(`${courier.name} Bensin Tipis! Mengalihkan rute ke SPBU terdekat.`, 'info');
+                if (courier.status === 'BROKEN') return;
+
+                if (courier.fuel <= 0 && courier.vehicle !== 'bicycle') {
+                    courier.status = 'BROKEN';
+                    AudioSys.playSiren();
+                    renderCouriersList();
+                    return;
                 }
 
-                if (courier.fuel <= 0) { courier.fuel = 0; courier.status = 'BROKEN_DOWN'; return; }
-                if (courier.status === 'IDLE') return;
-
-                if (courier.path.length > 0) {
+                if (courier.path && courier.path.length > 0) {
                     const targetNode = courier.path[0];
-                    const dx = targetNode.x - courier.x, dy = targetNode.y - courier.y, dist = Math.hypot(dx, dy);
-                    const moveStep = courier.speed * speedMultiplier * 1.6;
+                    const dx = targetNode.x - courier.x;
+                    const dy = targetNode.y - courier.y;
+                    const dist = Math.hypot(dx, dy);
+                    const speed = courier.speed * (gameState.rushHour ? 0.6 : 1.0);
 
-                    if (dist < moveStep) {
-                        courier.x = targetNode.x; courier.y = targetNode.y; courier.path.shift();
-                        if (courier.vehicle !== 'bicycle') courier.fuel = Math.max(0, courier.fuel - courier.fuelBurn);
+                    if (dist < speed) {
+                        courier.x = targetNode.x;
+                        courier.y = targetNode.y;
+                        courier.path.shift();
+
+                        if (courier.vehicle !== 'bicycle') {
+                            courier.fuel = Math.max(0, courier.fuel - courier.fuelBurn);
+                        }
+
+                        if (courier.path.length === 0) {
+                            // Arrived at destination node
+                            handleCourierArrival(courier);
+                        }
                     } else {
-                        courier.x += (dx / dist) * moveStep; courier.y += (dy / dist) * moveStep;
-                        if (courier.vehicle !== 'bicycle') courier.fuel = Math.max(0, courier.fuel - courier.fuelBurn * 0.1);
+                        courier.x += (dx / dist) * speed;
+                        courier.y += (dy / dist) * speed;
+                        if (courier.vehicle !== 'bicycle') {
+                            courier.fuel = Math.max(0, courier.fuel - (courier.fuelBurn * 0.1));
+                        }
                     }
-                } else {
-                    if (courier.status === 'REFUELING') {
-                        courier.fuel = CONFIG.vehicleTypes[courier.vehicle].maxFuel;
-                        courier.status = courier.currentOrders.length > 0 ? 'PICKING_UP' : 'IDLE';
-                        if (courier.status === 'PICKING_UP') {
-                            courier.path = findShortestPath(getClosestNode(courier.x, courier.y), courier.currentOrders[0].merchant.node);
-                        }
-                        showToast(`${courier.name} Selesai Isi Bensin di SPBU!`, 'success');
-                        renderCouriersList();
-                    } else if (courier.status === 'PICKING_UP') {
-                        courier.status = 'DELIVERING';
-                        courier.currentOrders.forEach(o => o.status = 'DELIVERING');
-                        courier.path = findShortestPath(courier.currentOrders[0].merchant.node, courier.currentOrders[0].customer.node);
-                        renderOrdersList();
-                    } else if (courier.status === 'DELIVERING') {
-                        if (courier.currentOrders.length > 0) {
-                            const completedOrder = courier.currentOrders.shift();
-                            const tip = Math.round(2000 + Math.random() * 6000);
-                            const totalPayout = completedOrder.price + tip;
-
-                            gameState.money += totalPayout;
-                            gameState.completedOrders++;
-
-                            const funnyComments = [
-                                "Driver ramah banget, makanan masih panas super gurih!",
-                                "Cepat banget nyampenya, porsi mantap! +Tip buat abang driver.",
-                                "Es teh masih dingin seger, ShopeeFood emang terbaik!",
-                                "Recommended! Kurir sopan & pakai masker lengkap."
-                            ];
-                            addCustomerReview(completedOrder.customer.name, 5, funnyComments[Math.floor(Math.random() * funnyComments.length)], tip);
-
-                            AudioSys.playSuccess();
-                            showToast(`Pesanan #${completedOrder.id} Terantar! (+Rp ${totalPayout.toLocaleString('id-ID')})`, 'success');
-                            orders = orders.filter(o => o.id !== completedOrder.id);
-
-                            if (courier.currentOrders.length > 0) {
-                                courier.path = findShortestPath(getClosestNode(courier.x, courier.y), courier.currentOrders[0].customer.node);
-                            } else {
-                                courier.status = 'IDLE';
-                            }
-                            renderOrdersList();
-                            renderCouriersList();
-                        }
+                } else if (courier.currentOrders.length > 0) {
+                    planCourierRoute(courier);
+                } else if (courier.fuel < 15 && courier.vehicle !== 'bicycle' && courier.status !== 'REFUELING_NAV') {
+                    const closestGas = getClosestGasStation(courier.x, courier.y);
+                    if (closestGas) {
+                        const startNode = getClosestNode(courier.x, courier.y);
+                        courier.path = findShortestPath(startNode, closestGas.node);
+                        courier.status = 'REFUELING_NAV';
                     }
                 }
             });
         }
 
-        function renderOrganicMap() {
-            if (!canvas || !ctx) return;
-            const container = canvas.parentElement;
-            if (container && (canvas.width !== container.clientWidth || canvas.height !== container.clientHeight)) {
-                canvas.width = container.clientWidth || 1200;
-                canvas.height = container.clientHeight || 800;
+        function handleCourierArrival(courier) {
+            if (courier.status === 'REFUELING_NAV') {
+                courier.fuel = CONFIG.vehicleTypes[courier.vehicle].maxFuel;
+                courier.status = 'IDLE';
+                AudioSys.playRefuel();
+                planCourierRoute(courier);
+                renderCouriersList();
+                return;
             }
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.save();
-            ctx.scale(canvas.width / CONFIG.mapWidth, canvas.height / CONFIG.mapHeight);
-
-            const activeSkinObj = CONFIG.skins.find(s => s.id === gameState.currentSkin) || CONFIG.skins[0];
-
-            // Map Terrain Background (Kota Organik)
-            ctx.fillStyle = gameState.weather === 'Malam' ? '#090d16' : '#111827';
-            ctx.fillRect(0, 0, CONFIG.mapWidth, CONFIG.mapHeight);
-
-            // Green Parks & City Districts
-            ctx.fillStyle = gameState.weather === 'Malam' ? '#062016' : '#143823';
-            ctx.beginPath();
-            ctx.roundRect(140, 180, 120, 70, 16);
-            ctx.roundRect(820, 580, 160, 90, 20);
-            ctx.fill();
-
-            // River Drawing (Sungai Kota)
-            ctx.strokeStyle = '#1e3a8a'; ctx.lineWidth = 28; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-            ctx.beginPath();
-            ctx.moveTo(riverPath[0].x, riverPath[0].y);
-            for (let i = 1; i < riverPath.length; i++) ctx.lineTo(riverPath[i].x, riverPath[i].y);
-            ctx.stroke();
-
-            // Roads (Jalan Raya Organik)
-            nodes.forEach(node => node.neighbors.forEach(neighbor => {
-                const isRushCongested = gameState.rushHour && (node.id <= 9 && neighbor.id <= 9);
-                
-                // Road Asphalt
-                ctx.strokeStyle = isRushCongested ? '#7f1d1d' : '#1e293b';
-                ctx.lineWidth = isRushCongested ? 18 : 16;
-                ctx.lineCap = 'round';
-                ctx.beginPath(); ctx.moveTo(node.x, node.y); ctx.lineTo(neighbor.x, neighbor.y); ctx.stroke();
-
-                // Lane Dash Lines
-                ctx.strokeStyle = isRushCongested ? '#ef4444' : '#334155';
-                ctx.lineWidth = 2; ctx.setLineDash([8, 8]);
-                ctx.beginPath(); ctx.moveTo(node.x, node.y); ctx.lineTo(neighbor.x, neighbor.y); ctx.stroke();
-                ctx.setLineDash([]);
-            }));
-
-            // Roundabout Center (Bundaran Kota)
-            ctx.fillStyle = '#1e293b'; ctx.beginPath(); ctx.arc(nodes[10].x, nodes[10].y, 32, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = '#065f46'; ctx.beginPath(); ctx.arc(nodes[10].x, nodes[10].y, 22, 0, Math.PI * 2); ctx.fill();
-
-            // Active Path Trails
-            couriers.forEach(courier => {
-                if (courier.status !== 'IDLE' && courier.path.length > 0) {
-                    ctx.strokeStyle = courier.status === 'REFUELING' ? '#f59e0b' : activeSkinObj.primary;
-                    ctx.lineWidth = 4; ctx.setLineDash([6, 6]);
-                    ctx.beginPath(); ctx.moveTo(courier.x, courier.y);
-                    courier.path.forEach(pt => ctx.lineTo(pt.x, pt.y));
-                    ctx.stroke(); ctx.setLineDash([]);
-                }
-            });
-
-            // 1. SPBU / Charging Stations Icons
-            gasStations.forEach(gs => {
-                ctx.fillStyle = '#f59e0b';
-                ctx.shadowColor = 'rgba(245, 158, 11, 0.5)'; ctx.shadowBlur = 10;
-                ctx.beginPath(); ctx.arc(gs.x, gs.y, 14, 0, Math.PI * 2); ctx.fill();
-                ctx.shadowBlur = 0;
-
-                ctx.fillStyle = '#0f172a';
-                ctx.font = '900 11px "Font Awesome 6 Free"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                ctx.fillText('\uf52f', gs.x, gs.y);
-            });
-
-            // 2. Customers Location Marker Pins
-            customers.forEach(cust => {
-                // Shopee Pin Style (Emerald Pin)
-                ctx.fillStyle = '#10b981';
-                ctx.beginPath();
-                ctx.arc(cust.x, cust.y - 6, 12, 0, Math.PI * 2);
-                ctx.fill();
-
-                ctx.beginPath();
-                ctx.moveTo(cust.x - 7, cust.y - 2);
-                ctx.lineTo(cust.x + 7, cust.y - 2);
-                ctx.lineTo(cust.x, cust.y + 10);
-                ctx.closePath();
-                ctx.fill();
-
-                ctx.fillStyle = '#ffffff';
-                ctx.font = '900 10px "Font Awesome 6 Free"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                ctx.fillText('\uf015', cust.x, cust.y - 6);
-            });
-
-            // 3. Shopee Food Merchants / Warung Icons
-            merchants.forEach(m => {
-                // Shopee Food Orange Pin Badge
-                ctx.fillStyle = activeSkinObj.primary;
-                ctx.shadowColor = 'rgba(238, 77, 45, 0.6)'; ctx.shadowBlur = 12;
-                ctx.beginPath();
-                ctx.arc(m.x, m.y - 7, 15, 0, Math.PI * 2);
-                ctx.fill();
-
-                ctx.beginPath();
-                ctx.moveTo(m.x - 9, m.y - 3);
-                ctx.lineTo(m.x + 9, m.y - 3);
-                ctx.lineTo(m.x, m.y + 12);
-                ctx.closePath();
-                ctx.fill();
-                ctx.shadowBlur = 0;
-
-                // Inner White Store Icon
-                ctx.fillStyle = '#ffffff';
-                ctx.font = '900 11px "Font Awesome 6 Free"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                ctx.fillText(m.type === 'food' ? '\uf2e7' : '\uf466', m.x, m.y - 7);
-
-                // Label Warung
-                ctx.fillStyle = '#f8fafc'; ctx.font = 'bold 9px "Plus Jakarta Sans"';
-                ctx.fillText(m.name, m.x, m.y + 18);
-            });
-
-            // 4. Shopee Food Driver / Kurir Icons
-            couriers.forEach(courier => {
-                const isBroken = courier.status === 'BROKEN_DOWN';
-
-                // Driver Outer Helmet Circle
-                ctx.fillStyle = isBroken ? '#ef4444' : activeSkinObj.primary;
-                ctx.shadowColor = isBroken ? 'rgba(239, 68, 68, 0.8)' : 'rgba(238, 77, 45, 0.7)'; ctx.shadowBlur = 12;
-                ctx.beginPath(); ctx.arc(courier.x, courier.y, 14, 0, Math.PI * 2); ctx.fill();
-                ctx.shadowBlur = 0;
-
-                // Shopee Food Delivery Box on Back
-                ctx.fillStyle = '#ff6633';
-                ctx.fillRect(courier.x - 6, courier.y - 18, 12, 6);
-
-                // Helmet Visor / Motor Icon
-                ctx.fillStyle = '#ffffff';
-                ctx.font = '900 10px "Font Awesome 6 Free"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                ctx.fillText(isBroken ? '\uf071' : '\uf21c', courier.x, courier.y);
-
-                // Multi-Order Badge Counter
-                if (courier.currentOrders.length > 0) {
-                    ctx.fillStyle = '#3b82f6';
-                    ctx.beginPath(); ctx.arc(courier.x + 10, courier.y - 10, 7, 0, Math.PI * 2); ctx.fill();
-                    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 8px "Plus Jakarta Sans"';
-                    ctx.fillText(courier.currentOrders.length, courier.x + 10, courier.y - 10);
-                }
-
-                // Fuel Gauge Bar
-                const fuelPct = courier.fuel / CONFIG.vehicleTypes[courier.vehicle].maxFuel;
-                ctx.fillStyle = 'rgba(15, 23, 42, 0.9)'; ctx.fillRect(courier.x - 16, courier.y - 24, 32, 4);
-                ctx.fillStyle = fuelPct > 0.4 ? '#10b981' : fuelPct > 0.15 ? '#f59e0b' : '#ef4444';
-                ctx.fillRect(courier.x - 16, courier.y - 24, 32 * fuelPct, 4);
-            });
-
-            // Rain particle effect
-            if (gameState.weather === 'Hujan') {
-                ctx.strokeStyle = 'rgba(147, 197, 253, 0.35)'; ctx.lineWidth = 1.5;
-                for (let i = 0; i < 40; i++) {
-                    let rx = (Math.sin(i * 99 + Date.now() * 0.002) * 0.5 + 0.5) * CONFIG.mapWidth;
-                    let ry = ((i * 35 + Date.now() * 0.4) % CONFIG.mapHeight);
-                    ctx.beginPath(); ctx.moveTo(rx, ry); ctx.lineTo(rx - 4, ry + 12); ctx.stroke();
-                }
+            if (courier.currentOrders.length === 0) {
+                courier.status = 'IDLE';
+                return;
             }
 
-            ctx.restore();
+            const currentOrder = courier.currentOrders[0];
+
+            if (courier.status === 'PICKING_UP') {
+                currentOrder.status = 'PICKED_UP';
+                planCourierRoute(courier);
+                renderOrdersList();
+            } else if (courier.status === 'DELIVERING') {
+                // Completed delivery!
+                currentOrder.status = 'COMPLETED';
+                gameState.money += currentOrder.fee + currentOrder.tip;
+                gameState.completedOrders++;
+                AudioSys.playSuccess();
+
+                // Add Customer Review
+                addCustomerReview(currentOrder);
+
+                courier.currentOrders.shift();
+                orders = orders.filter(o => o.id !== currentOrder.id);
+
+                planCourierRoute(courier);
+                updateStatsUI();
+                renderOrdersList();
+                renderCouriersList();
+            }
+        }
+
+        function addCustomerReview(order) {
+            const comments = [
+                { stars: 5, text: `Gokil super cepat! Makanan ${order.item} masih kebul-kebul panas 🔥. Kasih tip mantap!` },
+                { stars: 5, text: `Kurirnya ramah banget, sopan dan tepat waktu. Terima kasih ShopeeFood! 👍` },
+                { stars: 4, text: `Pesanan sesuai aplikasi, packing aman tidak tumpah. Mantap!` },
+                { stars: 3, text: `Agak macet di jalan tapi makanan tetap enak. Tingkatkan kecepatannya ya.` }
+            ];
+
+            const rev = comments[Math.floor(Math.random() * comments.length)];
+            reviews.unshift({
+                id: 'REV-' + Date.now(),
+                customerName: order.customer.name,
+                item: order.item,
+                rating: rev.stars,
+                text: rev.text,
+                tip: order.tip
+            });
+
+            if (reviews.length > 20) reviews.pop();
+            renderReviewsList();
         }
 
         function gameTick() {
-            if (gameState.gameSpeed === 0) return;
-            gameState.timeMinutes += 1;
+            // Time progression
+            gameState.timeMinutes += 2 * gameState.gameSpeed;
             if (gameState.timeMinutes >= 24 * 60) gameState.timeMinutes = 0;
 
-            const hours = Math.floor(gameState.timeMinutes / 60);
-            gameState.rushHour = (hours >= 11 && hours <= 13) || (hours >= 17 && hours <= 19);
+            const hour = Math.floor(gameState.timeMinutes / 60);
 
-            const rushBadge = document.getElementById('rushHourBadge');
-            if (rushBadge) rushBadge.classList.toggle('hidden', !gameState.rushHour);
+            // Rush Hour Trigger (07:00-09:00 & 17:00-19:00)
+            gameState.rushHour = (hour >= 7 && hour <= 9) || (hour >= 17 && hour <= 19);
+            document.getElementById('rushHourBadge').classList.toggle('hidden', !gameState.rushHour);
 
+            // Dynamic Weather Cycle
+            if (Math.random() < 0.05) {
+                if (hour >= 19 || hour < 5) gameState.weather = 'Malam';
+                else if (Math.random() < 0.2) gameState.weather = 'Hujan';
+                else gameState.weather = 'Cerah';
+            }
+
+            // Flash Sale Timer update
             if (gameState.flashSale.active) {
-                gameState.flashSale.timer -= 1;
+                gameState.flashSale.timer--;
                 document.getElementById('flashTimer').innerText = `00:${gameState.flashSale.timer.toString().padStart(2, '0')}`;
                 if (gameState.flashSale.timer <= 0) {
                     gameState.flashSale.active = false;
                     document.getElementById('bannerFlashSale').classList.add('hidden');
-                    showToast('Event Flash Sale Selesai!', 'info');
+                } else if (Math.random() < 0.6) {
+                    spawnOrder(true);
+                }
+            } else {
+                if (Math.random() < (gameState.rushHour ? 0.7 : 0.35)) {
+                    spawnOrder(false);
                 }
             }
 
-            if (Math.random() < 0.02) gameState.weather = CONFIG.weatherTypes[Math.floor(Math.random() * CONFIG.weatherTypes.length)];
-
-            orders.forEach((order, idx) => {
-                if (order.status === 'PENDING') {
-                    order.timer -= 1;
-                    if (order.timer <= 0) {
-                        orders.splice(idx, 1);
-                        addCustomerReview(order.customer.name, 1, "Lama banget nggak ada kurir yang ambil! Cancelled.", 0);
-                        showToast(`Pesanan #${order.id} Kadaluarsa!`, 'error');
-                    }
-                }
-            });
-
-            if (Math.random() < (gameState.flashSale.active ? 0.75 : gameState.rushHour ? 0.45 : 0.22)) spawnOrder(gameState.flashSale.active);
-            if (gameState.autoAssign) tryAutoAssignOrders();
-
-            updateHeaderStats();
-        }
-
-        function addCustomerReview(customerName, stars, comment, tip) {
-            reviews.unshift({ id: Date.now(), customer: customerName, stars: stars, comment: comment, tip: tip });
-            if (reviews.length > 20) reviews.pop();
-            const totalStars = reviews.reduce((sum, r) => sum + r.stars, 0);
-            gameState.rating = (totalStars / reviews.length).toFixed(1);
-            renderReviewsList();
+            if (gameState.autoAssign) autoAssignOrders();
+            updateCouriers();
+            updateStatsUI();
+            drawCanvas();
         }
 
         function triggerFlashSaleEvent() {
-            if (gameState.flashSale.active) return showToast('Flash Sale sedang berlangsung!', 'info');
             gameState.flashSale.active = true;
             gameState.flashSale.timer = 30;
             document.getElementById('bannerFlashSale').classList.remove('hidden');
             AudioSys.playSiren();
-            showToast('🔥 FLASH SALE 11.11 DIMULAI! Orderan melimpah!', 'success');
-            for (let i = 0; i < 5; i++) spawnOrder(true);
+            for (let i = 0; i < 4; i++) spawnOrder(true);
         }
 
-        function refuelCourier(courierId) {
-            const courier = couriers.find(c => c.id === courierId);
-            if (!courier) return;
-            const vehicleConfig = CONFIG.vehicleTypes[courier.vehicle];
-            if (courier.vehicle === 'bicycle') return showToast('Sepeda Ontel tidak butuh bensin!', 'info');
+        function drawCanvas() {
+            if (!canvas || !ctx) return;
 
-            const neededFuel = vehicleConfig.maxFuel - courier.fuel;
-            if (neededFuel <= 2) return showToast('Bensin sudah penuh!', 'info');
+            // Clear Canvas
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            const cost = Math.round(neededFuel * 200);
-            if (gameState.money < cost) return showToast(`Saldo tidak cukup (Rp ${cost.toLocaleString('id-ID')})`, 'error');
+            // Draw River
+            if (riverPath.length > 0) {
+                ctx.beginPath();
+                ctx.moveTo(riverPath[0].x, riverPath[0].y);
+                for (let i = 1; i < riverPath.length; i++) ctx.lineTo(riverPath[i].x, riverPath[i].y);
+                ctx.strokeStyle = '#1e3a8a';
+                ctx.lineWidth = 28;
+                ctx.stroke();
+            }
 
-            let closestGas = gasStations[0], minDist = Infinity;
-            gasStations.forEach(gs => {
-                let d = Math.hypot(gs.x - courier.x, gs.y - courier.y);
-                if (d < minDist) { minDist = d; closestGas = gs; }
+            // Draw Road Connections
+            nodes.forEach(node => {
+                node.neighbors.forEach(neighbor => {
+                    ctx.beginPath();
+                    ctx.moveTo(node.x, node.y);
+                    ctx.lineTo(neighbor.x, neighbor.y);
+                    ctx.strokeStyle = gameState.rushHour ? '#ef4444' : '#334155';
+                    ctx.lineWidth = gameState.rushHour ? 10 : 8;
+                    ctx.stroke();
+
+                    // Inner road line
+                    ctx.beginPath();
+                    ctx.moveTo(node.x, node.y);
+                    ctx.lineTo(neighbor.x, neighbor.y);
+                    ctx.strokeStyle = '#475569';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                });
             });
 
-            gameState.money -= cost;
-            courier.status = 'REFUELING';
-            courier.path = findShortestPath(getClosestNode(courier.x, courier.y), closestGas.node);
-            AudioSys.playRefuel();
-            showToast(`${courier.name} menuju SPBU!`, 'info');
-            renderCouriersList();
-            updateHeaderStats();
-        }
+            // Draw Landmarks
+            landmarks.forEach(lm => {
+                ctx.fillStyle = lm.color;
+                ctx.beginPath();
+                ctx.arc(lm.x, lm.y, 18, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '12px "Font Awesome 6 Free"';
+                ctx.font = 'bold 12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('🏛️', lm.x, lm.y + 4);
 
-        function towCourier(courierId) {
-            const courier = couriers.find(c => c.id === courierId);
-            if (!courier) return;
-            if (gameState.money < 25000) return showToast('Saldo tidak cukup untuk derek (Rp 25.000)!', 'error');
+                ctx.fillStyle = '#f8fafc';
+                ctx.font = 'bold 11px sans-serif';
+                ctx.fillText(lm.name, lm.x, lm.y - 24);
+            });
 
-            gameState.money -= 25000;
-            courier.fuel = CONFIG.vehicleTypes[courier.vehicle].maxFuel;
-            courier.status = 'IDLE';
-            courier.currentOrders = [];
-            showToast(`${courier.name} berhasil diderek dan bensin penuh!`, 'success');
-            renderCouriersList();
-            updateHeaderStats();
-        }
+            // Draw Gas Stations (SPBU)
+            gasStations.forEach(spbu => {
+                ctx.fillStyle = '#f59e0b';
+                ctx.beginPath();
+                ctx.arc(spbu.x, spbu.y, 14, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#0f172a';
+                ctx.font = 'bold 10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('⛽', spbu.x, spbu.y + 3);
+            });
 
-        function upgradeVehicle(courierId) {
-            const courier = couriers.find(c => c.id === courierId);
-            if (!courier) return;
-            let nextVehicle = courier.vehicle === 'bicycle' ? 'motorcycle' : courier.vehicle === 'motorcycle' ? 'car' : courier.vehicle === 'car' ? 'ev' : null;
-            if (!nextVehicle) return showToast('Kendaraan sudah level maksimal!', 'info');
+            // Draw Merchants (Warung)
+            merchants.forEach(m => {
+                ctx.fillStyle = m.type === 'food' ? '#ee4d2d' : '#2563eb';
+                ctx.beginPath();
+                ctx.arc(m.x, m.y, 15, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
 
-            const cost = CONFIG.vehicleTypes[nextVehicle].cost;
-            if (gameState.money < cost) return showToast(`Saldo tidak cukup! Butuh Rp ${cost.toLocaleString('id-ID')}`, 'error');
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(m.type === 'food' ? '🍜' : '📦', m.x, m.y + 3);
 
-            gameState.money -= cost;
-            courier.vehicle = nextVehicle;
-            courier.speed = CONFIG.vehicleTypes[nextVehicle].speed;
-            courier.capacity = CONFIG.vehicleTypes[nextVehicle].capacity;
-            courier.fuel = CONFIG.vehicleTypes[nextVehicle].maxFuel;
-            showToast(`${courier.name} upgrade ke ${CONFIG.vehicleTypes[nextVehicle].name}!`, 'success');
-            renderCouriersList();
-            updateHeaderStats();
-        }
+                ctx.fillStyle = '#e2e8f0';
+                ctx.font = 'bold 10px sans-serif';
+                ctx.fillText(m.name, m.x, m.y - 18);
+            });
 
-        function upgradeMerchant(mId) {
-            const m = merchants.find(i => i.id === mId);
-            if (!m) return;
-            const cost = m.level * 150000;
-            if (gameState.money < cost) return showToast(`Saldo tidak cukup! (Rp ${cost.toLocaleString('id-ID')})`, 'error');
+            // Draw Customers
+            customers.forEach(c => {
+                ctx.fillStyle = '#10b981';
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, 12, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 9px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('🏠', c.x, c.y + 3);
+            });
 
-            gameState.money -= cost;
-            m.level += 1;
-            m.prepSpeed += 0.3;
-            AudioSys.playSuccess();
-            showToast(`${m.name} Upgrade ke Level ${m.level}!`, 'success');
-            renderMerchantsList();
-            updateHeaderStats();
-        }
+            // Draw Couriers
+            const activeSkin = CONFIG.skins.find(s => s.id === gameState.currentSkin) || CONFIG.skins[0];
+            couriers.forEach(c => {
+                ctx.save();
+                ctx.translate(c.x, c.y);
 
-        function upgradeGasStation(gasId) {
-            const gs = gasStations.find(i => i.id === gasId);
-            if (!gs) return;
-            const curLevel = gs.level || 1;
-            const cost = curLevel * 200000;
-            if (gameState.money < cost) return showToast(`Saldo tidak cukup! (Rp ${cost.toLocaleString('id-ID')})`, 'error');
+                // Halo glow for current skin
+                ctx.fillStyle = activeSkin.primary;
+                ctx.globalAlpha = 0.3;
+                ctx.beginPath();
+                ctx.arc(0, 0, 20, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
 
-            gameState.money -= cost;
-            gs.level = curLevel + 1;
-            gs.speedBonus = (gs.speedBonus || 1.0) + 0.4;
-            AudioSys.playSuccess();
-            showToast(`${gs.name} Upgrade ke Level ${gs.level}!`, 'success');
-            renderMerchantsList();
-            updateHeaderStats();
-        }
+                // Courier Circle Body
+                ctx.fillStyle = c.status === 'BROKEN' ? '#ef4444' : activeSkin.primary;
+                ctx.beginPath();
+                ctx.arc(0, 0, 14, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
 
-        function applySkin(skinId) {
-            const skin = CONFIG.skins.find(s => s.id === skinId);
-            if (!skin) return;
+                // Courier Icon
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(c.status === 'BROKEN' ? '⚠️' : (c.vehicle === 'bicycle' ? '🚲' : '🛵'), 0, 3);
 
-            if (!skin.unlocked) {
-                if (gameState.money < skin.cost) return showToast(`Saldo tidak cukup! (Rp ${skin.cost.toLocaleString('id-ID')})`, 'error');
-                gameState.money -= skin.cost;
-                skin.unlocked = true;
-                showToast(`Skin ${skin.name} berhasil dibeli!`, 'success');
+                // Orders count badge
+                if (c.currentOrders.length > 0) {
+                    ctx.fillStyle = '#f59e0b';
+                    ctx.beginPath();
+                    ctx.arc(10, -10, 7, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = '#0f172a';
+                    ctx.font = 'black 9px sans-serif';
+                    ctx.fillText(c.currentOrders.length, 10, -7);
+                }
+
+                // Fuel level indicator line below
+                if (c.vehicle !== 'bicycle') {
+                    ctx.fillStyle = '#334155';
+                    ctx.fillRect(-12, 18, 24, 4);
+                    ctx.fillStyle = c.fuel > 30 ? '#10b981' : '#ef4444';
+                    ctx.fillRect(-12, 18, (c.fuel / 100) * 24, 4);
+                }
+
+                ctx.restore();
+            });
+
+            // Weather Effects Overlay
+            if (gameState.weather === 'Hujan') {
+                ctx.fillStyle = 'rgba(148, 163, 184, 0.15)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            } else if (gameState.weather === 'Malam') {
+                ctx.fillStyle = 'rgba(3, 7, 18, 0.55)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
             }
-            gameState.currentSkin = skinId;
-            document.getElementById('skinBadge').innerText = skin.badge;
-            renderSkinsList();
-            updateHeaderStats();
+        }
+
+        function renderOrdersList() {
+            const container = document.getElementById('ordersList');
+            document.getElementById('countAllOrders').innerText = orders.length;
+            document.getElementById('mBadgeOrders').innerText = orders.length;
+
+            if (orders.length === 0) {
+                container.innerHTML = `
+                    <div class="p-6 text-center text-slate-500 text-xs">
+                        <i class="fa-solid fa-mug-hot text-2xl mb-2 text-slate-600 block"></i>
+                        Belum ada orderan masuk. Menunggu pesanan pelanggan...
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = orders.map(o => `
+                <div class="bg-slate-800/80 border border-slate-700/60 p-2.5 rounded-xl text-xs space-y-1.5 shadow">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="font-black text-orange-400">${o.id}</span>
+                            <h4 class="font-bold text-slate-100 leading-tight">${o.item}</h4>
+                        </div>
+                        <span class="bg-slate-700 text-slate-300 font-bold px-2 py-0.5 rounded-md text-[10px]">${o.status}</span>
+                    </div>
+                    <div class="text-[11px] text-slate-400 space-y-0.5">
+                        <div><i class="fa-solid fa-shop text-orange-400 w-4"></i> ${o.merchant.name}</div>
+                        <div><i class="fa-solid fa-location-dot text-emerald-400 w-4"></i> ${o.customer.name} (${o.customer.address})</div>
+                    </div>
+                    <div class="flex justify-between items-center pt-1 border-t border-slate-700/40 text-[11px]">
+                        <span class="text-yellow-400 font-black">Komisi: Rp ${o.fee.toLocaleString('id-ID')} ${o.tip > 0 ? `<span class="text-emerald-400 text-[10px]">(+Tip Rp ${o.tip.toLocaleString('id-ID')})</span>` : ''}</span>
+                        ${o.status === 'PENDING' ? `
+                            <button onclick="manualAssignPrompt('${o.id}')" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-2 py-1 rounded-lg text-[10px] transition">
+                                Tugaskan
+                            </button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderReviewsList() {
+            const container = document.getElementById('reviewsList');
+            document.getElementById('countReviews').innerText = reviews.length;
+
+            if (reviews.length === 0) {
+                container.innerHTML = `<div class="p-6 text-center text-slate-500 text-xs">Belum ada ulasan masuk.</div>`;
+                return;
+            }
+
+            container.innerHTML = reviews.map(r => `
+                <div class="bg-slate-800/70 border border-slate-700/50 p-2.5 rounded-xl text-xs space-y-1">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-slate-200">${r.customerName}</span>
+                        <span class="text-yellow-400 font-bold text-[11px]">
+                            ${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}
+                        </span>
+                    </div>
+                    <p class="text-slate-300 text-[11px] italic">"${r.text}"</p>
+                    <div class="text-[10px] text-slate-400 flex justify-between pt-1 border-t border-slate-700/30">
+                        <span>Item: ${r.item}</span>
+                        ${r.tip > 0 ? `<span class="text-emerald-400 font-bold">Dapat Tip Rp ${r.tip.toLocaleString('id-ID')}</span>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderCouriersList() {
+            const container = document.getElementById('courierList');
+            document.getElementById('countCouriers').innerText = couriers.length;
+            document.getElementById('activeCouriersCount').innerText = `${couriers.filter(c => c.status !== 'IDLE' && c.status !== 'BROKEN').length}/${couriers.length}`;
+
+            container.innerHTML = couriers.map(c => `
+                <div class="bg-slate-800/80 border border-slate-700/60 p-2.5 rounded-xl text-xs space-y-2">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid ${CONFIG.vehicleTypes[c.vehicle].icon} text-orange-400 text-sm"></i>
+                            <div>
+                                <h4 class="font-bold text-slate-100">${c.name}</h4>
+                                <span class="text-[10px] text-slate-400">${CONFIG.vehicleTypes[c.vehicle].name}</span>
+                            </div>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase ${c.status === 'BROKEN' ? 'bg-red-600 text-white animate-bounce' : 'bg-slate-700 text-slate-300'}">
+                            ${c.status}
+                        </span>
+                    </div>
+
+                    ${c.vehicle !== 'bicycle' ? `
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[10px] text-slate-400 font-bold">
+                            <span>Bensin</span>
+                            <span>${Math.round(c.fuel)}%</span>
+                        </div>
+                        <div class="w-full bg-slate-700 rounded-full h-2 overflow-hidden">
+                            <div class="h-full ${c.fuel > 30 ? 'bg-emerald-400' : 'bg-red-500'}" style="width: ${c.fuel}%"></div>
+                        </div>
+                    </div>` : ''}
+
+                    <div class="flex justify-between items-center pt-1 text-[10px]">
+                        <span class="text-slate-400">Bawa Order: <strong>${c.currentOrders.length}/${c.capacity}</strong></span>
+                        <div class="flex gap-1">
+                            ${c.status === 'BROKEN' ? `
+                                <button onclick="openRepairModal('${c.id}')" class="bg-red-600 hover:bg-red-500 text-white font-black px-2 py-1 rounded-lg">
+                                    🔨 PERBAIKI MESIN
+                                </button>` : `
+                                ${c.vehicle !== 'bicycle' ? `
+                                <button onclick="refuelCourierManual('${c.id}')" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-2 py-1 rounded-lg">
+                                    ⛽ Isi Bensin
+                                </button>` : ''}`}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderCitiesList() {
+            const container = document.getElementById('citiesList');
+            container.innerHTML = CONFIG.cities.map(city => `
+                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-xl text-xs space-y-2">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-black text-slate-100 text-sm">${city.name}</h4>
+                            <p class="text-[11px] text-slate-400">${city.desc}</p>
+                        </div>
+                        ${city.unlocked ? `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[10px] px-2 py-0.5 rounded-md font-bold">Aktif</span>` : ''}
+                    </div>
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-700/40">
+                        <span class="text-slate-300 text-[11px]">Landmark: <strong>${city.landmark}</strong></span>
+                        ${city.unlocked ? `
+                            <button onclick="switchCity('${city.id}')" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-2.5 py-1 rounded-lg text-[10px]">
+                                Pindah Kota
+                            </button>` : `
+                            <button onclick="unlockCity('${city.id}', ${city.cost})" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2.5 py-1 rounded-lg text-[10px]">
+                                Buka (Rp ${city.cost.toLocaleString('id-ID')})
+                            </button>`}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderMerchantsList() {
+            const container = document.getElementById('merchantList');
+            container.innerHTML = `
+                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Daftar Warung Mitra & SPBU</div>
+                ${merchants.map(m => `
+                    <div class="bg-slate-800/80 border border-slate-700/60 p-2.5 rounded-xl text-xs flex justify-between items-center mb-2">
+                        <div>
+                            <h4 class="font-bold text-slate-100">${m.name}</h4>
+                            <span class="text-[10px] text-slate-400">Tipe: ${m.type === 'food' ? 'Kuliner Food' : 'Shopee Warehouse Express'}</span>
+                        </div>
+                        <span class="text-yellow-400 font-bold text-xs"><i class="fa-solid fa-star"></i> ${m.rating}</span>
+                    </div>
+                `).join('')}
+                ${gasStations.map(g => `
+                    <div class="bg-slate-800/80 border border-amber-500/30 p-2.5 rounded-xl text-xs flex justify-between items-center mb-2">
+                        <div>
+                            <h4 class="font-bold text-amber-300">${g.name}</h4>
+                            <span class="text-[10px] text-slate-400">Stasiun Pengisian Bahan Bakar Pertamina</span>
+                        </div>
+                        <span class="text-amber-400 font-bold text-xs">⛽ Pertamax</span>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function renderSkinsList() {
+            const container = document.getElementById('skinsList');
+            container.innerHTML = CONFIG.skins.map(s => `
+                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-xl text-xs flex justify-between items-center">
+                    <div>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full text-slate-900 bg-yellow-400 uppercase">${s.badge}</span>
+                        <h4 class="font-bold text-slate-100 mt-1">${s.name}</h4>
+                    </div>
+                    ${s.unlocked ? `
+                        <button onclick="applySkin('${s.id}')" class="${gameState.currentSkin === s.id ? 'bg-emerald-600' : 'bg-slate-700'} text-white font-bold px-3 py-1.5 rounded-xl text-[10px]">
+                            ${gameState.currentSkin === s.id ? 'Dipakai' : 'Gunakan'}
+                        </button>` : `
+                        <button onclick="buySkin('${s.id}', ${s.cost})" class="bg-orange-500 text-white font-bold px-3 py-1.5 rounded-xl text-[10px]">
+                            Beli Rp ${s.cost.toLocaleString('id-ID')}
+                        </button>`}
+                </div>
+            `).join('');
         }
 
         function openHireModal() {
             document.getElementById('hireModal').classList.remove('hidden');
-            const listEl = document.getElementById('candidatesList');
-            listEl.innerHTML = '';
-            [
-                { name: 'Bagas Express', vehicle: 'motorcycle', salary: 150000 },
-                { name: 'Doni Super Van', vehicle: 'car', salary: 450000 },
-                { name: 'Eka Cyber EV', vehicle: 'ev', salary: 850000 }
-            ].forEach(cand => {
-                const card = document.createElement('div');
-                card.className = "p-3 border border-slate-800 rounded-xl flex justify-between items-center bg-slate-800/60";
-                card.innerHTML = `<div><h4 class="font-bold text-xs">${cand.name}</h4><p class="text-[10px] text-slate-400">${CONFIG.vehicleTypes[cand.vehicle].name}</p></div><button onclick="confirmHire('${cand.name}', '${cand.vehicle}', ${cand.salary})" class="shopee-gradient text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow">Rekrut (Rp ${cand.salary.toLocaleString('id-ID')})</button>`;
-                listEl.appendChild(card);
-            });
+            const container = document.getElementById('candidatesList');
+            container.innerHTML = Object.keys(CONFIG.vehicleTypes).map(key => {
+                const v = CONFIG.vehicleTypes[key];
+                return `
+                    <div class="bg-slate-800 border border-slate-700 p-3 rounded-xl text-xs flex justify-between items-center">
+                        <div class="space-y-0.5">
+                            <h4 class="font-bold text-slate-100 flex items-center gap-1.5">
+                                <i class="fa-solid ${v.icon} text-orange-400"></i> ${v.name}
+                            </h4>
+                            <p class="text-[10px] text-slate-400">Kapasitas: ${v.capacity} Order &bull; Kecepatan: ${v.speed}x</p>
+                        </div>
+                        <button onclick="hireCourier('${key}', ${v.cost})" class="shopee-gradient text-white font-bold px-3 py-1.5 rounded-xl shadow text-xs">
+                            Sewa ${v.cost === 0 ? 'Gratis' : `Rp ${v.cost.toLocaleString('id-ID')}`}
+                        </button>
+                    </div>`;
+            }).join('');
         }
 
         function closeHireModal() { document.getElementById('hireModal').classList.add('hidden'); }
-        function confirmHire(name, vehicle, cost) {
-            if (gameState.money < cost) return showToast('Saldo tidak cukup!', 'error');
-            gameState.money -= cost;
-            const rNode = nodes[Math.floor(Math.random() * nodes.length)];
-            const vConfig = CONFIG.vehicleTypes[vehicle];
 
-            couriers.push({
-                id: `k${++nextCourierId}`, name: name, vehicle: vehicle, speed: vConfig.speed,
-                capacity: vConfig.capacity, fuelBurn: vConfig.fuelBurn, fuel: vConfig.maxFuel,
-                x: rNode.x, y: rNode.y, status: 'IDLE', currentOrders: [], path: [], earnings: 0, rating: 5.0
-            });
-            showToast(`Berhasil merekrut driver ${name}!`, 'success');
-            closeHireModal();
-            renderCouriersList();
-            updateHeaderStats();
-        }
-
-        function openAddMerchantModal() {
-            document.getElementById('addMerchantModal').classList.remove('hidden');
-            const listEl = document.getElementById('merchantCandidatesList');
-            listEl.innerHTML = '';
-            [
-                { name: 'Martabak Manis Bintang', type: 'food', cost: 200000 },
-                { name: 'Shopee Express Hub 02', type: 'express', cost: 350000 },
-                { name: 'SPBU Shell Express 24h', type: 'spbu', cost: 300000 }
-            ].forEach(opt => {
-                const card = document.createElement('div');
-                card.className = "p-3 border border-slate-800 rounded-xl flex justify-between items-center bg-slate-800/60";
-                card.innerHTML = `<div><h4 class="font-bold text-xs">${opt.name}</h4><p class="text-[10px] text-slate-400">${opt.type}</p></div><button onclick="confirmAddMerchant('${opt.name}', '${opt.type}', ${opt.cost})" class="bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow">Buka (Rp ${opt.cost.toLocaleString('id-ID')})</button>`;
-                listEl.appendChild(card);
-            });
-        }
-
-        function closeAddMerchantModal() { document.getElementById('addMerchantModal').classList.add('hidden'); }
-        function confirmAddMerchant(name, type, cost) {
-            if (gameState.money < cost) return showToast('Saldo tidak cukup!', 'error');
-            gameState.money -= cost;
-            const rNode = nodes[Math.floor(Math.random() * nodes.length)];
-
-            if (type === 'spbu') {
-                gasStations.push({ id: `spbu${gasStations.length + 1}`, name: name, level: 1, speedBonus: 1.0, x: rNode.x + 25, y: rNode.y + 25, node: rNode });
-                showToast(`SPBU Baru (${name}) dibangun!`, 'success');
-            } else {
-                merchants.push({ id: `m${merchants.length + 1}`, name: name, type: type, rating: 4.9, x: rNode.x + 25, y: rNode.y - 25, level: 1, prepSpeed: 1, node: rNode });
-                showToast(`Merchant baru ${name} beroperasi!`, 'success');
+        function hireCourier(vehicleKey, cost) {
+            if (gameState.money < cost) {
+                alert('Saldo Kas Utama tidak mencukupi!');
+                return;
             }
+            gameState.money -= cost;
+            const v = CONFIG.vehicleTypes[vehicleKey];
+            const startNode = nodes[Math.floor(Math.random() * nodes.length)];
+            couriers.push({
+                id: 'k' + nextCourierId++,
+                name: `Driver Shopee ${nextCourierId.toString().padStart(2, '0')}`,
+                vehicle: vehicleKey,
+                speed: v.speed,
+                capacity: v.capacity,
+                fuelBurn: v.fuelBurn,
+                fuel: 100,
+                x: startNode.x,
+                y: startNode.y,
+                status: 'IDLE',
+                currentOrders: [],
+                path: []
+            });
+
+            closeHireModal();
+            updateStatsUI();
+            renderCouriersList();
+        }
+
+        function openAddMerchantModal() { document.getElementById('addMerchantModal').classList.remove('hidden'); renderMerchantCandidates(); }
+        function closeAddMerchantModal() { document.getElementById('addMerchantModal').classList.add('hidden'); }
+
+        function renderMerchantCandidates() {
+            const container = document.getElementById('merchantCandidatesList');
+            container.innerHTML = `
+                <div class="bg-slate-800 border border-slate-700 p-3 rounded-xl text-xs flex justify-between items-center">
+                    <div>
+                        <h4 class="font-bold text-slate-100">Bebek Goreng H. Slamet</h4>
+                        <p class="text-[10px] text-slate-400">Mitra Kuliner Favorit Baru</p>
+                    </div>
+                    <button onclick="buyMerchant('Bebek Goreng H. Slamet', 'food', 150000)" class="bg-blue-600 text-white font-bold px-3 py-1 rounded-xl">
+                        Buka Rp 150.000
+                    </button>
+                </div>
+                <div class="bg-slate-800 border border-amber-500/40 p-3 rounded-xl text-xs flex justify-between items-center">
+                    <div>
+                        <h4 class="font-bold text-amber-300">SPBU Pertamina Tambahan</h4>
+                        <p class="text-[10px] text-slate-400">Titik Bensin Baru di Peta</p>
+                    </div>
+                    <button onclick="buyGasStation('SPBU Pertamina Baru', 200000)" class="bg-amber-500 text-slate-900 font-bold px-3 py-1 rounded-xl">
+                        Buka Rp 200.000
+                    </button>
+                </div>
+            `;
+        }
+
+        function buyMerchant(name, type, cost) {
+            if (gameState.money < cost) { alert('Saldo Kas tidak cukup!'); return; }
+            gameState.money -= cost;
+            const randomNode = nodes[Math.floor(Math.random() * nodes.length)];
+            merchants.push({
+                id: 'm' + (merchants.length + 1),
+                name: name,
+                type: type,
+                rating: 4.9,
+                x: randomNode.x + (Math.random() * 40 - 20),
+                y: randomNode.y + (Math.random() * 40 - 20),
+                node: randomNode
+            });
             closeAddMerchantModal();
+            updateStatsUI();
             renderMerchantsList();
-            updateHeaderStats();
+        }
+
+        function buyGasStation(name, cost) {
+            if (gameState.money < cost) { alert('Saldo Kas tidak cukup!'); return; }
+            gameState.money -= cost;
+            const randomNode = nodes[Math.floor(Math.random() * nodes.length)];
+            gasStations.push({
+                id: 'spbu' + (gasStations.length + 1),
+                name: name,
+                x: randomNode.x + 30,
+                y: randomNode.y + 30,
+                node: randomNode
+            });
+            closeAddMerchantModal();
+            updateStatsUI();
+            renderMerchantsList();
+        }
+
+        // Mini Game Engine Repair Functions
+        function openRepairModal(courierId) {
+            activeRepairCourierId = courierId;
+            repairTapCount = 0;
+            const courier = couriers.find(c => c.id === courierId);
+            document.getElementById('repairDriverName').innerText = courier ? courier.name : '...';
+            document.getElementById('repairClicksCount').innerText = '0';
+            document.getElementById('repairProgressBar').style.width = '0%';
+            document.getElementById('repairModal').classList.remove('hidden');
+        }
+
+        function closeRepairModal() { document.getElementById('repairModal').classList.add('hidden'); }
+
+        function tapRepairEngine() {
+            repairTapCount++;
+            AudioSys.playRepair();
+            const progress = (repairTapCount / 10) * 100;
+            document.getElementById('repairProgressBar').style.width = `${progress}%`;
+            document.getElementById('repairClicksCount').innerText = repairTapCount;
+
+            if (repairTapCount >= 10) {
+                const courier = couriers.find(c => c.id === activeRepairCourierId);
+                if (courier) {
+                    courier.fuel = 100;
+                    courier.status = 'IDLE';
+                }
+                setTimeout(() => {
+                    closeRepairModal();
+                    renderCouriersList();
+                }, 150);
+            }
+        }
+
+        function refuelCourierManual(courierId) {
+            const courier = couriers.find(c => c.id === courierId);
+            if (courier && gameState.money >= 15000) {
+                gameState.money -= 15000;
+                courier.fuel = 100;
+                AudioSys.playRefuel();
+                updateStatsUI();
+                renderCouriersList();
+            }
+        }
+
+        function unlockCity(cityId, cost) {
+            if (gameState.money < cost) { alert('Saldo Kas tidak cukup untuk ekspansi kota!'); return; }
+            gameState.money -= cost;
+            const city = CONFIG.cities.find(c => c.id === cityId);
+            if (city) city.unlocked = true;
+            switchCity(cityId);
+            updateStatsUI();
+            renderCitiesList();
+        }
+
+        function switchCity(cityId) {
+            loadCityMapData(cityId);
+            renderCitiesList();
+            renderMerchantsList();
+            renderCouriersList();
+        }
+
+        function buySkin(skinId, cost) {
+            if (gameState.money < cost) { alert('Saldo Kas tidak cukup!'); return; }
+            gameState.money -= cost;
+            const skin = CONFIG.skins.find(s => s.id === skinId);
+            if (skin) skin.unlocked = true;
+            applySkin(skinId);
+            updateStatsUI();
+            renderSkinsList();
+        }
+
+        function applySkin(skinId) {
+            gameState.currentSkin = skinId;
+            const skin = CONFIG.skins.find(s => s.id === skinId);
+            document.getElementById('skinBadge').innerText = skin ? skin.badge : 'Shopee Edition';
+            renderSkinsList();
+        }
+
+        function updateStatsUI() {
+            document.getElementById('statMoney').innerText = `Rp ${gameState.money.toLocaleString('id-ID')}`;
+            document.getElementById('mStatMoney').innerText = `Rp ${gameState.money.toLocaleString('id-ID')}`;
+
+            const hours = Math.floor(gameState.timeMinutes / 60).toString().padStart(2, '0');
+            const mins = (gameState.timeMinutes % 60).toString().padStart(2, '0');
+            document.getElementById('statTime').innerText = `${hours}:${mins} WIB`;
+            document.getElementById('mStatTime').innerText = `${hours}:${mins}`;
+
+            document.getElementById('statWeather').innerHTML = gameState.weather === 'Hujan' ?
+                `<i class="fa-solid fa-cloud-showers-heavy text-blue-400"></i> Hujan` :
+                (gameState.weather === 'Malam' ? `<i class="fa-solid fa-moon text-indigo-300"></i> Malam` : `<i class="fa-solid fa-sun text-yellow-300"></i> Cerah`);
+
+            document.getElementById('mStatWeather').innerHTML = gameState.weather === 'Hujan' ?
+                `<i class="fa-solid fa-cloud-showers-heavy text-blue-400"></i>` :
+                (gameState.weather === 'Malam' ? `<i class="fa-solid fa-moon text-indigo-300"></i>` : `<i class="fa-solid fa-sun text-yellow-300"></i>`);
+
+            document.getElementById('completedOrdersCount').innerText = gameState.completedOrders;
+            document.getElementById('gasStationsCount').innerText = gasStations.length;
+        }
+
+        function setSpeed(sp) {
+            gameState.gameSpeed = sp;
+            [0,1,2,4].forEach(s => {
+                const btn = document.getElementById(`btnSpeed${s}`);
+                if (btn) {
+                    if (s === sp) {
+                        btn.className = "px-2 py-1 text-xs font-bold rounded-lg bg-yellow-400 text-slate-900 transition";
+                    } else {
+                        btn.className = "px-2 py-1 text-xs font-bold rounded-lg bg-white/20 hover:bg-white/40 transition";
+                    }
+                }
+            });
+        }
+
+        function toggleAudio() {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            const btn = document.getElementById('btnAudio');
+            btn.innerHTML = gameState.soundEnabled ? `<i class="fa-solid fa-volume-high"></i>` : `<i class="fa-solid fa-volume-xmark text-red-400"></i>`;
+        }
+
+        function toggleAutoAssign() {
+            gameState.autoAssign = document.getElementById('autoAssignToggle').checked;
+            if (gameState.autoAssign) autoAssignOrders();
         }
 
         function switchLeftTab(tab) {
             gameState.leftTab = tab;
             document.getElementById('viewOrders').classList.toggle('hidden', tab !== 'orders');
             document.getElementById('viewReviews').classList.toggle('hidden', tab !== 'reviews');
-            document.getElementById('tabOrders').className = tab === 'orders' ? "flex-1 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-orange-400 shadow transition flex items-center justify-center gap-1" : "flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:bg-slate-800/60 transition flex items-center justify-center gap-1";
-            document.getElementById('tabReviews').className = tab === 'reviews' ? "flex-1 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-yellow-400 shadow transition flex items-center justify-center gap-1" : "flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:bg-slate-800/60 transition flex items-center justify-center gap-1";
+
+            document.getElementById('tabOrders').className = tab === 'orders' ? 'flex-1 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-orange-400 shadow transition flex items-center justify-center gap-1' : 'flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:bg-slate-800/60 transition flex items-center justify-center gap-1';
+            document.getElementById('tabReviews').className = tab === 'reviews' ? 'flex-1 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-orange-400 shadow transition flex items-center justify-center gap-1' : 'flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:bg-slate-800/60 transition flex items-center justify-center gap-1';
         }
 
         function switchRightTab(tab) {
             gameState.rightTab = tab;
-            document.getElementById('viewCouriers').classList.toggle('hidden', tab !== 'couriers');
-            document.getElementById('viewMerchants').classList.toggle('hidden', tab !== 'merchants');
-            document.getElementById('viewSkins').classList.toggle('hidden', tab !== 'skins');
-        }
-
-        function switchMobileTab(tab) { gameState.mobileView = tab; updateMobileLayout(); }
-        function setSpeed(speed) {
-            gameState.gameSpeed = speed;
-            [0, 1, 2, 4].forEach(s => {
-                const btn = document.getElementById(`btnSpeed${s}`);
-                if (btn) btn.className = s === speed ? "px-2 py-1 text-xs font-bold rounded-lg bg-yellow-400 text-slate-900 transition shadow" : "px-2 py-1 text-xs font-bold rounded-lg bg-white/20 hover:bg-white/40 transition";
+            ['couriers', 'cities', 'merchants', 'skins'].forEach(t => {
+                const view = document.getElementById(`view${t.charAt(0).toUpperCase() + t.slice(1)}`);
+                const btn = document.getElementById(`rightTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
+                if (view) view.classList.toggle('hidden', t !== tab);
+                if (btn) btn.className = t === tab ? 'flex-1 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-orange-400 shadow transition' : 'flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:bg-slate-800/60 transition';
             });
         }
-        function toggleAudio() {
-            gameState.soundEnabled = !gameState.soundEnabled;
-            const btn = document.getElementById('btnAudio');
-            if (btn) btn.innerHTML = gameState.soundEnabled ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
-        }
-        function toggleAutoAssign() {
-            const chk = document.getElementById('autoAssignToggle');
-            if (chk) gameState.autoAssign = chk.checked;
+
+        function switchMobileTab(tab) {
+            gameState.mobileView = tab;
+            document.getElementById('panelOrders').classList.toggle('hidden', tab !== 'orders');
+            document.getElementById('panelMap').classList.toggle('hidden', tab !== 'map');
+            document.getElementById('panelManage').classList.toggle('hidden', tab !== 'manage');
         }
 
-        function updateHeaderStats() {
-            document.getElementById('statMoney').innerText = `Rp ${gameState.money.toLocaleString('id-ID')}`;
-            document.getElementById('statRating').innerHTML = `<i class="fa-solid fa-star text-yellow-300 mr-1"></i>${gameState.rating}`;
-            document.getElementById('mStatMoney').innerText = `Rp ${gameState.money.toLocaleString('id-ID')}`;
-            document.getElementById('mStatRating').innerText = gameState.rating;
-
-            const weatherIcons = { 'Cerah': '<i class="fa-solid fa-sun text-yellow-300"></i> Cerah', 'Hujan': '<i class="fa-solid fa-cloud-showers-heavy text-blue-300"></i> Hujan', 'Malam': '<i class="fa-solid fa-moon text-indigo-300"></i> Malam' };
-            document.getElementById('statWeather').innerHTML = weatherIcons[gameState.weather];
-
-            const h = Math.floor(gameState.timeMinutes / 60).toString().padStart(2, '0');
-            const m = (gameState.timeMinutes % 60).toString().padStart(2, '0');
-            document.getElementById('statTime').innerText = `${h}:${m} WIB`;
-            document.getElementById('mStatTime').innerText = `${h}:${m}`;
-
-            document.getElementById('activeCouriersCount').innerText = `${couriers.filter(c => c.status !== 'IDLE').length}/${couriers.length}`;
-            document.getElementById('completedOrdersCount').innerText = gameState.completedOrders;
-            document.getElementById('gasStationsCount').innerText = gasStations.length;
-            document.getElementById('mBadgeOrders').innerText = orders.length;
-        }
-
-        function renderOrdersList() {
-            const listEl = document.getElementById('ordersList');
-            listEl.innerHTML = '';
-            document.getElementById('countAllOrders').innerText = orders.length;
-
-            if (orders.length === 0) {
-                listEl.innerHTML = `<div class="text-center py-10 text-slate-500"><i class="fa-solid fa-utensils text-3xl mb-2 opacity-40"></i><p class="text-xs">Antrean pesanan kosong</p></div>`;
-                return;
+        function resizeCanvas() {
+            canvas = document.getElementById('gameCanvas');
+            if (canvas) {
+                canvas.width = CONFIG.mapWidth;
+                canvas.height = CONFIG.mapHeight;
+                ctx = canvas.getContext('2d');
             }
-
-            orders.forEach(order => {
-                const card = document.createElement('div');
-                card.className = `p-3 rounded-xl border ${order.isFlashSale ? 'bg-red-950/50 border-red-500/70' : 'bg-slate-800/80 border-slate-700/80'}`;
-                card.innerHTML = `
-                    <div class="flex justify-between items-start mb-1">
-                        <span class="font-bold text-xs flex items-center gap-1.5"><i class="fa-solid ${order.type === 'food' ? 'fa-utensils text-orange-400' : 'fa-box text-blue-400'}"></i> #${order.id} - ${order.item}</span>
-                        <span class="font-black text-xs text-yellow-400">Rp ${order.price.toLocaleString('id-ID')}</span>
-                    </div>
-                    <div class="text-[11px] text-slate-400 mb-2">${order.merchant.name} ➔ ${order.customer.name}</div>
-                    <div class="flex justify-between items-center text-[10px] text-slate-400">
-                        <span>Status: <strong class="text-slate-200">${order.status}</strong></span>
-                        <span class="font-bold ${order.timer < 15 ? 'text-red-400 animate-pulse' : ''}">${order.timer}s</span>
-                    </div>
-                `;
-                listEl.appendChild(card);
-            });
-        }
-
-        function renderReviewsList() {
-            const listEl = document.getElementById('reviewsList');
-            listEl.innerHTML = '';
-            document.getElementById('countReviews').innerText = reviews.length;
-            document.getElementById('reviewScoreSummary').innerHTML = `<i class="fa-solid fa-star text-yellow-400"></i> ${gameState.rating} / 5.0`;
-
-            reviews.forEach(rev => {
-                const card = document.createElement('div');
-                card.className = "bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 space-y-1";
-                card.innerHTML = `
-                    <div class="flex justify-between text-xs font-bold"><span>${rev.customer}</span><span class="text-yellow-400">${'★'.repeat(rev.stars)}</span></div>
-                    <p class="text-[11px] text-slate-300 italic">"${rev.comment}"</p>
-                    ${rev.tip > 0 ? `<div class="text-[10px] text-emerald-400 font-bold">+Tip Rp ${rev.tip.toLocaleString('id-ID')}</div>` : ''}
-                `;
-                listEl.appendChild(card);
-            });
-        }
-
-        function renderCouriersList() {
-            const listEl = document.getElementById('courierList');
-            listEl.innerHTML = '';
-            document.getElementById('countCouriers').innerText = couriers.length;
-
-            couriers.forEach(courier => {
-                const vehicle = CONFIG.vehicleTypes[courier.vehicle];
-                const fuelPct = Math.round((courier.fuel / vehicle.maxFuel) * 100);
-                const card = document.createElement('div');
-                card.className = "bg-slate-800 p-3 rounded-xl border border-slate-700 space-y-2";
-                card.innerHTML = `
-                    <div class="flex justify-between items-center">
-                        <div><h4 class="font-bold text-xs">${courier.name}</h4><span class="text-[10px] text-slate-400">${vehicle.name} (Max ${courier.capacity} Item)</span></div>
-                        <span class="text-[10px] font-bold ${courier.status === 'BROKEN_DOWN' ? 'text-red-400' : 'text-emerald-400'}">${courier.status}</span>
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-[10px] text-slate-400 mb-1"><span>Indikator Bensin</span><span>${fuelPct}%</span></div>
-                        <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden"><div class="h-full ${fuelPct > 40 ? 'bg-emerald-500' : 'bg-red-500'}" style="width: ${fuelPct}%"></div></div>
-                    </div>
-                    <div class="flex gap-1">
-                        ${courier.status === 'BROKEN_DOWN' ? 
-                            `<button onclick="towCourier('${courier.id}')" class="w-full py-1 text-xs font-bold bg-red-600 rounded-xl">Derek SPBU (Rp 25k)</button>` :
-                            `<button onclick="refuelCourier('${courier.id}')" class="flex-1 py-1 text-[11px] font-bold bg-amber-500/20 text-amber-300 hover:bg-amber-500 hover:text-slate-900 rounded-xl transition">Isi Bensin</button>
-                             <button onclick="upgradeVehicle('${courier.id}')" class="flex-1 py-1 text-[11px] font-bold bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition">Upgrade</button>`
-                        }
-                    </div>
-                `;
-                listEl.appendChild(card);
-            });
-        }
-
-        function renderMerchantsList() {
-            const listEl = document.getElementById('merchantList');
-            listEl.innerHTML = '';
-
-            merchants.forEach(m => {
-                const card = document.createElement('div');
-                card.className = "bg-slate-800 p-3 rounded-xl border border-slate-700 space-y-2";
-                card.innerHTML = `
-                    <div class="flex justify-between items-center"><h4 class="font-bold text-xs">${m.name}</h4><span class="text-[10px] text-slate-400">Lvl ${m.level}</span></div>
-                    <button onclick="upgradeMerchant('${m.id}')" class="w-full py-1 text-xs font-bold bg-slate-700 hover:bg-orange-600 rounded-xl transition">Upgrade Toko (Rp ${(m.level * 150000).toLocaleString('id-ID')})</button>
-                `;
-                listEl.appendChild(card);
-            });
-
-            gasStations.forEach(gs => {
-                const card = document.createElement('div');
-                card.className = "bg-slate-800 p-3 rounded-xl border border-amber-500/30 space-y-2 mt-2";
-                card.innerHTML = `
-                    <div class="flex justify-between items-center"><h4 class="font-bold text-xs">${gs.name}</h4><span class="text-[10px] text-slate-400">Lvl ${gs.level || 1}</span></div>
-                    <button onclick="upgradeGasStation('${gs.id}')" class="w-full py-1 text-xs font-bold bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-900 rounded-xl transition">Upgrade SPBU (Rp ${((gs.level || 1) * 200000).toLocaleString('id-ID')})</button>
-                `;
-                listEl.appendChild(card);
-            });
-        }
-
-        function renderSkinsList() {
-            const listEl = document.getElementById('skinsList');
-            listEl.innerHTML = '';
-            CONFIG.skins.forEach(s => {
-                const isActive = gameState.currentSkin === s.id;
-                const card = document.createElement('div');
-                card.className = "p-3 rounded-xl bg-slate-800 border border-slate-700 space-y-2";
-                card.innerHTML = `
-                    <div class="flex justify-between items-center"><h4 class="font-bold text-xs">${s.name}</h4><span class="w-3.5 h-3.5 rounded-full" style="background:${s.primary}"></span></div>
-                    <button onclick="applySkin('${s.id}')" class="w-full py-1 text-xs font-bold rounded-xl ${isActive ? 'bg-emerald-600 text-white' : 'shopee-gradient text-white'}">${isActive ? 'Aktif' : 'Gunakan'}</button>
-                `;
-                listEl.appendChild(card);
-            });
-        }
-
-        function updateMobileLayout() {
-            const isMobile = window.innerWidth < 768;
-            document.getElementById('panelOrders').classList.toggle('hidden', isMobile && gameState.mobileView !== 'orders');
-            document.getElementById('panelMap').classList.toggle('hidden', isMobile && gameState.mobileView !== 'map');
-            document.getElementById('panelManage').classList.toggle('hidden', isMobile && gameState.mobileView !== 'manage');
-            setTimeout(() => { if (typeof renderOrganicMap === 'function') renderOrganicMap(); }, 50);
-        }
-
-        function showToast(msg, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `fixed bottom-14 md:bottom-5 right-5 z-50 px-4 py-2.5 rounded-xl text-white text-xs font-bold shadow-2xl transition-all ${type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-red-600' : 'bg-slate-800'}`;
-            toast.innerText = msg;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
         }
 
         window.onload = function() {
             AudioSys.init();
-            initOrganicMapGrid();
+            resizeCanvas();
+            loadCityMapData('jakarta');
+
             renderOrdersList();
             renderReviewsList();
             renderCouriersList();
+            renderCitiesList();
             renderMerchantsList();
             renderSkinsList();
-            updateHeaderStats();
-            updateMobileLayout();
 
-            window.addEventListener('resize', updateMobileLayout);
-
-            function animLoop() {
-                updatePositions();
-                renderOrganicMap();
-                requestAnimationFrame(animLoop);
-            }
-            animLoop();
-
-            setInterval(gameTick, CONFIG.tickInterval);
+            // Main game loop interval
+            setInterval(() => {
+                if (gameState.gameSpeed > 0) {
+                    gameTick();
+                }
+            }, CONFIG.tickInterval);
         };
+
+        window.onresize = resizeCanvas;
     </script>
 </body>
 </html>
