@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ShopeeFood Indonesia Empire</title>
+    <title>ShopeeFood Empire Simulator</title>
     <style>
         * {
             box-sizing: border-box;
@@ -15,624 +15,466 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: #0b0f19;
             color: #ffffff;
             height: 100vh;
             height: 100dvh;
-            overflow: hidden;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
 
-        /* Top Header */
+        /* Top Bar */
         header {
             background: linear-gradient(135deg, #ee4d2d, #ff6b35);
-            padding: 8px 12px;
+            padding: 10px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            z-index: 10;
+            z-index: 100;
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .brand-icon {
-            width: 32px;
-            height: 32px;
-            background: #fff;
-            color: #ee4d2d;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        .brand-title h1 {
+        .logo {
+            font-weight: 900;
             font-size: 14px;
-            font-weight: 800;
-            line-height: 1.1;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .brand-title span {
-            font-size: 10px;
-            background: #ffeb3b;
-            color: #000;
-            padding: 1px 5px;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-
-        .speed-controls {
+        .speed-box {
             display: flex;
             gap: 4px;
         }
 
         .btn-speed {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.25);
             border: none;
             color: white;
             padding: 4px 8px;
-            border-radius: 6px;
+            border-radius: 4px;
             font-size: 11px;
             font-weight: bold;
-            cursor: pointer;
         }
 
         .btn-speed.active {
-            background: #ffffff;
+            background: white;
             color: #ee4d2d;
         }
 
-        /* Stats Bar */
-        .stats-bar {
+        /* Status Bar */
+        .status-bar {
             background: #151c2c;
-            padding: 6px 12px;
+            padding: 8px 12px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
             font-size: 11px;
             border-bottom: 1px solid #222d42;
+            z-index: 100;
         }
 
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .stat-value {
-            color: #4caf50;
-            font-weight: bold;
-        }
-
-        /* Main Game View */
-        main {
+        /* Main View Container */
+        #game-view {
             flex: 1;
             position: relative;
-            overflow: hidden;
             background: #101726;
+            overflow: hidden;
         }
 
-        .tab-content {
+        .tab-panel {
             width: 100%;
             height: 100%;
             display: none;
-            position: relative;
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
         }
 
-        .tab-content.active {
+        .tab-panel.active {
             display: block;
         }
 
-        #gameCanvas {
+        /* Canvas Peta Fixed Style */
+        #canvas-wrapper {
             width: 100%;
             height: 100%;
-            display: block;
-            background: #131a29;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0f172a;
         }
 
-        .map-badge {
+        canvas {
+            background: #131a29;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            display: block;
+        }
+
+        /* Map Badge Overlays */
+        .map-info {
             position: absolute;
             top: 10px;
             left: 10px;
-            background: rgba(15, 23, 42, 0.85);
-            border: 1px solid #2a3854;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid #334155;
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 11px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            backdrop-filter: blur(4px);
-            z-index: 5;
+            z-index: 10;
+            pointer-events: none;
         }
 
-        .dot-online {
-            width: 8px;
-            height: 8px;
-            background: #10b981;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #10b981;
-        }
-
-        .hud-bottom {
+        .hud-stats {
             position: absolute;
             bottom: 10px;
             left: 10px;
             right: 10px;
             background: rgba(15, 23, 42, 0.9);
-            border: 1px solid #2a3854;
-            border-radius: 10px;
-            padding: 8px 12px;
+            border: 1px solid #334155;
+            padding: 8px;
+            border-radius: 8px;
             display: flex;
             justify-content: space-around;
             font-size: 11px;
-            backdrop-filter: blur(4px);
-            z-index: 5;
+            z-index: 10;
+            pointer-events: none;
         }
 
-        /* Panels (Pesanan & Kelola) */
-        .panel-container {
+        /* Cards & Buttons */
+        .card-list {
             padding: 12px;
-            height: 100%;
-            overflow-y: auto;
         }
 
         .card {
-            background: #1a2336;
-            border: 1px solid #2a3854;
+            background: #1e293b;
+            border: 1px solid #334155;
             border-radius: 8px;
             padding: 12px;
             margin-bottom: 10px;
         }
 
-        .card h3 {
+        .card h4 {
             font-size: 13px;
-            margin-bottom: 6px;
-            color: #ee4d2d;
+            color: #ff6b35;
+            margin-bottom: 4px;
         }
 
         .card p {
             font-size: 11px;
             color: #94a3b8;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
-        .btn-action {
+        .btn {
             width: 100%;
             background: #ee4d2d;
             border: none;
             color: white;
-            padding: 8px;
+            padding: 10px;
             border-radius: 6px;
             font-size: 12px;
             font-weight: bold;
-            cursor: pointer;
         }
 
-        .btn-action:disabled {
-            background: #475569;
-            cursor: not-allowed;
-        }
-
-        /* Bottom Navigation Bar */
+        /* Bottom Navigation */
         nav {
             background: #0f172a;
             border-top: 1px solid #1e293b;
             display: flex;
-            justify-content: space-around;
-            padding: 6px 0;
-            z-index: 10;
+            height: 55px;
+            z-index: 100;
         }
 
-        .nav-btn {
+        .nav-item {
+            flex: 1;
             background: transparent;
             border: none;
             color: #64748b;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
+            justify-content: center;
             font-size: 10px;
-            cursor: pointer;
-            width: 33%;
-            position: relative;
+            gap: 2px;
         }
 
-        .nav-btn.active {
+        .nav-item.active {
             color: #ee4d2d;
-        }
-
-        .nav-icon {
-            font-size: 18px;
-        }
-
-        .badge {
-            position: absolute;
-            top: -2px;
-            right: 30%;
-            background: #ef4444;
-            color: white;
-            font-size: 9px;
-            padding: 1px 4px;
-            border-radius: 10px;
             font-weight: bold;
+        }
+
+        .nav-item span:first-child {
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
     <header>
-        <div class="brand">
-            <div class="brand-icon">🛵</div>
-            <div class="brand-title">
-                <h1>ShopeeFood</h1>
-                <span>PRO EDITION</span>
-            </div>
-        </div>
-        <div class="speed-controls">
+        <div class="logo">🛵 ShopeeFood PRO</div>
+        <div class="speed-box">
             <button class="btn-speed" onclick="setSpeed(0)">⏸</button>
             <button class="btn-speed active" onclick="setSpeed(1)">1x</button>
             <button class="btn-speed" onclick="setSpeed(2)">2x</button>
-            <button class="btn-speed" onclick="setSpeed(4)">4x</button>
         </div>
     </header>
 
-    <!-- Stats Bar -->
-    <div class="stats-bar">
-        <div class="stat-item">Kas: <span id="txtKas" class="stat-value">Rp 500.000</span></div>
-        <div class="stat-item">Kota: <span id="txtKota" style="color:#38bdf8;">Jakarta</span></div>
-        <div class="stat-item">⭐ <span id="txtRating">5.0</span></div>
-        <div class="stat-item">☀️ <span id="txtCuaca">Cerah</span></div>
-        <div class="stat-item"><span id="txtWaktu">08:00</span></div>
+    <div class="status-bar">
+        <div>Kas: <strong id="txtKas" style="color:#4caf50;">Rp 500.000</strong></div>
+        <div>Kota: <strong id="txtKota" style="color:#38bdf8;">Jakarta</strong></div>
+        <div>⏰ <strong id="txtJam">08:00</strong></div>
     </div>
 
-    <!-- Main View -->
-    <main id="mainContainer">
-        <!-- Tab 1: Peta -->
-        <div id="tabPeta" class="tab-content active">
-            <div class="map-badge">
-                <div class="dot-online"></div>
-                <span id="mapTitle">Peta DKI Jakarta (Monas & Bundaran HI)</span>
-            </div>
-            <canvas id="gameCanvas"></canvas>
-            <div class="hud-bottom">
-                <span>🛵 Kurir Jalan: <strong id="hudKurir">0/0</strong></span>
-                <span>⛽ SPBU: <strong id="hudSpbu">2</strong></span>
-                <span>✅ Sukses: <strong id="hudSukses">0</strong></span>
-            </div>
-        </div>
-
-        <!-- Tab 2: Pesanan -->
-        <div id="tabPesanan" class="tab-content">
-            <div class="panel-container">
-                <h2 style="font-size: 15px; margin-bottom: 10px;">Daftar Pesanan Masuk</h2>
-                <div id="listPesanan">
-                    <!-- Pesanan dimasukkan dinamis via JS -->
+    <div id="game-view">
+        <!-- Tab 1: Peta Canvas -->
+        <div id="tab-peta" class="tab-panel active">
+            <div id="canvas-wrapper">
+                <div class="map-info">🟢 Peta Operasional <span id="mapCityName">Jakarta</span></div>
+                <canvas id="gameCanvas" width="360" height="480"></canvas>
+                <div class="hud-stats">
+                    <span>🛵 Aktif: <strong id="hudKurir">1/1</strong></span>
+                    <span>⛽ Bensin: <strong id="hudBensin">100%</strong></span>
+                    <span>✅ Order: <strong id="hudSukses">0</strong></span>
                 </div>
             </div>
         </div>
 
-        <!-- Tab 3: Kelola Armada -->
-        <div id="tabKelola" class="tab-content">
-            <div class="panel-container">
-                <h2 style="font-size: 15px; margin-bottom: 10px;">Manajemen Armada & Fitur</h2>
+        <!-- Tab 2: Orderan -->
+        <div id="tab-order" class="tab-panel">
+            <div class="card-list">
+                <h3 style="font-size:14px; margin-bottom:10px;">Daftar Pesanan Masuk</h3>
+                <div id="container-order"></div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Kelola -->
+        <div id="tab-kelola" class="tab-panel">
+            <div class="card-list">
+                <h3 style="font-size:14px; margin-bottom:10px;">Manajemen Bisnis</h3>
                 
                 <div class="card">
-                    <h3>Tambah Kurir Baru</h3>
-                    <p>Beli sepeda motor tambahan dan rekrut kurir baru.</p>
-                    <button class="btn-action" onclick="beliKurir()">Sewa Kurir (Rp 250.000)</button>
+                    <h4>Beli Motor & Rekrut Kurir</h4>
+                    <p>Biaya: Rp 250.000 (Menambah 1 Armada)</p>
+                    <button class="btn" onclick="beliKurir()">Sewa Kurir Baru</button>
                 </div>
 
                 <div class="card">
-                    <h3>Isi Bensin Otomatis</h3>
-                    <p>Isi ulang bensin untuk semua kurir yang bensinnya tipis (<20%).</p>
-                    <button class="btn-action" style="background:#059669;" onclick="refuelAll()">Refuel Semua (Rp 15.000/motor)</button>
+                    <h4>Isi Bensin Masal</h4>
+                    <p>Biaya: Rp 15.000 per motor</p>
+                    <button class="btn" style="background:#059669;" onclick="isiBensin()">Refuel Semua Motor</button>
                 </div>
 
                 <div class="card">
-                    <h3>Pindah Operasional Kota</h3>
-                    <p>Buka cabang ekspansi bisnis di kota lain.</p>
-                    <button class="btn-action" style="background:#0284c7;" onclick="gantiKota()">Ganti Kota Operasional</button>
+                    <h4>Ekspansi Kota Operasional</h4>
+                    <p>Pindah wilayah pengiriman</p>
+                    <button class="btn" style="background:#0284c7;" onclick="pindahKota()">Pindah Kota</button>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 
-    <!-- Navigation -->
     <nav>
-        <button class="nav-btn active" onclick="switchTab('tabPeta', this)">
-            <span class="nav-icon">🗺️</span>
+        <button class="nav-item active" onclick="switchTab('tab-peta', this)">
+            <span>🗺️</span>
             <span>Peta</span>
         </button>
-        <button class="nav-btn" onclick="switchTab('tabPesanan', this)">
-            <span class="nav-icon">📦</span>
+        <button class="nav-item" onclick="switchTab('tab-order', this)">
+            <span>📦</span>
             <span>Pesanan</span>
-            <span id="badgePesanan" class="badge">0</span>
         </button>
-        <button class="nav-btn" onclick="switchTab('tabKelola', this)">
-            <span class="nav-icon">⚙️</span>
+        <button class="nav-item" onclick="switchTab('tab-kelola', this)">
+            <span>⚙️</span>
             <span>Kelola</span>
         </button>
     </nav>
 
     <script>
-        // State Game Global
-        let game = {
+        // Game State Engine
+        const gameState = {
             kas: 500000,
-            rating: 5.0,
-            kota: 'Jakarta',
             sukses: 0,
             speed: 1,
+            kota: 'Jakarta',
             jam: 8,
             menit: 0,
-            kurir: [],
-            pesanan: [],
-            spbu: [{x: 0.3, y: 0.3}, {x: 0.7, y: 0.7}],
-            warung: [{x: 0.2, y: 0.5, nama: "Geprek Bensu"}, {x: 0.8, y: 0.2, nama: "Kopi Janji Jiwa"}, {x: 0.5, y: 0.8, nama: "Nasi Goreng 68"}]
+            kurir: [
+                { x: 180, y: 240, targetX: null, targetY: null, bensin: 100, status: 'idle' }
+            ],
+            orders: [],
+            warung: [
+                { x: 60, y: 100, nama: "Geprek Bensu" },
+                { x: 300, y: 120, nama: "Kopi Janji Jiwa" },
+                { x: 180, y: 380, nama: "Nasi Goreng 68" }
+            ]
         };
 
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Resizing Canvas Responsif HP
-        function resizeCanvas() {
-            const container = document.getElementById('tabPeta');
-            canvas.width = container.clientWidth || window.innerWidth;
-            canvas.height = container.clientHeight || (window.innerHeight - 100);
-            drawMap();
+        // Layout Adaptor untuk iPhone / Android Screen
+        function fitCanvas() {
+            const wrapper = document.getElementById('canvas-wrapper');
+            const scale = Math.min(wrapper.clientWidth / 360, wrapper.clientHeight / 480);
+            canvas.style.width = (360 * scale) + 'px';
+            canvas.style.height = (480 * scale) + 'px';
         }
 
-        window.addEventListener('resize', resizeCanvas);
-
-        // Inisialisasi Aplikasi
         window.addEventListener('load', () => {
-            resizeCanvas();
-            initGame();
-            setInterval(gameLoop, 1000 / 30); // 30 FPS Loop
+            fitCanvas();
+            window.addEventListener('resize', fitCanvas);
+            
+            // Start Engine Loops
+            requestAnimationFrame(renderLoop);
+            setInterval(logicLoop, 100);
             setInterval(clockLoop, 1000);
-            setInterval(generateOrder, 5000);
+            setInterval(generateOrder, 4000);
+            
+            renderOrdersUI();
+            updateUI();
         });
 
-        function initGame() {
-            // Tambah 1 kurir awal
-            beliKurirFree();
-        }
-
-        // Navigation Tabs
+        // Tab Switcher
         function switchTab(tabId, btn) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
             
             document.getElementById(tabId).classList.add('active');
             btn.classList.add('active');
 
-            if(tabId === 'tabPeta') {
-                setTimeout(resizeCanvas, 50);
-            }
+            if(tabId === 'tab-peta') fitCanvas();
         }
 
-        // Speed Control
         function setSpeed(val) {
-            game.speed = val;
-            document.querySelectorAll('.btn-speed').forEach((b, idx) => {
-                b.classList.toggle('active', (val === 0 && idx === 0) || (val === 1 && idx === 1) || (val === 2 && idx === 2) || (val === 4 && idx === 3));
+            gameState.speed = val;
+            document.querySelectorAll('.btn-speed').forEach((b, i) => {
+                b.classList.toggle('active', (val === 0 && i === 0) || (val === 1 && i === 1) || (val === 2 && i === 2));
             });
         }
 
-        // Game Loops
-        function gameLoop() {
-            if (game.speed === 0) return;
+        // Logic Movement & Physics
+        function logicLoop() {
+            if (gameState.speed === 0) return;
 
-            // Move Kurir
-            game.kurir.forEach(k => {
+            gameState.kurir.forEach(k => {
                 if (k.bensin <= 0) return;
 
-                if (k.target) {
-                    let dx = k.target.x - k.x;
-                    let dy = k.target.y - k.y;
-                    let dist = Math.sqrt(dx*dx + dy*dy);
-                    let step = 0.005 * game.speed;
+                if (k.targetX !== null && k.targetY !== null) {
+                    let dx = k.targetX - k.x;
+                    let dy = k.targetY - k.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    let moveStep = 3 * gameState.speed;
 
-                    if (dist < step) {
-                        k.x = k.target.x;
-                        k.y = k.target.y;
-                        k.target = null;
-                        k.bensin -= 10;
-                        if(k.bensin < 0) k.bensin = 0;
+                    if (dist <= moveStep) {
+                        k.x = k.targetX;
+                        k.y = k.targetY;
+                        k.targetX = null;
+                        k.targetY = null;
+                        k.bensin -= 15;
+                        if (k.bensin < 0) k.bensin = 0;
 
-                        if(k.status === 'antar') {
+                        if (k.status === 'antar') {
                             k.status = 'idle';
-                            game.kas += 18000;
-                            game.sukses++;
+                            gameState.kas += 20000;
+                            gameState.sukses++;
                             updateUI();
                         }
                     } else {
-                        k.x += (dx / dist) * step;
-                        k.y += (dy / dist) * step;
-                        k.bensin -= 0.02 * game.speed;
+                        k.x += (dx / dist) * moveStep;
+                        k.y += (dy / dist) * moveStep;
+                        k.bensin -= 0.05 * gameState.speed;
                     }
                 }
             });
-
-            drawMap();
         }
 
         function clockLoop() {
-            if (game.speed === 0) return;
-            game.menit += 5 * game.speed;
-            if (game.menit >= 60) {
-                game.menit = 0;
-                game.jam = (game.jam + 1) % 24;
+            if (gameState.speed === 0) return;
+            gameState.menit += 5 * gameState.speed;
+            if (gameState.menit >= 60) {
+                gameState.menit = 0;
+                gameState.jam = (gameState.jam + 1) % 24;
             }
-            document.getElementById('txtWaktu').innerText = `${String(game.jam).padStart(2,'0')}:${String(game.menit).padStart(2,'0')}`;
+            document.getElementById('txtJam').innerText = 
+                `${String(gameState.jam).padStart(2,'0')}:${String(gameState.menit).padStart(2,'0')}`;
         }
 
         function generateOrder() {
-            if (game.pesanan.length >= 8) return;
-            let randomWarung = game.warung[Math.floor(Math.random() * game.warung.length)];
-            let order = {
+            if (gameState.orders.length >= 6) return;
+            let w = gameState.warung[Math.floor(Math.random() * gameState.warung.length)];
+            gameState.orders.push({
                 id: Date.now(),
-                resto: randomWarung.nama,
-                restoX: randomWarung.x,
-                restoY: randomWarung.y,
-                custX: Math.random() * 0.8 + 0.1,
-                custY: Math.random() * 0.8 + 0.1,
-                ongkir: 18000
-            };
-            game.pesanan.push(order);
-            renderOrders();
+                resto: w.nama,
+                custX: Math.floor(Math.random() * 280) + 40,
+                custY: Math.floor(Math.random() * 380) + 40,
+                ongkir: 20000
+            });
+            renderOrdersUI();
         }
 
-        // Rendering Map Canvas
-        function drawMap() {
-            let w = canvas.width;
-            let h = canvas.height;
+        // Render Graphics Engine
+        function renderLoop() {
+            ctx.clearRect(0, 0, 360, 480);
 
-            if (w === 0 || h === 0) return;
-
-            // Background Peta
-            ctx.fillStyle = "#131a29";
-            ctx.fillRect(0, 0, w, h);
-
-            // Draw Jalanan Peta
-            ctx.strokeStyle = "#25334d";
-            ctx.lineWidth = 12;
+            // Draw Road Grid
+            ctx.strokeStyle = "#1e293b";
+            ctx.lineWidth = 14;
             ctx.beginPath();
-            ctx.moveTo(w * 0.1, h * 0.5); ctx.lineTo(w * 0.9, h * 0.5);
-            ctx.moveTo(w * 0.5, h * 0.1); ctx.lineTo(w * 0.5, h * 0.9);
+            ctx.moveTo(60, 0); ctx.lineTo(60, 480);
+            ctx.moveTo(180, 0); ctx.lineTo(180, 480);
+            ctx.moveTo(300, 0); ctx.lineTo(300, 480);
+            ctx.moveTo(0, 120); ctx.lineTo(360, 120);
+            ctx.moveTo(0, 240); ctx.lineTo(360, 240);
+            ctx.moveTo(0, 380); ctx.lineTo(360, 380);
             ctx.stroke();
 
-            // Draw SPBU
-            game.spbu.forEach(s => {
-                ctx.fillStyle = "#ef4444";
-                ctx.beginPath();
-                ctx.arc(s.x * w, s.y * h, 10, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = "#ffffff";
-                ctx.font = "10px sans-serif";
-                ctx.fillText("⛽ SPBU", s.x * w - 16, s.y * h - 12);
-            });
-
-            // Draw Warung Resto
-            game.warung.forEach(wr => {
+            // Draw Warung
+            gameState.warung.forEach(w => {
                 ctx.fillStyle = "#f59e0b";
-                ctx.fillRect(wr.x * w - 8, wr.y * h - 8, 16, 16);
+                ctx.fillRect(w.x - 10, w.y - 10, 20, 20);
                 ctx.fillStyle = "#ffffff";
                 ctx.font = "9px sans-serif";
-                ctx.fillText(wr.nama, wr.x * w - 20, wr.y * h + 18);
+                ctx.fillText(w.nama, w.x - 25, w.y + 22);
             });
 
             // Draw Kurir
-            game.kurir.forEach((k, idx) => {
-                let kx = k.x * w;
-                let ky = k.y * h;
-
-                ctx.fillStyle = k.bensin > 0 ? "#10b981" : "#64748b";
+            gameState.kurir.forEach((k, idx) => {
+                ctx.fillStyle = k.bensin > 0 ? "#10b981" : "#ef4444";
                 ctx.beginPath();
-                ctx.arc(kx, ky, 8, 0, Math.PI * 2);
+                ctx.arc(k.x, k.y, 9, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Text Kurir
                 ctx.fillStyle = "#ffffff";
                 ctx.font = "10px sans-serif";
-                ctx.fillText(`🛵 Kurir ${idx+1}`, kx - 18, ky - 12);
+                ctx.fillText(`🛵 K${idx+1}`, k.x - 12, k.y - 14);
             });
+
+            requestAnimationFrame(renderLoop);
         }
 
-        // Beli Kurir
-        function beliKurirFree() {
-            game.kurir.push({
-                x: 0.5,
-                y: 0.5,
-                target: null,
-                bensin: 100,
-                status: 'idle'
-            });
-            updateUI();
-        }
-
-        function beliKurir() {
-            if (game.kas >= 250000) {
-                game.kas -= 250000;
-                beliKurirFree();
-            } else {
-                alert("Kas tidak mencukupi!");
-            }
-        }
-
-        function refuelAll() {
-            let butuh = game.kurir.filter(k => k.bensin < 100).length;
-            let biaya = butuh * 15000;
-            if (game.kas >= biaya) {
-                game.kas -= biaya;
-                game.kurir.forEach(k => k.bensin = 100);
-                updateUI();
-                alert("Semua kurir berhasil diisi bensin!");
-            } else {
-                alert("Kas tidak cukup untuk refuel!");
-            }
-        }
-
-        function terimaPesanan(orderId) {
-            let idleKurir = game.kurir.find(k => k.status === 'idle' && k.bensin > 10);
-            if (!idleKurir) {
-                alert("Tidak ada kurir yang siap / bensin habis!");
+        // UI Handlers & Actions
+        function ambilOrder(id) {
+            let kurir = gameState.kurir.find(k => k.status === 'idle' && k.bensin > 10);
+            if (!kurir) {
+                alert("Semua kurir sibuk / bensin habis!");
                 return;
             }
 
-            let orderIndex = game.pesanan.findIndex(o => o.id === orderId);
-            if (orderIndex > -1) {
-                let order = game.pesanan[orderIndex];
-                idleKurir.status = 'antar';
-                idleKurir.target = { x: order.custX, y: order.custY };
-                game.pesanan.splice(orderIndex, 1);
-                renderOrders();
-                switchTab('tabPeta', document.querySelectorAll('.nav-btn')[0]);
+            let idx = gameState.orders.findIndex(o => o.id === id);
+            if (idx > -1) {
+                let ord = gameState.orders[idx];
+                kurir.status = 'antar';
+                kurir.targetX = ord.custX;
+                kurir.targetY = ord.custY;
+                gameState.orders.splice(idx, 1);
+                renderOrdersUI();
+                switchTab('tab-peta', document.querySelectorAll('.nav-item')[0]);
             }
         }
 
-        function renderOrders() {
-            let container = document.getElementById('listPesanan');
-            document.getElementById('badgePesanan').innerText = game.pesanan.length;
-
-            if (game.pesanan.length === 0) {
-                container.innerHTML = '<p style="font-size:12px; color:#64748b;">Belum ada pesanan masuk...</p>';
-                return;
-            }
-
-            container.innerHTML = game.pesanan.map(o => `
-                <div class="card">
-                    <h3>${o.resto}</h3>
-                    <p>Pengiriman Makanan • Ongkir Rp ${o.ongkir.toLocaleString('id-ID')}</p>
-                    <button class="btn-action" onclick="terimaPesanan(${o.id})">Ambil Pesanan Ini</button>
-                </div>
-            `).join('');
-        }
-
-        function updateUI() {
-            document.getElementById('txtKas').innerText = `Rp ${game.kas.toLocaleString('id-ID')}`;
-            document.getElementById('hudKurir').innerText = `${game.kurir.filter(k => k.status === 'antar').length}/${game.kurir.length}`;
-            document.getElementById('hudSukses').innerText = game.sukses;
-        }
-
-        function gantiKota() {
-            let list = ['Jakarta', 'Yogyakarta', 'Bandung'];
-            let next = list[(list.indexOf(game.kota) + 1) % list.length];
-            game.kota = next;
-            document.getElementById('txtKota').innerText = next;
-            document.getElementById('mapTitle').innerText = `Peta Operasional ${next}`;
-            alert(`Berhasil pindah ke kota ${next}!`);
-        }
-    </script>
-</body>
-</html>
+        function renderOrdersUI() {
+            let box = document.getElementById('container-order');
+            if (gameState.orders.length === 0) {
+                box.innerHTML = '<p style="font-size
