@@ -2,1723 +2,637 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delivery Empire Simulator - Edisi Indonesia Pro</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>ShopeeFood Indonesia Empire</title>
     <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #0b0f19;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
             user-select: none;
+            -webkit-user-select: none;
             touch-action: manipulation;
         }
-        
-        .custom-scroll {
-            overflow-y: auto !important;
-            -webkit-overflow-scrolling: touch;
-            touch-action: pan-y;
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0b0f19;
+            color: #ffffff;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        .custom-scroll::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
+        /* Top Header */
+        header {
+            background: linear-gradient(135deg, #ee4d2d, #ff6b35);
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            z-index: 10;
         }
-        .custom-scroll::-webkit-scrollbar-track {
-            background: #111827;
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            background: #fff;
+            color: #ee4d2d;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .brand-title h1 {
+            font-size: 14px;
+            font-weight: 800;
+            line-height: 1.1;
+        }
+
+        .brand-title span {
+            font-size: 10px;
+            background: #ffeb3b;
+            color: #000;
+            padding: 1px 5px;
             border-radius: 4px;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: #ee4d2d;
-            border-radius: 4px;
+            font-weight: bold;
         }
 
-        .shopee-gradient {
-            background: linear-gradient(135deg, #ee4d2d 0%, #ff6633 100%);
+        .speed-controls {
+            display: flex;
+            gap: 4px;
         }
 
-        .shopee-glass {
+        .btn-speed {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-speed.active {
+            background: #ffffff;
+            color: #ee4d2d;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            background: #151c2c;
+            padding: 6px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            border-bottom: 1px solid #222d42;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-value {
+            color: #4caf50;
+            font-weight: bold;
+        }
+
+        /* Main Game View */
+        main {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: #101726;
+        }
+
+        .tab-content {
+            width: 100%;
+            height: 100%;
+            display: none;
+            position: relative;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        #gameCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            background: #131a29;
+        }
+
+        .map-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
             background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid #2a3854;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(4px);
+            z-index: 5;
         }
 
-        @keyframes pulse-glow {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.06); opacity: 0.85; }
+        .dot-online {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10b981;
         }
 
-        .animate-pulse-glow {
-            animation: pulse-glow 2s infinite ease-in-out;
+        .hud-bottom {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid #2a3854;
+            border-radius: 10px;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-around;
+            font-size: 11px;
+            backdrop-filter: blur(4px);
+            z-index: 5;
         }
 
-        canvas {
-            border-radius: 16px;
-            box-shadow: inset 0 0 40px rgba(0,0,0,0.6);
+        /* Panels (Pesanan & Kelola) */
+        .panel-container {
+            padding: 12px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .card {
+            background: #1a2336;
+            border: 1px solid #2a3854;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .card h3 {
+            font-size: 13px;
+            margin-bottom: 6px;
+            color: #ee4d2d;
+        }
+
+        .card p {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .btn-action {
+            width: 100%;
+            background: #ee4d2d;
+            border: none;
+            color: white;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-action:disabled {
+            background: #475569;
+            cursor: not-allowed;
+        }
+
+        /* Bottom Navigation Bar */
+        nav {
+            background: #0f172a;
+            border-top: 1px solid #1e293b;
+            display: flex;
+            justify-content: space-around;
+            padding: 6px 0;
+            z-index: 10;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            font-size: 10px;
+            cursor: pointer;
+            width: 33%;
+            position: relative;
+        }
+
+        .nav-btn.active {
+            color: #ee4d2d;
+        }
+
+        .nav-icon {
+            font-size: 18px;
+        }
+
+        .badge {
+            position: absolute;
+            top: -2px;
+            right: 30%;
+            background: #ef4444;
+            color: white;
+            font-size: 9px;
+            padding: 1px 4px;
+            border-radius: 10px;
+            font-weight: bold;
         }
     </style>
 </head>
-<body class="h-[100dvh] w-screen overflow-hidden flex flex-col text-slate-100 bg-slate-950">
+<body>
 
-    <header class="shopee-gradient text-white px-3 md:px-5 py-2 shadow-xl flex justify-between items-center z-20 flex-shrink-0">
-        <div class="flex items-center space-x-2 md:space-x-3">
-            <div class="bg-white text-[#ee4d2d] p-2 rounded-2xl font-black text-xl shadow-lg flex items-center justify-center w-9 h-9 md:w-11 md:h-11">
-                <i class="fa-solid fa-motorcycle"></i>
-            </div>
-            <div>
-                <h1 class="font-black text-base md:text-xl leading-none tracking-tight flex items-center gap-2">
-                    ShopeeFood Indonesia Empire
-                    <span id="skinBadge" class="bg-yellow-400 text-slate-900 text-[10px] md:text-xs px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider shadow">Pro Edition</span>
-                </h1>
-                <p class="text-[10px] md:text-xs text-orange-100 opacity-90 mt-0.5 hidden sm:block">Simulator Kurir Nusantara &bull; Multi-Kota, Kemacetan, SPBU & Ulasan Pelanggan</p>
+    <!-- Header -->
+    <header>
+        <div class="brand">
+            <div class="brand-icon">🛵</div>
+            <div class="brand-title">
+                <h1>ShopeeFood</h1>
+                <span>PRO EDITION</span>
             </div>
         </div>
-
-        <!-- Realtime Stats Bar Header -->
-        <div class="hidden lg:flex items-center space-x-4 bg-black/25 px-4 py-1.5 rounded-2xl backdrop-blur-md border border-white/10">
-            <div class="text-center">
-                <span class="text-[9px] uppercase font-bold text-orange-200 block tracking-wider">Kas Utama</span>
-                <span id="statMoney" class="text-sm font-black text-yellow-300">Rp 500.000</span>
-            </div>
-            <div class="h-6 w-px bg-white/20"></div>
-            <div class="text-center">
-                <span class="text-[9px] uppercase font-bold text-orange-200 block tracking-wider">Kota Aktif</span>
-                <span id="statCity" class="text-sm font-extrabold text-white"><i class="fa-solid fa-city text-orange-300 mr-1"></i>DKI Jakarta</span>
-            </div>
-            <div class="h-6 w-px bg-white/20"></div>
-            <div class="text-center">
-                <span class="text-[9px] uppercase font-bold text-orange-200 block tracking-wider">Rating Shopee</span>
-                <span id="statRating" class="text-sm font-bold text-white"><i class="fa-solid fa-star text-yellow-300 mr-1"></i>5.0</span>
-            </div>
-            <div class="h-6 w-px bg-white/20"></div>
-            <div class="text-center">
-                <span class="text-[9px] uppercase font-bold text-orange-200 block tracking-wider">Cuaca</span>
-                <span id="statWeather" class="text-sm font-bold text-white flex items-center gap-1">
-                    <i class="fa-solid fa-sun text-yellow-300"></i> Cerah
-                </span>
-            </div>
-            <div class="h-6 w-px bg-white/20"></div>
-            <div class="text-center">
-                <span class="text-[9px] uppercase font-bold text-orange-200 block tracking-wider">Waktu Operations</span>
-                <span id="statTime" class="text-sm font-mono font-bold text-white">08:00 WIB</span>
-            </div>
-        </div>
-
-        <!-- Controls -->
-        <div class="flex items-center space-x-1.5 md:space-x-2">
-            <button id="btnFlashSale" onclick="triggerFlashSaleEvent()" class="bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-black px-2.5 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow-lg transition active:scale-95">
-                <i class="fa-solid fa-bolt text-red-600 animate-bounce"></i>
-                <span class="hidden sm:inline">Event 11.11</span>
-            </button>
-
-            <div class="bg-black/25 p-1 rounded-xl flex items-center space-x-1 border border-white/10">
-                <button id="btnSpeed0" onclick="setSpeed(0)" class="px-2 py-1 text-xs font-bold rounded-lg bg-white/20 hover:bg-white/40 transition">⏸</button>
-                <button id="btnSpeed1" onclick="setSpeed(1)" class="px-2 py-1 text-xs font-bold rounded-lg bg-yellow-400 text-slate-900 transition">1x</button>
-                <button id="btnSpeed2" onclick="setSpeed(2)" class="px-2 py-1 text-xs font-bold rounded-lg bg-white/20 hover:bg-white/40 transition">2x</button>
-                <button id="btnSpeed4" onclick="setSpeed(4)" class="px-2 py-1 text-xs font-bold rounded-lg bg-white/20 hover:bg-white/40 transition">4x</button>
-            </div>
-            
-            <button onclick="toggleAudio()" id="btnAudio" class="p-2 bg-black/25 hover:bg-black/40 rounded-xl text-xs md:text-sm text-white border border-white/10">
-                <i class="fa-solid fa-volume-high"></i>
-            </button>
+        <div class="speed-controls">
+            <button class="btn-speed" onclick="setSpeed(0)">⏸</button>
+            <button class="btn-speed active" onclick="setSpeed(1)">1x</button>
+            <button class="btn-speed" onclick="setSpeed(2)">2x</button>
+            <button class="btn-speed" onclick="setSpeed(4)">4x</button>
         </div>
     </header>
 
-    <div class="flex lg:hidden bg-slate-900 text-white px-3 py-1.5 justify-between items-center text-[11px] border-b border-slate-800 z-20 flex-shrink-0">
-        <div class="flex items-center gap-1">
-            <span class="text-slate-400">Kas:</span>
-            <span id="mStatMoney" class="font-black text-yellow-400">Rp 500.000</span>
-        </div>
-        <div class="flex items-center gap-1">
-            <span id="mStatCity" class="font-bold text-orange-400">Jakarta</span>
-        </div>
-        <div class="flex items-center gap-1">
-            <i class="fa-solid fa-star text-yellow-400"></i>
-            <span id="mStatRating" class="font-bold">5.0</span>
-        </div>
-        <div id="mStatWeather" class="flex items-center gap-1">
-            <i class="fa-solid fa-sun text-yellow-400"></i> Cerah
-        </div>
-        <div id="mStatTime" class="font-mono font-bold text-orange-300">
-            08:00
-        </div>
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+        <div class="stat-item">Kas: <span id="txtKas" class="stat-value">Rp 500.000</span></div>
+        <div class="stat-item">Kota: <span id="txtKota" style="color:#38bdf8;">Jakarta</span></div>
+        <div class="stat-item">⭐ <span id="txtRating">5.0</span></div>
+        <div class="stat-item">☀️ <span id="txtCuaca">Cerah</span></div>
+        <div class="stat-item"><span id="txtWaktu">08:00</span></div>
     </div>
 
-    <!-- FLASH SALE BANNER -->
-    <div id="bannerFlashSale" class="hidden bg-gradient-to-r from-red-600 via-orange-500 to-amber-500 text-white px-4 py-2 flex items-center justify-between text-xs font-bold shadow-lg z-30 animate-pulse flex-shrink-0">
-        <div class="flex items-center gap-2">
-            <i class="fa-solid fa-fire text-yellow-300 text-base"></i>
-            <span>PROMO HARBOLNAS 11.11! Pesanan membanjiri layar 3x Lipat & Plus Tip Melimpah!</span>
+    <!-- Main View -->
+    <main id="mainContainer">
+        <!-- Tab 1: Peta -->
+        <div id="tabPeta" class="tab-content active">
+            <div class="map-badge">
+                <div class="dot-online"></div>
+                <span id="mapTitle">Peta DKI Jakarta (Monas & Bundaran HI)</span>
+            </div>
+            <canvas id="gameCanvas"></canvas>
+            <div class="hud-bottom">
+                <span>🛵 Kurir Jalan: <strong id="hudKurir">0/0</strong></span>
+                <span>⛽ SPBU: <strong id="hudSpbu">2</strong></span>
+                <span>✅ Sukses: <strong id="hudSukses">0</strong></span>
+            </div>
         </div>
-        <span id="flashTimer" class="bg-black/30 px-2.5 py-0.5 rounded-lg font-mono text-yellow-300">00:30</span>
-    </div>
 
-    <!-- MAIN WRAPPER -->
-    <div class="flex-1 flex flex-col md:flex-row overflow-hidden p-2 md:p-3 gap-2 md:gap-3 bg-slate-950 min-h-0">
-
-        <!-- Left Sidebar: Orders & Customer Reviews Feed -->
-        <aside id="panelOrders" class="w-full md:w-80 bg-slate-900/90 rounded-2xl border border-slate-800 flex-col overflow-hidden flex-shrink-0 shadow-2xl h-full min-h-0 hidden md:flex">
-            <div class="flex border-b border-slate-800 bg-slate-950 p-1.5 gap-1 flex-shrink-0">
-                <button id="tabOrders" onclick="switchLeftTab('orders')" class="flex-1 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-orange-400 shadow transition flex items-center justify-center gap-1">
-                    <i class="fa-solid fa-boxes-packing"></i> Pesanan (<span id="countAllOrders">0</span>)
-                </button>
-                <button id="tabReviews" onclick="switchLeftTab('reviews')" class="flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:bg-slate-800/60 transition flex items-center justify-center gap-1">
-                    <i class="fa-solid fa-star text-yellow-400"></i> Ulasan (<span id="countReviews">0</span>)
-                </button>
-            </div>
-
-            <!-- View: Orders List -->
-            <div id="viewOrders" class="flex-1 flex flex-col overflow-hidden min-h-0">
-                <div class="p-2.5 bg-slate-800/50 border-b border-slate-800 flex items-center justify-between flex-shrink-0">
-                    <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-route text-orange-500"></i>
-                        <span class="text-xs font-bold text-slate-200">Auto-Batch Multi Order</span>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="autoAssignToggle" onchange="toggleAutoAssign()" class="sr-only peer" checked>
-                        <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
-                    </label>
-                </div>
-
-                <div class="p-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex justify-between items-center flex-shrink-0">
-                    <span>Daftar Order Masuk Realtime</span>
-                    <span id="rushHourBadge" class="hidden bg-red-600 text-white text-[9px] px-2 py-0.5 rounded-full font-black animate-pulse">MACET JAM SIBUK</span>
-                </div>
-
-                <div id="ordersList" class="flex-1 custom-scroll px-2.5 space-y-2 pb-3 min-h-0">
-                    <!-- Dynamic Orders -->
+        <!-- Tab 2: Pesanan -->
+        <div id="tabPesanan" class="tab-content">
+            <div class="panel-container">
+                <h2 style="font-size: 15px; margin-bottom: 10px;">Daftar Pesanan Masuk</h2>
+                <div id="listPesanan">
+                    <!-- Pesanan dimasukkan dinamis via JS -->
                 </div>
             </div>
+        </div>
 
-            <!-- View: Customer Reviews Feed -->
-            <div id="viewReviews" class="flex-1 flex flex-col overflow-hidden hidden min-h-0">
-                <div class="p-2.5 bg-slate-800/50 border-b border-slate-800 text-xs font-bold text-slate-300 flex items-center justify-between flex-shrink-0">
-                    <span>Ulasan Pembeli ShopeeFood</span>
-                    <span id="reviewScoreSummary" class="text-yellow-400"><i class="fa-solid fa-star"></i> 5.0 / 5.0</span>
+        <!-- Tab 3: Kelola Armada -->
+        <div id="tabKelola" class="tab-content">
+            <div class="panel-container">
+                <h2 style="font-size: 15px; margin-bottom: 10px;">Manajemen Armada & Fitur</h2>
+                
+                <div class="card">
+                    <h3>Tambah Kurir Baru</h3>
+                    <p>Beli sepeda motor tambahan dan rekrut kurir baru.</p>
+                    <button class="btn-action" onclick="beliKurir()">Sewa Kurir (Rp 250.000)</button>
                 </div>
-                <div id="reviewsList" class="flex-1 custom-scroll p-2.5 space-y-2.5 min-h-0">
-                    <!-- Dynamic Reviews -->
+
+                <div class="card">
+                    <h3>Isi Bensin Otomatis</h3>
+                    <p>Isi ulang bensin untuk semua kurir yang bensinnya tipis (<20%).</p>
+                    <button class="btn-action" style="background:#059669;" onclick="refuelAll()">Refuel Semua (Rp 15.000/motor)</button>
+                </div>
+
+                <div class="card">
+                    <h3>Pindah Operasional Kota</h3>
+                    <p>Buka cabang ekspansi bisnis di kota lain.</p>
+                    <button class="btn-action" style="background:#0284c7;" onclick="gantiKota()">Ganti Kota Operasional</button>
                 </div>
             </div>
-        </aside>
+        </div>
+    </main>
 
-        <!-- Center Interactive Map Canvas -->
-        <main id="panelMap" class="w-full flex-1 bg-slate-900 rounded-2xl border border-slate-800 flex flex-col overflow-hidden relative min-h-0 h-full shadow-2xl">
-            <!-- Map Info Overlay Header -->
-            <div class="absolute top-3 left-3 right-3 z-10 flex justify-between items-center pointer-events-none">
-                <div class="bg-slate-950/85 backdrop-blur-md text-white px-3 py-1.5 rounded-xl text-[10px] md:text-xs font-medium shadow-xl pointer-events-auto flex items-center gap-2 border border-slate-800">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                    <span id="mapStatusText">Peta DKI Jakarta (Monas & Bundaran HI)</span>
-                </div>
-
-                <!-- Shopee Styled Map Legend -->
-                <div class="bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-xl text-[10px] md:text-xs font-semibold shadow-xl text-slate-300 pointer-events-auto flex items-center gap-2.5 border border-slate-800 hidden sm:flex">
-                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#ee4d2d] flex items-center justify-center text-[8px] text-white font-bold"><i class="fa-solid fa-utensils"></i></span> Warung</span>
-                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#ee4d2d] border border-white flex items-center justify-center text-[8px] text-white"><i class="fa-solid fa-motorcycle"></i></span> Kurir</span>
-                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500 flex items-center justify-center text-[8px] text-white"><i class="fa-solid fa-location-dot"></i></span> Pembeli</span>
-                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-400 flex items-center justify-center text-[8px] text-slate-900"><i class="fa-solid fa-gas-pump"></i></span> SPBU</span>
-                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-blue-500 flex items-center justify-center text-[8px] text-white"><i class="fa-solid fa-landmark"></i></span> Landmark</span>
-                </div>
-            </div>
-
-            <!-- Canvas Container -->
-            <div class="w-full h-full relative overflow-hidden bg-slate-950 flex items-center justify-center flex-1">
-                <canvas id="gameCanvas" class="w-full h-full object-cover cursor-pointer"></canvas>
-            </div>
-
-            <!-- Bottom Map Bar Summary -->
-            <div class="h-11 border-t border-slate-800 bg-slate-900/90 backdrop-blur px-4 flex items-center justify-between text-xs font-medium text-slate-400 flex-shrink-0">
-                <div class="flex items-center gap-4">
-                    <span><i class="fa-solid fa-motorcycle text-orange-500 mr-1"></i> Kurir Jalan: <strong id="activeCouriersCount" class="text-slate-100">0/0</strong></span>
-                    <span><i class="fa-solid fa-gas-pump text-amber-400 mr-1"></i> SPBU Pertamina: <strong id="gasStationsCount" class="text-slate-100">2</strong></span>
-                    <span><i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i> Sukses: <strong id="completedOrdersCount" class="text-slate-100">0</strong></span>
-                </div>
-                <div class="hidden sm:flex items-center gap-2 text-slate-400 text-[11px]">
-                    <i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Bensin &lt; 15% kurir otomatis mampir SPBU terdekat!
-                </div>
-            </div>
-        </main>
-
-        <!-- Right Sidebar: Fleet Management, Cities Expansion & Skins -->
-        <aside id="panelManage" class="w-full md:w-80 bg-slate-900/90 rounded-2xl border border-slate-800 flex flex-col overflow-hidden flex-shrink-0 hidden md:flex shadow-2xl h-full min-h-0">
-            <div class="flex border-b border-slate-800 bg-slate-950 p-1.5 gap-1 flex-shrink-0">
-                <button id="rightTabCouriers" onclick="switchRightTab('couriers')" class="flex-1 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-orange-400 shadow transition">
-                    Armada (<span id="countCouriers">0</span>)
-                </button>
-                <button id="rightTabCities" onclick="switchRightTab('cities')" class="flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:bg-slate-800/60 transition">
-                    Kota (Ekspansi)
-                </button>
-                <button id="rightTabMerchants" onclick="switchRightTab('merchants')" class="flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:bg-slate-800/60 transition">
-                    Mitra Warung
-                </button>
-                <button id="rightTabSkins" onclick="switchRightTab('skins')" class="flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:bg-slate-800/60 transition">
-                    Skin / Uniform
-                </button>
-            </div>
-
-            <!-- Couriers Tab View -->
-            <div id="viewCouriers" class="flex-1 flex flex-col overflow-hidden min-h-0">
-                <div class="p-2.5 border-b border-slate-800 flex justify-between items-center bg-slate-800/40 flex-shrink-0">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Kelola Driver & Bensin</span>
-                    <button onclick="openHireModal()" class="shopee-gradient text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow hover:opacity-90 transition flex items-center gap-1">
-                        <i class="fa-solid fa-user-plus"></i> Rekrut Driver
-                    </button>
-                </div>
-                <div id="courierList" class="flex-1 custom-scroll p-2.5 space-y-2.5 min-h-0">
-                    <!-- Courier cards rendered here -->
-                </div>
-            </div>
-
-            <!-- Multi-City Expansion View -->
-            <div id="viewCities" class="flex-1 flex flex-col overflow-hidden hidden min-h-0">
-                <div class="p-2.5 border-b border-slate-800 bg-slate-800/40 flex-shrink-0">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Ekspansi Kota Baru Nusantara</span>
-                </div>
-                <div id="citiesList" class="flex-1 custom-scroll p-2.5 space-y-2.5 min-h-0">
-                    <!-- City Cards -->
-                </div>
-            </div>
-
-            <!-- Merchants & SPBU Tab View -->
-            <div id="viewMerchants" class="flex-1 flex flex-col overflow-hidden hidden min-h-0">
-                <div class="p-2.5 border-b border-slate-800 flex justify-between items-center bg-slate-800/40 flex-shrink-0">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Warung & SPBU Pertamina</span>
-                    <button onclick="openAddMerchantModal()" class="bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow hover:bg-blue-700 transition flex items-center gap-1">
-                        <i class="fa-solid fa-plus"></i> Tambah Mitra
-                    </button>
-                </div>
-                <div id="merchantList" class="flex-1 custom-scroll p-2.5 space-y-2.5 min-h-0">
-                    <!-- Merchant & SPBU cards rendered here -->
-                </div>
-            </div>
-
-            <!-- Skins & Customization Tab View -->
-            <div id="viewSkins" class="flex-1 flex flex-col overflow-hidden hidden min-h-0">
-                <div class="p-2.5 border-b border-slate-800 bg-slate-800/40 flex-shrink-0">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Seragam & Sticker Armada</span>
-                </div>
-                <div id="skinsList" class="flex-1 custom-scroll p-2.5 space-y-2.5 min-h-0">
-                    <!-- Skins rendered here -->
-                </div>
-            </div>
-        </aside>
-    </div>
-
-    <!-- Mobile Navigation -->
-    <nav class="md:hidden bg-slate-900 border-t border-slate-800 flex justify-around items-center py-2 px-3 z-30 shadow-2xl flex-shrink-0">
-        <button id="mTabMap" onclick="switchMobileTab('map')" class="flex flex-col items-center gap-0.5 text-orange-500 font-bold">
-            <i class="fa-solid fa-map-location-dot text-base"></i>
-            <span class="text-[10px]">Peta</span>
+    <!-- Navigation -->
+    <nav>
+        <button class="nav-btn active" onclick="switchTab('tabPeta', this)">
+            <span class="nav-icon">🗺️</span>
+            <span>Peta</span>
         </button>
-        <button id="mTabOrders" onclick="switchMobileTab('orders')" class="flex flex-col items-center gap-0.5 text-slate-400 relative">
-            <i class="fa-solid fa-boxes-packing text-base"></i>
-            <span class="text-[10px] font-bold">Pesanan</span>
-            <span id="mBadgeOrders" class="absolute -top-1 -right-2 bg-orange-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full">0</span>
+        <button class="nav-btn" onclick="switchTab('tabPesanan', this)">
+            <span class="nav-icon">📦</span>
+            <span>Pesanan</span>
+            <span id="badgePesanan" class="badge">0</span>
         </button>
-        <button id="mTabManage" onclick="switchMobileTab('manage')" class="flex flex-col items-center gap-0.5 text-slate-400">
-            <i class="fa-solid fa-sliders text-base"></i>
-            <span class="text-[10px] font-bold">Kelola</span>
+        <button class="nav-btn" onclick="switchTab('tabKelola', this)">
+            <span class="nav-icon">⚙️</span>
+            <span>Kelola</span>
         </button>
     </nav>
 
-    <!-- Modals -->
-    <!-- Modal Hire Driver -->
-    <div id="hireModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl border border-slate-800 overflow-hidden text-slate-100">
-            <div class="shopee-gradient p-4 text-white flex justify-between items-center">
-                <h3 class="font-bold text-base flex items-center gap-2">
-                    <i class="fa-solid fa-user-plus"></i> Rekrut Driver ShopeeFood
-                </h3>
-                <button onclick="closeHireModal()" class="text-white/80 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="p-4 space-y-3">
-                <p class="text-xs text-slate-400">Pilih driver profesional dengan jenis kendaraan & kapasitas muat sesuai kebutuhan kota.</p>
-                <div id="candidatesList" class="space-y-2.5 max-h-80 custom-scroll pr-1"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Add Merchant / SPBU -->
-    <div id="addMerchantModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl border border-slate-800 overflow-hidden text-slate-100">
-            <div class="bg-blue-600 p-4 text-white flex justify-between items-center">
-                <h3 class="font-bold text-base flex items-center gap-2">
-                    <i class="fa-solid fa-shop"></i> Buka Mitra Warung / SPBU
-                </h3>
-                <button onclick="closeAddMerchantModal()" class="text-white/80 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="p-4 space-y-3">
-                <p class="text-xs text-slate-400">Buka titik kuliner favorit khas daerah atau SPBU Pertamina tambahan.</p>
-                <div id="merchantCandidatesList" class="space-y-2.5 max-h-80 custom-scroll pr-1"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Mini-Game Reparasi Motor Modal -->
-    <div id="repairModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl border border-red-500/50 overflow-hidden text-slate-100 text-center">
-            <div class="bg-gradient-to-r from-red-600 to-amber-600 p-4 text-white">
-                <h3 class="font-black text-lg flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-wrench"></i> Mini-Game Reparasi Motor!
-                </h3>
-                <p class="text-xs text-orange-100 mt-1">Tap/Klik cepat tombol di bawah untuk memperbaiki mesin mogok!</p>
-            </div>
-            <div class="p-6 space-y-4">
-                <div class="text-xs text-slate-400" id="repairTargetText">Driver: <strong id="repairDriverName" class="text-white">...</strong></div>
-                
-                <!-- Progress Bar Mini Game -->
-                <div class="w-full bg-slate-800 rounded-full h-5 p-1 border border-slate-700">
-                    <div id="repairProgressBar" class="bg-gradient-to-r from-amber-400 to-emerald-400 h-full rounded-full transition-all duration-100" style="width: 0%"></div>
-                </div>
-
-                <button id="btnTapRepair" onclick="tapRepairEngine()" class="w-full py-4 bg-orange-600 hover:bg-orange-500 text-white font-black rounded-2xl text-lg shadow-xl active:scale-95 transition transform">
-                    🔨 TAP CEPAT DI SINI! (<span id="repairClicksCount">0</span>/10)
-                </button>
-
-                <div class="flex justify-between items-center text-[11px] text-slate-500 pt-2 border-t border-slate-800">
-                    <span>Atau gunakan opsi Derek SPBU (Rp 25.000)</span>
-                    <button onclick="closeRepairModal()" class="text-slate-400 hover:text-white underline">Tutup</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
-        const AudioSys = {
-            ctx: null,
-            init() { 
-                try { 
-                    this.ctx = new (window.AudioContext || window.webkitAudioContext)(); 
-                } catch(e){} 
-            },
-            unlockAudio() {
-                if (this.ctx && this.ctx.state === 'suspended') {
-                    this.ctx.resume().catch(() => {});
-                }
-            },
-            playBeep(freq = 600, type = 'sine', duration = 0.12) {
-                if (!gameState.soundEnabled || !this.ctx) return;
-                try {
-                    if (this.ctx.state === 'suspended') this.ctx.resume();
-                    const osc = this.ctx.createOscillator();
-                    const gain = this.ctx.createGain();
-                    osc.type = type;
-                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-                    gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
-                    osc.connect(gain);
-                    gain.connect(this.ctx.destination);
-                    osc.start();
-                    osc.stop(this.ctx.currentTime + duration);
-                } catch(e){}
-            },
-            playSuccess() {
-                this.playBeep(523.25, 'triangle', 0.1);
-                setTimeout(() => this.playBeep(659.25, 'triangle', 0.1), 80);
-                setTimeout(() => this.playBeep(783.99, 'triangle', 0.2), 160);
-            },
-            playOrderNew() { this.playBeep(880, 'sine', 0.08); },
-            playRefuel() { this.playBeep(320, 'sawtooth', 0.25); },
-            playRepair() { this.playBeep(450, 'square', 0.1); },
-            playSiren() {
-                this.playBeep(900, 'sine', 0.15);
-                setTimeout(() => this.playBeep(1200, 'sine', 0.2), 150);
-            }
+        // State Game Global
+        let game = {
+            kas: 500000,
+            rating: 5.0,
+            kota: 'Jakarta',
+            sukses: 0,
+            speed: 1,
+            jam: 8,
+            menit: 0,
+            kurir: [],
+            pesanan: [],
+            spbu: [{x: 0.3, y: 0.3}, {x: 0.7, y: 0.7}],
+            warung: [{x: 0.2, y: 0.5, nama: "Geprek Bensu"}, {x: 0.8, y: 0.2, nama: "Kopi Janji Jiwa"}, {x: 0.5, y: 0.8, nama: "Nasi Goreng 68"}]
         };
 
-        function loadCityMapData(cityId) {
-            gameState.currentCity = cityId;
-            const statusText = document.getElementById('mapStatusText');
-            const cityConfig = CONFIG.cities.find(c => c.id === cityId);
-            if (statusText && cityConfig) statusText.innerText = `Peta ${cityConfig.name} (${cityConfig.landmark})`;
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
 
-            if (cityId === 'jakarta') {
-                // DKI JAKARTA MAP: Monas Center + Bundaran HI + Sudirman + Ciliwung
-                nodes = [
-                    { id: 0, x: 150, y: 150, neighbors: [] }, // Ancol North
-                    { id: 1, x: 600, y: 120, neighbors: [] }, // Kemayoran
-                    { id: 2, x: 1050, y: 150, neighbors: [] }, // Sunter/Kelapa Gading
-                    { id: 3, x: 1080, y: 450, neighbors: [] }, // Pulo Gadung
-                    { id: 4, x: 1050, y: 700, neighbors: [] }, // Cawang / East
-                    { id: 5, x: 600, y: 720, neighbors: [] }, // Pancoran / South
-                    { id: 6, x: 150, y: 700, neighbors: [] }, // Senayan / Palmerah
-                    { id: 7, x: 120, y: 420, neighbors: [] }, // Grogol West
-
-                    // Center Monas & HI Roundabout
-                    { id: 8, x: 600, y: 320, neighbors: [] }, // Monas Center
-                    { id: 9, x: 600, y: 480, neighbors: [] }, // Bundaran HI
-                    { id: 10, x: 420, y: 400, neighbors: [] }, // Tanah Abang
-                    { id: 11, x: 780, y: 400, neighbors: [] }  // Senen / Manggarai
-                ];
-
-                connectSeq([0,1,2,3,4,5,6,7,0]);
-                connectSeq([8,9]);
-                connectSeq([8,1,10,6]);
-                connectSeq([8,11,3]);
-                connectSeq([9,5]); connectSeq([9,10]); connectSeq([9,11]);
-
-                riverPath = [{ x: 50, y: 100 }, { x: 380, y: 300 }, { x: 600, y: 420 }, { x: 820, y: 550 }, { x: 1150, y: 750 }];
-
-                landmarks = [
-                    { name: 'Monumen Nasional (Monas)', x: 600, y: 320, icon: '\uf44b', color: '#eab308' },
-                    { name: 'Bundaran HI', x: 600, y: 480, icon: '\uf2e7', color: '#3b82f6' }
-                ];
-
-                gasStations = [
-                    { id: 'spbu1', name: 'SPBU Pertamina Pasti Pas Sudirman', level: 1, x: 520, y: 480, node: nodes[9] },
-                    { id: 'spbu2', name: 'Shopee EV Supercharge Pancoran', level: 1, x: 650, y: 700, node: nodes[5] }
-                ];
-
-                merchants = [
-                    { id: 'm1', name: 'Soto Betawi H. Husein', type: 'food', rating: 4.9, x: 400, y: 380, level: 1, prepSpeed: 1, node: nodes[10] },
-                    { id: 'm2', name: 'Martabak San Francisco HI', type: 'food', rating: 4.8, x: 640, y: 510, level: 1, prepSpeed: 1, node: nodes[9] },
-                    { id: 'm3', name: 'Shopee Central Warehouse Jakarta', type: 'express', rating: 5.0, x: 1020, y: 180, level: 1, prepSpeed: 1.2, node: nodes[2] }
-                ];
-
-                customers = [
-                    { id: 'c1', name: 'Bpk. Hendra', address: 'Apartemen Sudirman Suites', x: 560, y: 680, node: nodes[5] },
-                    { id: 'c2', name: 'Siska (Grogol)', address: 'Kost Green Garden', x: 120, y: 460, node: nodes[7] },
-                    { id: 'c3', name: 'Kantor BUMN Monas', address: 'Jl. Medan Merdeka Barat', x: 640, y: 300, node: nodes[8] }
-                ];
-            } else if (cityId === 'jogja') {
-                // YOGYAKARTA MAP
-                nodes = [
-                    { id: 0, x: 600, y: 150, neighbors: [] }, // Tugu Jogja
-                    { id: 1, x: 600, y: 350, neighbors: [] }, // Stasiun Tugu / Malioboro North
-                    { id: 2, x: 600, y: 520, neighbors: [] }, // Titik Nol KM / Benteng
-                    { id: 3, x: 600, y: 700, neighbors: [] }, // Alun-Alun Utara / Keraton
-                    { id: 4, x: 200, y: 350, neighbors: [] }, // Pingit / Barat
-                    { id: 5, x: 1000, y: 350, neighbors: [] }, // Lempuyangan / Timur
-                    { id: 6, x: 200, y: 700, neighbors: [] }, // Bugisan / Selatan Barat
-                    { id: 7, x: 1000, y: 700, neighbors: [] }  // Umbulharjo / Selatan Timur
-                ];
-
-                connectSeq([0,1,2,3]);
-                connectSeq([4,1,5]);
-                connectSeq([6,2,7]);
-                connectSeq([4,6,3,7,5,0,4]);
-
-                riverPath = [{ x: 350, y: 50 }, { x: 380, y: 400 }, { x: 420, y: 800 }];
-
-                landmarks = [
-                    { name: 'Tugu Yogyakarta', x: 600, y: 150, icon: '\uf44b', color: '#eab308' },
-                    { name: 'Jalan Malioboro', x: 600, y: 350, icon: '\uf54e', color: '#ee4d2d' },
-                    { name: 'Keraton Jogja', x: 600, y: 700, icon: '\uf015', color: '#10b981' }
-                ];
-
-                gasStations = [
-                    { id: 'spbu1', name: 'SPBU Pertamina Malioboro', level: 1, x: 650, y: 350, node: nodes[1] },
-                    { id: 'spbu2', name: 'SPBU Umbulharjo Jogja', level: 1, x: 950, y: 680, node: nodes[7] }
-                ];
-
-                merchants = [
-                    { id: 'm1', name: 'Gudeg Yu Djum Malioboro', type: 'food', rating: 5.0, x: 560, y: 380, level: 1, prepSpeed: 1, node: nodes[1] },
-                    { id: 'm2', name: 'Bakpia Pathok 25', type: 'food', rating: 4.9, x: 220, y: 380, level: 1, prepSpeed: 1, node: nodes[4] }
-                ];
-
-                customers = [
-                    { id: 'c1', name: 'Mas Dimas', address: 'Jl. Solo Lempuyangan', x: 1020, y: 320, node: nodes[5] },
-                    { id: 'c2', name: 'Mbak Nisa', address: 'Alun-Alun Kidul', x: 640, y: 720, node: nodes[3] }
-                ];
-            } else if (cityId === 'bandung') {
-                // BANDUNG MAP
-                nodes = [
-                    { id: 0, x: 600, y: 120, neighbors: [] }, // Dago Atas
-                    { id: 1, x: 600, y: 320, neighbors: [] }, // Gedung Sate
-                    { id: 2, x: 600, y: 520, neighbors: [] }, // Asia Afrika
-                    { id: 3, x: 600, y: 720, neighbors: [] }, // Buah Batu
-                    { id: 4, x: 180, y: 320, neighbors: [] }, // Pasteur / Tol
-                    { id: 5, x: 1020, y: 320, neighbors: [] }, // Cicaheum
-                    { id: 6, x: 180, y: 720, neighbors: [] }, // Kopo
-                    { id: 7, x: 1020, y: 720, neighbors: [] }  // Kiaracondong
-                ];
-
-                connectSeq([0,1,2,3]);
-                connectSeq([4,1,5]);
-                connectSeq([6,2,7]);
-                connectSeq([4,0,5,7,3,6,4]);
-
-                riverPath = [{ x: 50, y: 600 }, { x: 600, y: 640 }, { x: 1150, y: 620 }];
-
-                landmarks = [
-                    { name: 'Gedung Sate Pasundan', x: 600, y: 320, icon: '\uf19c', color: '#3b82f6' },
-                    { name: 'Jl. Asia Afrika Bandung', x: 600, y: 520, icon: '\uf54e', color: '#10b981' }
-                ];
-
-                gasStations = [
-                    { id: 'spbu1', name: 'SPBU Pertamina Pasteur', level: 1, x: 220, y: 320, node: nodes[4] },
-                    { id: 'spbu2', name: 'SPBU Dago Bandung', level: 1, x: 640, y: 150, node: nodes[0] }
-                ];
-
-                merchants = [
-                    { id: 'm1', name: 'Batagor Riri Dago', type: 'food', rating: 4.9, x: 550, y: 280, level: 1, prepSpeed: 1, node: nodes[1] },
-                    { id: 'm2', name: 'Seblak Bandung Pedas', type: 'food', rating: 4.8, x: 640, y: 550, level: 1, prepSpeed: 1, node: nodes[2] }
-                ];
-
-                customers = [
-                    { id: 'c1', name: 'Teh Asep', address: 'Komplek Pasteur Indah', x: 140, y: 350, node: nodes[4] },
-                    { id: 'c2', name: 'Kang Cecep', address: 'Buah Batu Residence', x: 640, y: 750, node: nodes[3] }
-                ];
-            }
-
-            if (couriers.length === 0) {
-                couriers = [
-                    { id: 'k1', name: 'Rizky (Driver Shopee 01)', vehicle: 'motorcycle', speed: CONFIG.vehicleTypes.motorcycle.speed, capacity: CONFIG.vehicleTypes.motorcycle.capacity, fuelBurn: CONFIG.vehicleTypes.motorcycle.fuelBurn, fuel: 100, x: nodes[0].x, y: nodes[0].y, status: 'IDLE', currentOrders: [], path: [] },
-                    { id: 'k2', name: 'Siti Eco (Driver Sepeda)', vehicle: 'bicycle', speed: CONFIG.vehicleTypes.bicycle.speed, capacity: CONFIG.vehicleTypes.bicycle.capacity, fuelBurn: CONFIG.vehicleTypes.bicycle.fuelBurn, fuel: 100, x: nodes[1].x, y: nodes[1].y, status: 'IDLE', currentOrders: [], path: [] }
-                ];
-            } else {
-                couriers.forEach((c, idx) => {
-                    const targetNode = nodes[idx % nodes.length];
-                    c.x = targetNode.x; c.y = targetNode.y; c.path = []; c.status = 'IDLE'; c.currentOrders = [];
-                });
-            }
-
-            orders = [];
-            document.getElementById('statCity').innerText = cityConfig ? cityConfig.name : cityId;
-            document.getElementById('mStatCity').innerText = cityConfig ? cityConfig.name : cityId;
-        }
-
-        function connectSeq(arr) {
-            for (let i = 0; i < arr.length - 1; i++) {
-                let n1 = nodes[arr[i]], n2 = nodes[arr[i+1]];
-                if (!n1.neighbors.includes(n2)) n1.neighbors.push(n2);
-                if (!n2.neighbors.includes(n1)) n2.neighbors.push(n1);
-            }
-        }
-
-        function findShortestPath(startNode, endNode) {
-            let distances = {}, previous = {}, unvisited = new Set(nodes);
-            nodes.forEach(node => { distances[node.id] = Infinity; previous[node.id] = null; });
-            distances[startNode.id] = 0;
-
-            while (unvisited.size > 0) {
-                let current = null, lowestDist = Infinity;
-                unvisited.forEach(node => {
-                    if (distances[node.id] < lowestDist) { lowestDist = distances[node.id]; current = node; }
-                });
-
-                if (!current || current === endNode) break;
-                unvisited.delete(current);
-
-                current.neighbors.forEach(neighbor => {
-                    if (unvisited.has(neighbor)) {
-                        let baseDist = Math.hypot(current.x - neighbor.x, current.y - neighbor.y);
-                        if (gameState.rushHour && (current.id % 2 === 0)) baseDist *= 1.8;
-                        let alt = distances[current.id] + baseDist;
-                        if (alt < distances[neighbor.id]) { distances[neighbor.id] = alt; previous[neighbor.id] = current; }
-                    }
-                });
-            }
-
-            let path = [], curr = endNode;
-            while (curr) { path.unshift(curr); curr = previous[curr.id]; }
-            return path;
-        }
-
-        function getClosestNode(x, y) {
-            let closest = nodes[0], minD = Infinity;
-            nodes.forEach(n => {
-                let d = Math.hypot(n.x - x, n.y - y);
-                if (d < minD) { minD = d; closest = n; }
-            });
-            return closest;
-        }
-
-        function spawnOrder(isFlashSale = false) {
-            if (orders.length >= 14) return;
-            const isFood = Math.random() > 0.3;
-            const availableMerchants = merchants.filter(m => isFood ? m.type === 'food' : m.type === 'express');
-            if (availableMerchants.length === 0 || customers.length === 0) return;
-
-            const merchant = availableMerchants[Math.floor(Math.random() * availableMerchants.length)];
-            const customer = customers[Math.floor(Math.random() * customers.length)];
-            
-            const foodNames = ['Ayam Geprek Sambal Ijo', 'Nasi Goreng Spesial Telur', 'Es Teh Manis Jumbo', 'Soto Ayam Madura', 'Kopi Susu Gula Aren', 'Seblak Seafood Pedas'];
-            const expressItems = ['Dokumen Kantor BUMN', 'Paket Shopee Express Premium', 'Kaos Distro Original', 'Aksesoris Gadget Neon'];
-
-            const itemName = isFood ? foodNames[Math.floor(Math.random() * foodNames.length)] : expressItems[Math.floor(Math.random() * expressItems.length)];
-            const basePrice = isFood ? Math.floor(Math.random() * 35000) + 15000 : Math.floor(Math.random() * 50000) + 20000;
-            const fee = Math.floor(basePrice * (isFlashSale ? 0.35 : 0.25));
-
-            const newOrder = {
-                id: 'ORD-' + nextOrderId++,
-                item: itemName,
-                merchant: merchant,
-                customer: customer,
-                fee: fee,
-                tip: isFlashSale ? Math.floor(Math.random() * 15000) + 5000 : (Math.random() > 0.5 ? 5000 : 0),
-                status: 'PENDING',
-                assignedCourierId: null,
-                createdAt: gameState.timeMinutes
-            };
-
-            orders.push(newOrder);
-            AudioSys.playOrderNew();
-
-            if (gameState.autoAssign) autoAssignOrders();
-            renderOrdersList();
-        }
-
-        function autoAssignOrders() {
-            const pendingOrders = orders.filter(o => o.status === 'PENDING');
-            pendingOrders.forEach(order => {
-                const availableCourier = couriers.find(c => {
-                    return c.status !== 'BROKEN' && c.currentOrders.length < c.capacity;
-                });
-
-                if (availableCourier) {
-                    assignOrderToCourier(order.id, availableCourier.id);
-                }
-            });
-        }
-
-        function assignOrderToCourier(orderId, courierId) {
-            const order = orders.find(o => o.id === orderId);
-            const courier = couriers.find(c => c.id === courierId);
-            if (!order || !courier) return;
-
-            order.status = 'ASSIGNED';
-            order.assignedCourierId = courier.id;
-            courier.currentOrders.push(order);
-
-            if (courier.status === 'IDLE') {
-                planCourierRoute(courier);
-            }
-            renderOrdersList();
-            renderCouriersList();
-        }
-
-        function planCourierRoute(courier) {
-            if (courier.currentOrders.length === 0) {
-                // Check if fuel low
-                if (courier.fuel < 20 && courier.vehicle !== 'bicycle') {
-                    const closestGas = getClosestGasStation(courier.x, courier.y);
-                    if (closestGas) {
-                        const startNode = getClosestNode(courier.x, courier.y);
-                        courier.path = findShortestPath(startNode, closestGas.node);
-                        courier.status = 'REFUELING_NAV';
-                        return;
-                    }
-                }
-                courier.status = 'IDLE';
-                return;
-            }
-
-            const targetOrder = courier.currentOrders[0];
-            const startNode = getClosestNode(courier.x, courier.y);
-
-            if (targetOrder.status === 'ASSIGNED') {
-                courier.status = 'PICKING_UP';
-                courier.path = findShortestPath(startNode, targetOrder.merchant.node);
-            } else if (targetOrder.status === 'PICKED_UP') {
-                courier.status = 'DELIVERING';
-                courier.path = findShortestPath(startNode, targetOrder.customer.node);
-            }
-        }
-
-        function getClosestGasStation(x, y) {
-            if (gasStations.length === 0) return null;
-            let closest = gasStations[0], minD = Infinity;
-            gasStations.forEach(g => {
-                let d = Math.hypot(g.x - x, g.y - y);
-                if (d < minD) { minD = d; closest = g; }
-            });
-            return closest;
-        }
-
-        function updateCouriers() {
-            couriers.forEach(courier => {
-                if (courier.status === 'BROKEN') return;
-
-                if (courier.fuel <= 0 && courier.vehicle !== 'bicycle') {
-                    courier.status = 'BROKEN';
-                    AudioSys.playSiren();
-                    renderCouriersList();
-                    return;
-                }
-
-                if (courier.path && courier.path.length > 0) {
-                    const targetNode = courier.path[0];
-                    const dx = targetNode.x - courier.x;
-                    const dy = targetNode.y - courier.y;
-                    const dist = Math.hypot(dx, dy);
-                    const speed = courier.speed * (gameState.rushHour ? 0.6 : 1.0);
-
-                    if (dist < speed) {
-                        courier.x = targetNode.x;
-                        courier.y = targetNode.y;
-                        courier.path.shift();
-
-                        if (courier.vehicle !== 'bicycle') {
-                            courier.fuel = Math.max(0, courier.fuel - courier.fuelBurn);
-                        }
-
-                        if (courier.path.length === 0) {
-                            // Arrived at destination node
-                            handleCourierArrival(courier);
-                        }
-                    } else {
-                        courier.x += (dx / dist) * speed;
-                        courier.y += (dy / dist) * speed;
-                        if (courier.vehicle !== 'bicycle') {
-                            courier.fuel = Math.max(0, courier.fuel - (courier.fuelBurn * 0.1));
-                        }
-                    }
-                } else if (courier.currentOrders.length > 0) {
-                    planCourierRoute(courier);
-                } else if (courier.fuel < 15 && courier.vehicle !== 'bicycle' && courier.status !== 'REFUELING_NAV') {
-                    const closestGas = getClosestGasStation(courier.x, courier.y);
-                    if (closestGas) {
-                        const startNode = getClosestNode(courier.x, courier.y);
-                        courier.path = findShortestPath(startNode, closestGas.node);
-                        courier.status = 'REFUELING_NAV';
-                    }
-                }
-            });
-        }
-
-        function handleCourierArrival(courier) {
-            if (courier.status === 'REFUELING_NAV') {
-                courier.fuel = CONFIG.vehicleTypes[courier.vehicle].maxFuel;
-                courier.status = 'IDLE';
-                AudioSys.playRefuel();
-                planCourierRoute(courier);
-                renderCouriersList();
-                return;
-            }
-
-            if (courier.currentOrders.length === 0) {
-                courier.status = 'IDLE';
-                return;
-            }
-
-            const currentOrder = courier.currentOrders[0];
-
-            if (courier.status === 'PICKING_UP') {
-                currentOrder.status = 'PICKED_UP';
-                planCourierRoute(courier);
-                renderOrdersList();
-            } else if (courier.status === 'DELIVERING') {
-                // Completed delivery!
-                currentOrder.status = 'COMPLETED';
-                gameState.money += currentOrder.fee + currentOrder.tip;
-                gameState.completedOrders++;
-                AudioSys.playSuccess();
-
-                // Add Customer Review
-                addCustomerReview(currentOrder);
-
-                courier.currentOrders.shift();
-                orders = orders.filter(o => o.id !== currentOrder.id);
-
-                planCourierRoute(courier);
-                updateStatsUI();
-                renderOrdersList();
-                renderCouriersList();
-            }
-        }
-
-        function addCustomerReview(order) {
-            const comments = [
-                { stars: 5, text: `Gokil super cepat! Makanan ${order.item} masih kebul-kebul panas 🔥. Kasih tip mantap!` },
-                { stars: 5, text: `Kurirnya ramah banget, sopan dan tepat waktu. Terima kasih ShopeeFood! 👍` },
-                { stars: 4, text: `Pesanan sesuai aplikasi, packing aman tidak tumpah. Mantap!` },
-                { stars: 3, text: `Agak macet di jalan tapi makanan tetap enak. Tingkatkan kecepatannya ya.` }
-            ];
-
-            const rev = comments[Math.floor(Math.random() * comments.length)];
-            reviews.unshift({
-                id: 'REV-' + Date.now(),
-                customerName: order.customer.name,
-                item: order.item,
-                rating: rev.stars,
-                text: rev.text,
-                tip: order.tip
-            });
-
-            if (reviews.length > 20) reviews.pop();
-            renderReviewsList();
-        }
-
-        function gameTick() {
-            // Time progression
-            gameState.timeMinutes += 2 * gameState.gameSpeed;
-            if (gameState.timeMinutes >= 24 * 60) gameState.timeMinutes = 0;
-
-            const hour = Math.floor(gameState.timeMinutes / 60);
-
-            // Rush Hour Trigger (07:00-09:00 & 17:00-19:00)
-            gameState.rushHour = (hour >= 7 && hour <= 9) || (hour >= 17 && hour <= 19);
-            document.getElementById('rushHourBadge').classList.toggle('hidden', !gameState.rushHour);
-
-            // Dynamic Weather Cycle
-            if (Math.random() < 0.05) {
-                if (hour >= 19 || hour < 5) gameState.weather = 'Malam';
-                else if (Math.random() < 0.2) gameState.weather = 'Hujan';
-                else gameState.weather = 'Cerah';
-            }
-
-            // Flash Sale Timer update
-            if (gameState.flashSale.active) {
-                gameState.flashSale.timer--;
-                document.getElementById('flashTimer').innerText = `00:${gameState.flashSale.timer.toString().padStart(2, '0')}`;
-                if (gameState.flashSale.timer <= 0) {
-                    gameState.flashSale.active = false;
-                    document.getElementById('bannerFlashSale').classList.add('hidden');
-                } else if (Math.random() < 0.6) {
-                    spawnOrder(true);
-                }
-            } else {
-                if (Math.random() < (gameState.rushHour ? 0.7 : 0.35)) {
-                    spawnOrder(false);
-                }
-            }
-
-            if (gameState.autoAssign) autoAssignOrders();
-            updateCouriers();
-            updateStatsUI();
-            drawCanvas();
-        }
-
-        function triggerFlashSaleEvent() {
-            gameState.flashSale.active = true;
-            gameState.flashSale.timer = 30;
-            document.getElementById('bannerFlashSale').classList.remove('hidden');
-            AudioSys.playSiren();
-            for (let i = 0; i < 4; i++) spawnOrder(true);
-        }
-
-        function drawCanvas() {
-            if (!canvas || !ctx) return;
-
-            const scaleX = canvas.width / CONFIG.mapWidth;
-            const scaleY = canvas.height / CONFIG.mapHeight;
-
-            // Clear Canvas
-            ctx.fillStyle = '#0f172a';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.save();
-            ctx.scale(scaleX, scaleY);
-
-            // Draw River
-            if (riverPath.length > 0) {
-                ctx.beginPath();
-                ctx.moveTo(riverPath[0].x, riverPath[0].y);
-                for (let i = 1; i < riverPath.length; i++) ctx.lineTo(riverPath[i].x, riverPath[i].y);
-                ctx.strokeStyle = '#1e3a8a';
-                ctx.lineWidth = 28;
-                ctx.stroke();
-            }
-
-            // Draw Road Connections
-            nodes.forEach(node => {
-                node.neighbors.forEach(neighbor => {
-                    ctx.beginPath();
-                    ctx.moveTo(node.x, node.y);
-                    ctx.lineTo(neighbor.x, neighbor.y);
-                    ctx.strokeStyle = gameState.rushHour ? '#ef4444' : '#334155';
-                    ctx.lineWidth = gameState.rushHour ? 10 : 8;
-                    ctx.stroke();
-
-                    // Inner road line
-                    ctx.beginPath();
-                    ctx.moveTo(node.x, node.y);
-                    ctx.lineTo(neighbor.x, neighbor.y);
-                    ctx.strokeStyle = '#475569';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-                });
-            });
-
-            // Draw Landmarks
-            landmarks.forEach(lm => {
-                ctx.fillStyle = lm.color;
-                ctx.beginPath();
-                ctx.arc(lm.x, lm.y, 18, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 12px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText('🏛️', lm.x, lm.y + 4);
-
-                ctx.fillStyle = '#f8fafc';
-                ctx.font = 'bold 11px sans-serif';
-                ctx.fillText(lm.name, lm.x, lm.y - 24);
-            });
-
-            // Draw Gas Stations (SPBU)
-            gasStations.forEach(spbu => {
-                ctx.fillStyle = '#f59e0b';
-                ctx.beginPath();
-                ctx.arc(spbu.x, spbu.y, 14, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#0f172a';
-                ctx.font = 'bold 10px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText('⛽', spbu.x, spbu.y + 3);
-            });
-
-            // Draw Merchants (Warung)
-            merchants.forEach(m => {
-                ctx.fillStyle = m.type === 'food' ? '#ee4d2d' : '#2563eb';
-                ctx.beginPath();
-                ctx.arc(m.x, m.y, 15, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 10px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(m.type === 'food' ? '🍜' : '📦', m.x, m.y + 3);
-
-                ctx.fillStyle = '#e2e8f0';
-                ctx.font = 'bold 10px sans-serif';
-                ctx.fillText(m.name, m.x, m.y - 18);
-            });
-
-            // Draw Customers
-            customers.forEach(c => {
-                ctx.fillStyle = '#10b981';
-                ctx.beginPath();
-                ctx.arc(c.x, c.y, 12, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 9px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText('🏠', c.x, c.y + 3);
-            });
-
-            // Draw Couriers
-            const activeSkin = CONFIG.skins.find(s => s.id === gameState.currentSkin) || CONFIG.skins[0];
-            couriers.forEach(c => {
-                ctx.save();
-                ctx.translate(c.x, c.y);
-
-                // Halo glow for current skin
-                ctx.fillStyle = activeSkin.primary;
-                ctx.globalAlpha = 0.3;
-                ctx.beginPath();
-                ctx.arc(0, 0, 20, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.globalAlpha = 1.0;
-
-                // Courier Circle Body
-                ctx.fillStyle = c.status === 'BROKEN' ? '#ef4444' : activeSkin.primary;
-                ctx.beginPath();
-                ctx.arc(0, 0, 14, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-
-                // Courier Icon
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 10px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(c.status === 'BROKEN' ? '⚠️' : (c.vehicle === 'bicycle' ? '🚲' : '🛵'), 0, 3);
-
-                // Orders count badge
-                if (c.currentOrders.length > 0) {
-                    ctx.fillStyle = '#f59e0b';
-                    ctx.beginPath();
-                    ctx.arc(10, -10, 7, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.fillStyle = '#0f172a';
-                    ctx.font = 'black 9px sans-serif';
-                    ctx.fillText(c.currentOrders.length, 10, -7);
-                }
-
-                // Fuel level indicator line below
-                if (c.vehicle !== 'bicycle') {
-                    ctx.fillStyle = '#334155';
-                    ctx.fillRect(-12, 18, 24, 4);
-                    ctx.fillStyle = c.fuel > 30 ? '#10b981' : '#ef4444';
-                    ctx.fillRect(-12, 18, (c.fuel / 100) * 24, 4);
-                }
-
-                ctx.restore();
-            });
-
-            // Weather Effects Overlay
-            if (gameState.weather === 'Hujan') {
-                ctx.fillStyle = 'rgba(148, 163, 184, 0.15)';
-                ctx.fillRect(0, 0, CONFIG.mapWidth, CONFIG.mapHeight);
-            } else if (gameState.weather === 'Malam') {
-                ctx.fillStyle = 'rgba(3, 7, 18, 0.55)';
-                ctx.fillRect(0, 0, CONFIG.mapWidth, CONFIG.mapHeight);
-            }
-
-            ctx.restore();
-        }
-
-            // Draw Road Connections
-            nodes.forEach(node => {
-                node.neighbors.forEach(neighbor => {
-                    ctx.beginPath();
-                    ctx.moveTo(node.x, node.y);
-                    ctx.lineTo(neighbor.x, neighbor.y);
-                    ctx.strokeStyle = gameState.rushHour ? '#ef4444' : '#334155';
-                    ctx.lineWidth = gameState.rushHour ? 10 : 8;
-                    ctx.stroke();
-
-                    // Inner road line
-                    ctx.beginPath();
-                    ctx.moveTo(node.x, node.y);
-                    ctx.lineTo(neighbor.x, neighbor.y);
-                    ctx.strokeStyle = '#475569';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-                });
-            });
-
-            // Draw Landmarks
-            landmarks.forEach(lm => {
-                ctx.fillStyle = lm.color;
-                ctx.beginPath();
-                ctx.arc(lm.x, lm.y, 18, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#ffffff';
-                ctx.font = '12px "Font Awesome 6 Free"';
-                ctx.font = 'bold 12px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText('🏛️', lm.x, lm.y + 4);
-
-                ctx.fillStyle = '#f8fafc';
-                ctx.font = 'bold 11px sans-serif';
-                ctx.fillText(lm.name, lm.x, lm.y - 24);
-            });
-
-            // Draw Gas Stations (SPBU)
-            gasStations.forEach(spbu => {
-                ctx.fillStyle = '#f59e0b';
-                ctx.beginPath();
-                ctx.arc(spbu.x, spbu.y, 14, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#0f172a';
-                ctx.font = 'bold 10px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText('⛽', spbu.x, spbu.y + 3);
-            });
-
-            // Draw Merchants (Warung)
-            merchants.forEach(m => {
-                ctx.fillStyle = m.type === 'food' ? '#ee4d2d' : '#2563eb';
-                ctx.beginPath();
-                ctx.arc(m.x, m.y, 15, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 10px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(m.type === 'food' ? '🍜' : '📦', m.x, m.y + 3);
-
-                ctx.fillStyle = '#e2e8f0';
-                ctx.font = 'bold 10px sans-serif';
-                ctx.fillText(m.name, m.x, m.y - 18);
-            });
-
-            // Draw Customers
-            customers.forEach(c => {
-                ctx.fillStyle = '#10b981';
-                ctx.beginPath();
-                ctx.arc(c.x, c.y, 12, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 9px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText('🏠', c.x, c.y + 3);
-            });
-
-            // Draw Couriers
-            const activeSkin = CONFIG.skins.find(s => s.id === gameState.currentSkin) || CONFIG.skins[0];
-            couriers.forEach(c => {
-                ctx.save();
-                ctx.translate(c.x, c.y);
-
-                // Halo glow for current skin
-                ctx.fillStyle = activeSkin.primary;
-                ctx.globalAlpha = 0.3;
-                ctx.beginPath();
-                ctx.arc(0, 0, 20, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.globalAlpha = 1.0;
-
-                // Courier Circle Body
-                ctx.fillStyle = c.status === 'BROKEN' ? '#ef4444' : activeSkin.primary;
-                ctx.beginPath();
-                ctx.arc(0, 0, 14, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-
-                // Courier Icon
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 10px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(c.status === 'BROKEN' ? '⚠️' : (c.vehicle === 'bicycle' ? '🚲' : '🛵'), 0, 3);
-
-                // Orders count badge
-                if (c.currentOrders.length > 0) {
-                    ctx.fillStyle = '#f59e0b';
-                    ctx.beginPath();
-                    ctx.arc(10, -10, 7, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.fillStyle = '#0f172a';
-                    ctx.font = 'black 9px sans-serif';
-                    ctx.fillText(c.currentOrders.length, 10, -7);
-                }
-
-                // Fuel level indicator line below
-                if (c.vehicle !== 'bicycle') {
-                    ctx.fillStyle = '#334155';
-                    ctx.fillRect(-12, 18, 24, 4);
-                    ctx.fillStyle = c.fuel > 30 ? '#10b981' : '#ef4444';
-                    ctx.fillRect(-12, 18, (c.fuel / 100) * 24, 4);
-                }
-
-                ctx.restore();
-            });
-
-            // Weather Effects Overlay
-            if (gameState.weather === 'Hujan') {
-                ctx.fillStyle = 'rgba(148, 163, 184, 0.15)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-            } else if (gameState.weather === 'Malam') {
-                ctx.fillStyle = 'rgba(3, 7, 18, 0.55)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-            }
-        }
-
-        function renderOrdersList() {
-            const container = document.getElementById('ordersList');
-            document.getElementById('countAllOrders').innerText = orders.length;
-            document.getElementById('mBadgeOrders').innerText = orders.length;
-
-            if (orders.length === 0) {
-                container.innerHTML = `
-                    <div class="p-6 text-center text-slate-500 text-xs">
-                        <i class="fa-solid fa-mug-hot text-2xl mb-2 text-slate-600 block"></i>
-                        Belum ada orderan masuk. Menunggu pesanan pelanggan...
-                    </div>`;
-                return;
-            }
-
-            container.innerHTML = orders.map(o => `
-                <div class="bg-slate-800/80 border border-slate-700/60 p-2.5 rounded-xl text-xs space-y-1.5 shadow">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <span class="font-black text-orange-400">${o.id}</span>
-                            <h4 class="font-bold text-slate-100 leading-tight">${o.item}</h4>
-                        </div>
-                        <span class="bg-slate-700 text-slate-300 font-bold px-2 py-0.5 rounded-md text-[10px]">${o.status}</span>
-                    </div>
-                    <div class="text-[11px] text-slate-400 space-y-0.5">
-                        <div><i class="fa-solid fa-shop text-orange-400 w-4"></i> ${o.merchant.name}</div>
-                        <div><i class="fa-solid fa-location-dot text-emerald-400 w-4"></i> ${o.customer.name} (${o.customer.address})</div>
-                    </div>
-                    <div class="flex justify-between items-center pt-1 border-t border-slate-700/40 text-[11px]">
-                        <span class="text-yellow-400 font-black">Komisi: Rp ${o.fee.toLocaleString('id-ID')} ${o.tip > 0 ? `<span class="text-emerald-400 text-[10px]">(+Tip Rp ${o.tip.toLocaleString('id-ID')})</span>` : ''}</span>
-                        ${o.status === 'PENDING' ? `
-                            <button onclick="manualAssignPrompt('${o.id}')" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-2 py-1 rounded-lg text-[10px] transition">
-                                Tugaskan
-                            </button>` : ''}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderReviewsList() {
-            const container = document.getElementById('reviewsList');
-            document.getElementById('countReviews').innerText = reviews.length;
-
-            if (reviews.length === 0) {
-                container.innerHTML = `<div class="p-6 text-center text-slate-500 text-xs">Belum ada ulasan masuk.</div>`;
-                return;
-            }
-
-            container.innerHTML = reviews.map(r => `
-                <div class="bg-slate-800/70 border border-slate-700/50 p-2.5 rounded-xl text-xs space-y-1">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-slate-200">${r.customerName}</span>
-                        <span class="text-yellow-400 font-bold text-[11px]">
-                            ${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}
-                        </span>
-                    </div>
-                    <p class="text-slate-300 text-[11px] italic">"${r.text}"</p>
-                    <div class="text-[10px] text-slate-400 flex justify-between pt-1 border-t border-slate-700/30">
-                        <span>Item: ${r.item}</span>
-                        ${r.tip > 0 ? `<span class="text-emerald-400 font-bold">Dapat Tip Rp ${r.tip.toLocaleString('id-ID')}</span>` : ''}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderCouriersList() {
-            const container = document.getElementById('courierList');
-            document.getElementById('countCouriers').innerText = couriers.length;
-            document.getElementById('activeCouriersCount').innerText = `${couriers.filter(c => c.status !== 'IDLE' && c.status !== 'BROKEN').length}/${couriers.length}`;
-
-            container.innerHTML = couriers.map(c => `
-                <div class="bg-slate-800/80 border border-slate-700/60 p-2.5 rounded-xl text-xs space-y-2">
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid ${CONFIG.vehicleTypes[c.vehicle].icon} text-orange-400 text-sm"></i>
-                            <div>
-                                <h4 class="font-bold text-slate-100">${c.name}</h4>
-                                <span class="text-[10px] text-slate-400">${CONFIG.vehicleTypes[c.vehicle].name}</span>
-                            </div>
-                        </div>
-                        <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase ${c.status === 'BROKEN' ? 'bg-red-600 text-white animate-bounce' : 'bg-slate-700 text-slate-300'}">
-                            ${c.status}
-                        </span>
-                    </div>
-
-                    ${c.vehicle !== 'bicycle' ? `
-                    <div class="space-y-1">
-                        <div class="flex justify-between text-[10px] text-slate-400 font-bold">
-                            <span>Bensin</span>
-                            <span>${Math.round(c.fuel)}%</span>
-                        </div>
-                        <div class="w-full bg-slate-700 rounded-full h-2 overflow-hidden">
-                            <div class="h-full ${c.fuel > 30 ? 'bg-emerald-400' : 'bg-red-500'}" style="width: ${c.fuel}%"></div>
-                        </div>
-                    </div>` : ''}
-
-                    <div class="flex justify-between items-center pt-1 text-[10px]">
-                        <span class="text-slate-400">Bawa Order: <strong>${c.currentOrders.length}/${c.capacity}</strong></span>
-                        <div class="flex gap-1">
-                            ${c.status === 'BROKEN' ? `
-                                <button onclick="openRepairModal('${c.id}')" class="bg-red-600 hover:bg-red-500 text-white font-black px-2 py-1 rounded-lg">
-                                    🔨 PERBAIKI MESIN
-                                </button>` : `
-                                ${c.vehicle !== 'bicycle' ? `
-                                <button onclick="refuelCourierManual('${c.id}')" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-2 py-1 rounded-lg">
-                                    ⛽ Isi Bensin
-                                </button>` : ''}`}
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderCitiesList() {
-            const container = document.getElementById('citiesList');
-            container.innerHTML = CONFIG.cities.map(city => `
-                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-xl text-xs space-y-2">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h4 class="font-black text-slate-100 text-sm">${city.name}</h4>
-                            <p class="text-[11px] text-slate-400">${city.desc}</p>
-                        </div>
-                        ${city.unlocked ? `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[10px] px-2 py-0.5 rounded-md font-bold">Aktif</span>` : ''}
-                    </div>
-                    <div class="flex justify-between items-center pt-2 border-t border-slate-700/40">
-                        <span class="text-slate-300 text-[11px]">Landmark: <strong>${city.landmark}</strong></span>
-                        ${city.unlocked ? `
-                            <button onclick="switchCity('${city.id}')" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-2.5 py-1 rounded-lg text-[10px]">
-                                Pindah Kota
-                            </button>` : `
-                            <button onclick="unlockCity('${city.id}', ${city.cost})" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2.5 py-1 rounded-lg text-[10px]">
-                                Buka (Rp ${city.cost.toLocaleString('id-ID')})
-                            </button>`}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderMerchantsList() {
-            const container = document.getElementById('merchantList');
-            container.innerHTML = `
-                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Daftar Warung Mitra & SPBU</div>
-                ${merchants.map(m => `
-                    <div class="bg-slate-800/80 border border-slate-700/60 p-2.5 rounded-xl text-xs flex justify-between items-center mb-2">
-                        <div>
-                            <h4 class="font-bold text-slate-100">${m.name}</h4>
-                            <span class="text-[10px] text-slate-400">Tipe: ${m.type === 'food' ? 'Kuliner Food' : 'Shopee Warehouse Express'}</span>
-                        </div>
-                        <span class="text-yellow-400 font-bold text-xs"><i class="fa-solid fa-star"></i> ${m.rating}</span>
-                    </div>
-                `).join('')}
-                ${gasStations.map(g => `
-                    <div class="bg-slate-800/80 border border-amber-500/30 p-2.5 rounded-xl text-xs flex justify-between items-center mb-2">
-                        <div>
-                            <h4 class="font-bold text-amber-300">${g.name}</h4>
-                            <span class="text-[10px] text-slate-400">Stasiun Pengisian Bahan Bakar Pertamina</span>
-                        </div>
-                        <span class="text-amber-400 font-bold text-xs">⛽ Pertamax</span>
-                    </div>
-                `).join('')}
-            `;
-        }
-
-        function renderSkinsList() {
-            const container = document.getElementById('skinsList');
-            container.innerHTML = CONFIG.skins.map(s => `
-                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-xl text-xs flex justify-between items-center">
-                    <div>
-                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full text-slate-900 bg-yellow-400 uppercase">${s.badge}</span>
-                        <h4 class="font-bold text-slate-100 mt-1">${s.name}</h4>
-                    </div>
-                    ${s.unlocked ? `
-                        <button onclick="applySkin('${s.id}')" class="${gameState.currentSkin === s.id ? 'bg-emerald-600' : 'bg-slate-700'} text-white font-bold px-3 py-1.5 rounded-xl text-[10px]">
-                            ${gameState.currentSkin === s.id ? 'Dipakai' : 'Gunakan'}
-                        </button>` : `
-                        <button onclick="buySkin('${s.id}', ${s.cost})" class="bg-orange-500 text-white font-bold px-3 py-1.5 rounded-xl text-[10px]">
-                            Beli Rp ${s.cost.toLocaleString('id-ID')}
-                        </button>`}
-                </div>
-            `).join('');
-        }
-
-        function openHireModal() {
-            document.getElementById('hireModal').classList.remove('hidden');
-            const container = document.getElementById('candidatesList');
-            container.innerHTML = Object.keys(CONFIG.vehicleTypes).map(key => {
-                const v = CONFIG.vehicleTypes[key];
-                return `
-                    <div class="bg-slate-800 border border-slate-700 p-3 rounded-xl text-xs flex justify-between items-center">
-                        <div class="space-y-0.5">
-                            <h4 class="font-bold text-slate-100 flex items-center gap-1.5">
-                                <i class="fa-solid ${v.icon} text-orange-400"></i> ${v.name}
-                            </h4>
-                            <p class="text-[10px] text-slate-400">Kapasitas: ${v.capacity} Order &bull; Kecepatan: ${v.speed}x</p>
-                        </div>
-                        <button onclick="hireCourier('${key}', ${v.cost})" class="shopee-gradient text-white font-bold px-3 py-1.5 rounded-xl shadow text-xs">
-                            Sewa ${v.cost === 0 ? 'Gratis' : `Rp ${v.cost.toLocaleString('id-ID')}`}
-                        </button>
-                    </div>`;
-            }).join('');
-        }
-
-        function closeHireModal() { document.getElementById('hireModal').classList.add('hidden'); }
-
-        function hireCourier(vehicleKey, cost) {
-            if (gameState.money < cost) {
-                alert('Saldo Kas Utama tidak mencukupi!');
-                return;
-            }
-            gameState.money -= cost;
-            const v = CONFIG.vehicleTypes[vehicleKey];
-            const startNode = nodes[Math.floor(Math.random() * nodes.length)];
-            couriers.push({
-                id: 'k' + nextCourierId++,
-                name: `Driver Shopee ${nextCourierId.toString().padStart(2, '0')}`,
-                vehicle: vehicleKey,
-                speed: v.speed,
-                capacity: v.capacity,
-                fuelBurn: v.fuelBurn,
-                fuel: 100,
-                x: startNode.x,
-                y: startNode.y,
-                status: 'IDLE',
-                currentOrders: [],
-                path: []
-            });
-
-            closeHireModal();
-            updateStatsUI();
-            renderCouriersList();
-        }
-
-        function openAddMerchantModal() { document.getElementById('addMerchantModal').classList.remove('hidden'); renderMerchantCandidates(); }
-        function closeAddMerchantModal() { document.getElementById('addMerchantModal').classList.add('hidden'); }
-
-        function renderMerchantCandidates() {
-            const container = document.getElementById('merchantCandidatesList');
-            container.innerHTML = `
-                <div class="bg-slate-800 border border-slate-700 p-3 rounded-xl text-xs flex justify-between items-center">
-                    <div>
-                        <h4 class="font-bold text-slate-100">Bebek Goreng H. Slamet</h4>
-                        <p class="text-[10px] text-slate-400">Mitra Kuliner Favorit Baru</p>
-                    </div>
-                    <button onclick="buyMerchant('Bebek Goreng H. Slamet', 'food', 150000)" class="bg-blue-600 text-white font-bold px-3 py-1 rounded-xl">
-                        Buka Rp 150.000
-                    </button>
-                </div>
-                <div class="bg-slate-800 border border-amber-500/40 p-3 rounded-xl text-xs flex justify-between items-center">
-                    <div>
-                        <h4 class="font-bold text-amber-300">SPBU Pertamina Tambahan</h4>
-                        <p class="text-[10px] text-slate-400">Titik Bensin Baru di Peta</p>
-                    </div>
-                    <button onclick="buyGasStation('SPBU Pertamina Baru', 200000)" class="bg-amber-500 text-slate-900 font-bold px-3 py-1 rounded-xl">
-                        Buka Rp 200.000
-                    </button>
-                </div>
-            `;
-        }
-
-        function buyMerchant(name, type, cost) {
-            if (gameState.money < cost) { alert('Saldo Kas tidak cukup!'); return; }
-            gameState.money -= cost;
-            const randomNode = nodes[Math.floor(Math.random() * nodes.length)];
-            merchants.push({
-                id: 'm' + (merchants.length + 1),
-                name: name,
-                type: type,
-                rating: 4.9,
-                x: randomNode.x + (Math.random() * 40 - 20),
-                y: randomNode.y + (Math.random() * 40 - 20),
-                node: randomNode
-            });
-            closeAddMerchantModal();
-            updateStatsUI();
-            renderMerchantsList();
-        }
-
-        function buyGasStation(name, cost) {
-            if (gameState.money < cost) { alert('Saldo Kas tidak cukup!'); return; }
-            gameState.money -= cost;
-            const randomNode = nodes[Math.floor(Math.random() * nodes.length)];
-            gasStations.push({
-                id: 'spbu' + (gasStations.length + 1),
-                name: name,
-                x: randomNode.x + 30,
-                y: randomNode.y + 30,
-                node: randomNode
-            });
-            closeAddMerchantModal();
-            updateStatsUI();
-            renderMerchantsList();
-        }
-
-        // Mini Game Engine Repair Functions
-        function openRepairModal(courierId) {
-            activeRepairCourierId = courierId;
-            repairTapCount = 0;
-            const courier = couriers.find(c => c.id === courierId);
-            document.getElementById('repairDriverName').innerText = courier ? courier.name : '...';
-            document.getElementById('repairClicksCount').innerText = '0';
-            document.getElementById('repairProgressBar').style.width = '0%';
-            document.getElementById('repairModal').classList.remove('hidden');
-        }
-
-        function closeRepairModal() { document.getElementById('repairModal').classList.add('hidden'); }
-
-        function tapRepairEngine() {
-            repairTapCount++;
-            AudioSys.playRepair();
-            const progress = (repairTapCount / 10) * 100;
-            document.getElementById('repairProgressBar').style.width = `${progress}%`;
-            document.getElementById('repairClicksCount').innerText = repairTapCount;
-
-            if (repairTapCount >= 10) {
-                const courier = couriers.find(c => c.id === activeRepairCourierId);
-                if (courier) {
-                    courier.fuel = 100;
-                    courier.status = 'IDLE';
-                }
-                setTimeout(() => {
-                    closeRepairModal();
-                    renderCouriersList();
-                }, 150);
-            }
-        }
-
-        function refuelCourierManual(courierId) {
-            const courier = couriers.find(c => c.id === courierId);
-            if (courier && gameState.money >= 15000) {
-                gameState.money -= 15000;
-                courier.fuel = 100;
-                AudioSys.playRefuel();
-                updateStatsUI();
-                renderCouriersList();
-            }
-        }
-
-        function unlockCity(cityId, cost) {
-            if (gameState.money < cost) { alert('Saldo Kas tidak cukup untuk ekspansi kota!'); return; }
-            gameState.money -= cost;
-            const city = CONFIG.cities.find(c => c.id === cityId);
-            if (city) city.unlocked = true;
-            switchCity(cityId);
-            updateStatsUI();
-            renderCitiesList();
-        }
-
-        function switchCity(cityId) {
-            loadCityMapData(cityId);
-            renderCitiesList();
-            renderMerchantsList();
-            renderCouriersList();
-        }
-
-        function buySkin(skinId, cost) {
-            if (gameState.money < cost) { alert('Saldo Kas tidak cukup!'); return; }
-            gameState.money -= cost;
-            const skin = CONFIG.skins.find(s => s.id === skinId);
-            if (skin) skin.unlocked = true;
-            applySkin(skinId);
-            updateStatsUI();
-            renderSkinsList();
-        }
-
-        function applySkin(skinId) {
-            gameState.currentSkin = skinId;
-            const skin = CONFIG.skins.find(s => s.id === skinId);
-            document.getElementById('skinBadge').innerText = skin ? skin.badge : 'Shopee Edition';
-            renderSkinsList();
-        }
-
-        function updateStatsUI() {
-            document.getElementById('statMoney').innerText = `Rp ${gameState.money.toLocaleString('id-ID')}`;
-            document.getElementById('mStatMoney').innerText = `Rp ${gameState.money.toLocaleString('id-ID')}`;
-
-            const hours = Math.floor(gameState.timeMinutes / 60).toString().padStart(2, '0');
-            const mins = (gameState.timeMinutes % 60).toString().padStart(2, '0');
-            document.getElementById('statTime').innerText = `${hours}:${mins} WIB`;
-            document.getElementById('mStatTime').innerText = `${hours}:${mins}`;
-
-            document.getElementById('statWeather').innerHTML = gameState.weather === 'Hujan' ?
-                `<i class="fa-solid fa-cloud-showers-heavy text-blue-400"></i> Hujan` :
-                (gameState.weather === 'Malam' ? `<i class="fa-solid fa-moon text-indigo-300"></i> Malam` : `<i class="fa-solid fa-sun text-yellow-300"></i> Cerah`);
-
-            document.getElementById('mStatWeather').innerHTML = gameState.weather === 'Hujan' ?
-                `<i class="fa-solid fa-cloud-showers-heavy text-blue-400"></i>` :
-                (gameState.weather === 'Malam' ? `<i class="fa-solid fa-moon text-indigo-300"></i>` : `<i class="fa-solid fa-sun text-yellow-300"></i>`);
-
-            document.getElementById('completedOrdersCount').innerText = gameState.completedOrders;
-            document.getElementById('gasStationsCount').innerText = gasStations.length;
-        }
-
-        function setSpeed(sp) {
-            gameState.gameSpeed = sp;
-            [0,1,2,4].forEach(s => {
-                const btn = document.getElementById(`btnSpeed${s}`);
-                if (btn) {
-                    if (s === sp) {
-                        btn.className = "px-2 py-1 text-xs font-bold rounded-lg bg-yellow-400 text-slate-900 transition";
-                    } else {
-                        btn.className = "px-2 py-1 text-xs font-bold rounded-lg bg-white/20 hover:bg-white/40 transition";
-                    }
-                }
-            });
-        }
-
-        function toggleAudio() {
-            gameState.soundEnabled = !gameState.soundEnabled;
-            const btn = document.getElementById('btnAudio');
-            btn.innerHTML = gameState.soundEnabled ? `<i class="fa-solid fa-volume-high"></i>` : `<i class="fa-solid fa-volume-xmark text-red-400"></i>`;
-        }
-
-        function toggleAutoAssign() {
-            gameState.autoAssign = document.getElementById('autoAssignToggle').checked;
-            if (gameState.autoAssign) autoAssignOrders();
-        }
-
-        function switchLeftTab(tab) {
-            gameState.leftTab = tab;
-            document.getElementById('viewOrders').classList.toggle('hidden', tab !== 'orders');
-            document.getElementById('viewReviews').classList.toggle('hidden', tab !== 'reviews');
-
-            document.getElementById('tabOrders').className = tab === 'orders' ? 'flex-1 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-orange-400 shadow transition flex items-center justify-center gap-1' : 'flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:bg-slate-800/60 transition flex items-center justify-center gap-1';
-            document.getElementById('tabReviews').className = tab === 'reviews' ? 'flex-1 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-orange-400 shadow transition flex items-center justify-center gap-1' : 'flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:bg-slate-800/60 transition flex items-center justify-center gap-1';
-        }
-
-        function switchRightTab(tab) {
-            gameState.rightTab = tab;
-            ['couriers', 'cities', 'merchants', 'skins'].forEach(t => {
-                const view = document.getElementById(`view${t.charAt(0).toUpperCase() + t.slice(1)}`);
-                const btn = document.getElementById(`rightTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
-                if (view) view.classList.toggle('hidden', t !== tab);
-                if (btn) btn.className = t === tab ? 'flex-1 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-orange-400 shadow transition' : 'flex-1 py-1.5 text-xs font-semibold rounded-xl text-slate-400 hover:bg-slate-800/60 transition';
-            });
-        }
-
-        function switchMobileTab(tab) {
-            gameState.mobileView = tab;
-            const pOrders = document.getElementById('panelOrders');
-            const pMap = document.getElementById('panelMap');
-            const pManage = document.getElementById('panelManage');
-
-            if (window.innerWidth < 768) {
-                if (pOrders) {
-                    pOrders.classList.toggle('hidden', tab !== 'orders');
-                    pOrders.classList.toggle('flex', tab === 'orders');
-                }
-                if (pMap) {
-                    pMap.classList.toggle('hidden', tab !== 'map');
-                    pMap.classList.toggle('flex', tab === 'map');
-                }
-                if (pManage) {
-                    pManage.classList.toggle('hidden', tab !== 'manage');
-                    pManage.classList.toggle('flex', tab === 'manage');
-                }
-            } else {
-                if (pOrders) { pOrders.classList.remove('hidden'); pOrders.classList.add('flex'); }
-                if (pMap) { pMap.classList.remove('hidden'); pMap.classList.add('flex'); }
-                if (pManage) { pManage.classList.remove('hidden'); pManage.classList.add('flex'); }
-            }
-
-            const btnMap = document.getElementById('mTabMap');
-            const btnOrders = document.getElementById('mTabOrders');
-            const btnManage = document.getElementById('mTabManage');
-
-            if (btnMap) btnMap.className = `flex flex-col items-center gap-0.5 ${tab === 'map' ? 'text-orange-500 font-bold' : 'text-slate-400'}`;
-            if (btnOrders) btnOrders.className = `flex flex-col items-center gap-0.5 relative ${tab === 'orders' ? 'text-orange-500 font-bold' : 'text-slate-400'}`;
-            if (btnManage) btnManage.className = `flex flex-col items-center gap-0.5 ${tab === 'manage' ? 'text-orange-500 font-bold' : 'text-slate-400'}`;
-        }
-
+        // Resizing Canvas Responsif HP
         function resizeCanvas() {
-            canvas = document.getElementById('gameCanvas');
-            if (canvas && canvas.parentElement) {
-                const rect = canvas.parentElement.getBoundingClientRect();
-                if (rect.width > 0 && rect.height > 0) {
-                    canvas.width = rect.width;
-                    canvas.height = rect.height;
-                }
-                ctx = canvas.getContext('2d');
-                drawCanvas();
+            const container = document.getElementById('tabPeta');
+            canvas.width = container.clientWidth || window.innerWidth;
+            canvas.height = container.clientHeight || (window.innerHeight - 100);
+            drawMap();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        // Inisialisasi Aplikasi
+        window.addEventListener('load', () => {
+            resizeCanvas();
+            initGame();
+            setInterval(gameLoop, 1000 / 30); // 30 FPS Loop
+            setInterval(clockLoop, 1000);
+            setInterval(generateOrder, 5000);
+        });
+
+        function initGame() {
+            // Tambah 1 kurir awal
+            beliKurirFree();
+        }
+
+        // Navigation Tabs
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+
+            if(tabId === 'tabPeta') {
+                setTimeout(resizeCanvas, 50);
             }
         }
 
-        window.onload = function() {
-            AudioSys.init();
-            
-            // Touch unlock listener for mobile audio policy
-            const unlockHandler = () => {
-                AudioSys.unlockAudio();
-                document.removeEventListener('touchstart', unlockHandler);
-                document.removeEventListener('click', unlockHandler);
-            };
-            document.addEventListener('touchstart', unlockHandler);
-            document.addEventListener('click', unlockHandler);
+        // Speed Control
+        function setSpeed(val) {
+            game.speed = val;
+            document.querySelectorAll('.btn-speed').forEach((b, idx) => {
+                b.classList.toggle('active', (val === 0 && idx === 0) || (val === 1 && idx === 1) || (val === 2 && idx === 2) || (val === 4 && idx === 3));
+            });
+        }
 
-            resizeCanvas();
-            loadCityMapData('jakarta');
+        // Game Loops
+        function gameLoop() {
+            if (game.speed === 0) return;
 
-            renderOrdersList();
-            renderReviewsList();
-            renderCouriersList();
-            renderCitiesList();
-            renderMerchantsList();
-            renderSkinsList();
+            // Move Kurir
+            game.kurir.forEach(k => {
+                if (k.bensin <= 0) return;
 
-            switchMobileTab('map');
+                if (k.target) {
+                    let dx = k.target.x - k.x;
+                    let dy = k.target.y - k.y;
+                    let dist = Math.sqrt(dx*dx + dy*dy);
+                    let step = 0.005 * game.speed;
 
-            // Main game loop interval
-            setInterval(() => {
-                if (gameState.gameSpeed > 0) {
-                    gameTick();
+                    if (dist < step) {
+                        k.x = k.target.x;
+                        k.y = k.target.y;
+                        k.target = null;
+                        k.bensin -= 10;
+                        if(k.bensin < 0) k.bensin = 0;
+
+                        if(k.status === 'antar') {
+                            k.status = 'idle';
+                            game.kas += 18000;
+                            game.sukses++;
+                            updateUI();
+                        }
+                    } else {
+                        k.x += (dx / dist) * step;
+                        k.y += (dy / dist) * step;
+                        k.bensin -= 0.02 * game.speed;
+                    }
                 }
-            }, CONFIG.tickInterval);
-        };
+            });
 
-        window.onresize = function() {
-            resizeCanvas();
-            switchMobileTab(gameState.mobileView);
-        };
+            drawMap();
+        }
+
+        function clockLoop() {
+            if (game.speed === 0) return;
+            game.menit += 5 * game.speed;
+            if (game.menit >= 60) {
+                game.menit = 0;
+                game.jam = (game.jam + 1) % 24;
+            }
+            document.getElementById('txtWaktu').innerText = `${String(game.jam).padStart(2,'0')}:${String(game.menit).padStart(2,'0')}`;
+        }
+
+        function generateOrder() {
+            if (game.pesanan.length >= 8) return;
+            let randomWarung = game.warung[Math.floor(Math.random() * game.warung.length)];
+            let order = {
+                id: Date.now(),
+                resto: randomWarung.nama,
+                restoX: randomWarung.x,
+                restoY: randomWarung.y,
+                custX: Math.random() * 0.8 + 0.1,
+                custY: Math.random() * 0.8 + 0.1,
+                ongkir: 18000
+            };
+            game.pesanan.push(order);
+            renderOrders();
+        }
+
+        // Rendering Map Canvas
+        function drawMap() {
+            let w = canvas.width;
+            let h = canvas.height;
+
+            if (w === 0 || h === 0) return;
+
+            // Background Peta
+            ctx.fillStyle = "#131a29";
+            ctx.fillRect(0, 0, w, h);
+
+            // Draw Jalanan Peta
+            ctx.strokeStyle = "#25334d";
+            ctx.lineWidth = 12;
+            ctx.beginPath();
+            ctx.moveTo(w * 0.1, h * 0.5); ctx.lineTo(w * 0.9, h * 0.5);
+            ctx.moveTo(w * 0.5, h * 0.1); ctx.lineTo(w * 0.5, h * 0.9);
+            ctx.stroke();
+
+            // Draw SPBU
+            game.spbu.forEach(s => {
+                ctx.fillStyle = "#ef4444";
+                ctx.beginPath();
+                ctx.arc(s.x * w, s.y * h, 10, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "10px sans-serif";
+                ctx.fillText("⛽ SPBU", s.x * w - 16, s.y * h - 12);
+            });
+
+            // Draw Warung Resto
+            game.warung.forEach(wr => {
+                ctx.fillStyle = "#f59e0b";
+                ctx.fillRect(wr.x * w - 8, wr.y * h - 8, 16, 16);
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "9px sans-serif";
+                ctx.fillText(wr.nama, wr.x * w - 20, wr.y * h + 18);
+            });
+
+            // Draw Kurir
+            game.kurir.forEach((k, idx) => {
+                let kx = k.x * w;
+                let ky = k.y * h;
+
+                ctx.fillStyle = k.bensin > 0 ? "#10b981" : "#64748b";
+                ctx.beginPath();
+                ctx.arc(kx, ky, 8, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Text Kurir
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "10px sans-serif";
+                ctx.fillText(`🛵 Kurir ${idx+1}`, kx - 18, ky - 12);
+            });
+        }
+
+        // Beli Kurir
+        function beliKurirFree() {
+            game.kurir.push({
+                x: 0.5,
+                y: 0.5,
+                target: null,
+                bensin: 100,
+                status: 'idle'
+            });
+            updateUI();
+        }
+
+        function beliKurir() {
+            if (game.kas >= 250000) {
+                game.kas -= 250000;
+                beliKurirFree();
+            } else {
+                alert("Kas tidak mencukupi!");
+            }
+        }
+
+        function refuelAll() {
+            let butuh = game.kurir.filter(k => k.bensin < 100).length;
+            let biaya = butuh * 15000;
+            if (game.kas >= biaya) {
+                game.kas -= biaya;
+                game.kurir.forEach(k => k.bensin = 100);
+                updateUI();
+                alert("Semua kurir berhasil diisi bensin!");
+            } else {
+                alert("Kas tidak cukup untuk refuel!");
+            }
+        }
+
+        function terimaPesanan(orderId) {
+            let idleKurir = game.kurir.find(k => k.status === 'idle' && k.bensin > 10);
+            if (!idleKurir) {
+                alert("Tidak ada kurir yang siap / bensin habis!");
+                return;
+            }
+
+            let orderIndex = game.pesanan.findIndex(o => o.id === orderId);
+            if (orderIndex > -1) {
+                let order = game.pesanan[orderIndex];
+                idleKurir.status = 'antar';
+                idleKurir.target = { x: order.custX, y: order.custY };
+                game.pesanan.splice(orderIndex, 1);
+                renderOrders();
+                switchTab('tabPeta', document.querySelectorAll('.nav-btn')[0]);
+            }
+        }
+
+        function renderOrders() {
+            let container = document.getElementById('listPesanan');
+            document.getElementById('badgePesanan').innerText = game.pesanan.length;
+
+            if (game.pesanan.length === 0) {
+                container.innerHTML = '<p style="font-size:12px; color:#64748b;">Belum ada pesanan masuk...</p>';
+                return;
+            }
+
+            container.innerHTML = game.pesanan.map(o => `
+                <div class="card">
+                    <h3>${o.resto}</h3>
+                    <p>Pengiriman Makanan • Ongkir Rp ${o.ongkir.toLocaleString('id-ID')}</p>
+                    <button class="btn-action" onclick="terimaPesanan(${o.id})">Ambil Pesanan Ini</button>
+                </div>
+            `).join('');
+        }
+
+        function updateUI() {
+            document.getElementById('txtKas').innerText = `Rp ${game.kas.toLocaleString('id-ID')}`;
+            document.getElementById('hudKurir').innerText = `${game.kurir.filter(k => k.status === 'antar').length}/${game.kurir.length}`;
+            document.getElementById('hudSukses').innerText = game.sukses;
+        }
+
+        function gantiKota() {
+            let list = ['Jakarta', 'Yogyakarta', 'Bandung'];
+            let next = list[(list.indexOf(game.kota) + 1) % list.length];
+            game.kota = next;
+            document.getElementById('txtKota').innerText = next;
+            document.getElementById('mapTitle').innerText = `Peta Operasional ${next}`;
+            alert(`Berhasil pindah ke kota ${next}!`);
+        }
     </script>
 </body>
 </html>
